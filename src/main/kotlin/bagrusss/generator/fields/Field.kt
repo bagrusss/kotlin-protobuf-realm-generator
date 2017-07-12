@@ -18,6 +18,8 @@ abstract class Field<T>(builder: FieldBuilder<T>) {
     protected val generateToProto      = builder.generateToProto
     protected val generateFromProto    = builder.generateFromProto
     protected val primaryKey           = builder.primaryKey
+    protected val parentName           = builder.parentName
+
     protected val protoConstructorParameter = "protoModel"
 
     protected val propertySpec by lazy { getPropSpec() }

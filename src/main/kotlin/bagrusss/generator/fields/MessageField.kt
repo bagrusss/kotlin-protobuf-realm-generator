@@ -7,6 +7,10 @@ import com.squareup.kotlinpoet.PropertySpec
  */
 class MessageField private constructor(builder: MessageField.Builder): Field<MessageField>(builder) {
 
+    class Builder: FieldBuilder<MessageField>() {
+        override fun build() = MessageField(this)
+    }
+
     override fun getPropSpec(): PropertySpec {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -15,7 +19,4 @@ class MessageField private constructor(builder: MessageField.Builder): Field<Mes
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    class Builder: FieldBuilder<MessageField>() {
-        override fun build() = MessageField(this)
-    }
 }

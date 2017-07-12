@@ -15,6 +15,7 @@ abstract class FieldBuilder<T> {
     internal var fullProtoTypeName = ""
     internal var protoTypeName = ""
     internal var fieldName = ""
+    internal var parentName = ""
     internal var generateToProto = true
     internal var generateFromProto = true
     internal var primaryKey = false
@@ -73,6 +74,10 @@ abstract class FieldBuilder<T> {
 
     fun primaryKey(primary: Boolean) = apply {
         this.primaryKey = primary
+    }
+
+    fun parentName(name: String) = apply {
+        this.parentName = name
     }
 
 
