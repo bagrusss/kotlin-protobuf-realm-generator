@@ -130,7 +130,7 @@ object Main {
 
          if (/*(node.fieldList.isNotEmpty() || node.hasOptions()) && */!protoPackageName.contains("google", true) && !node.name.contains("Swift", true)) {
 
-             val currentName = "$prefix$parentName${node.name}${if (protoPackageName.contains("react", true)) "React" else ""}"
+             val currentName = "${if (protoPackageName.contains("react", true)) "React" else ""}$prefix$parentName${node.name}"
              val outFile = PluginProtos.CodeGeneratorResponse.File.newBuilder().setName("$currentName.kt")
 
              val classNameBuilder = TypeSpec.classBuilder(currentName)
@@ -449,14 +449,15 @@ object Main {
                         response?.addFile(outFile)
                     }*/
                     if (field.label == DescriptorProtos.FieldDescriptorProto.Label.LABEL_REPEATED) {
-                        var classType = if (!typeName.contains(prefix)) "$prefix$typeName" else typeName
-                        classType = if (field.typeName.contains("react", true)) classType + "React" else classType
+                        var classType = "$prefix${field.typeName.replace(protoFilePackage, "").replace(".", "")}"
+                        classType = if (field.typeName.contains("react", true)) "React" + classType  else classType
                         val typedClass = ClassName.bestGuess(classType)
 
                         getRealmList(typedClass, field.name, fieldName, toProtoBodyBuilder, realmConstructorBodyBuilder, "${if (field.typeName.contains("proto", true)) "ru.rocketbank.protomodel.api" else protoPackageName }.${field.typeName.substring(field.typeName.indexOf(splitted[2]))}")
                     } else {
-                        var customTypeName = if (!typeName.contains(prefix)) "$prefix$typeName" else typeName
-                        customTypeName = if (field.typeName.contains("react", true)) customTypeName + "React" else customTypeName
+                        log("custom type parent = $parentName")
+                        var customTypeName = "$prefix${field.typeName.replace(protoFilePackage, "").replace(".", "")}"
+                        customTypeName = if (field.typeName.contains("react", true)) "React" + customTypeName  else customTypeName
                         //поле с кастомным типом
                         val builder =  PropertySpec.builder(fieldName, ClassName.bestGuess(customTypeName), KModifier.OPEN)
 
