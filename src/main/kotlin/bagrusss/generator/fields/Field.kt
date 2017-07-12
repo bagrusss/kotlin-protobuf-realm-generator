@@ -18,6 +18,7 @@ abstract class Field<T>(builder: FieldBuilder<T>) {
     protected val generateToProto      = builder.generateToProto
     protected val generateFromProto    = builder.generateFromProto
     protected val primaryKey           = builder.primaryKey
+    protected val protoConstructorParameter = "protoModel"
 
     protected val propertySpec by lazy { getPropSpec() }
     protected val kotlinFieldType by lazy { getFieldType() }
@@ -26,5 +27,5 @@ abstract class Field<T>(builder: FieldBuilder<T>) {
     protected abstract fun getFieldType(): String
 
     lateinit var toProtoInitializer: String
-    lateinit var fromProtoInitialized: String
+    lateinit var fromProtoInitializer: String
 }
