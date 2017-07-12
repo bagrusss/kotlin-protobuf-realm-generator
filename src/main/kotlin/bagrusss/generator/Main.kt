@@ -1,5 +1,6 @@
 package bagrusss.generator
 
+import bagrusss.generator.fields.ByteArrayField
 import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.compiler.PluginProtos
 import com.squareup.kotlinpoet.*
@@ -16,15 +17,41 @@ import java.nio.file.StandardOpenOption
 object Main {
 
     @JvmField val packageName = "com.serenity.data_impl.realm.model"
-    @JvmField var protoPackageName = "ru.rocketbank.protomodel"
+    @JvmField var protoPackageName = ""
+    @JvmField var protoFilePackage = ""
     @JvmField val prefix = "Realm"
 
-    @JvmField val realmString = "RealmString"
-    @JvmField val realmInt = "RealmInt"
-    @JvmField val realmLong = "RealmLong"
-    @JvmField val realmFloat = "realmFloat"
-    @JvmField val realmDouble = "realmDouble"
     @JvmField val logPath = System.getProperty("user.dir") + "/log.txt"
+
+    @JvmStatic
+    fun generateRealmPrimitive(clazz: ClassName, defValue: Any): PluginProtos.CodeGeneratorResponse.File  {
+        val realmTypeFile = PluginProtos.CodeGeneratorResponse.File.newBuilder().setName("$prefix${clazz.simpleName()}.kt")
+
+
+        val classBuilder = TypeSpec.classBuilder(ClassName.bestGuess("$prefix${clazz.simpleName()}"))
+        val fieldBuilder = PropertySpec.builder("value", clazz, KModifier.OPEN)
+                .mutable(true)
+                .initializer("%L", defValue)
+
+        classBuilder.addProperty(fieldBuilder.build())
+                .addModifiers(KModifier.OPEN)
+                .superclass(ClassName.bestGuess("io.realm.RealmObject"))
+                .addFun(FunSpec.constructorBuilder().build())
+                .addFun(FunSpec.constructorBuilder()
+                        .addParameter(ParameterSpec.builder("value", clazz).build())
+                        .addStatement("this.value = value")
+                        .build())
+        //return classBuilder.build()
+        val content = KotlinFile.builder(packageName, "$prefix${clazz.simpleName()}")
+                .addType(classBuilder.build())
+                .build()
+                .toJavaFileObject()
+                .getCharContent(true)
+                .toString()
+
+        realmTypeFile.content = content
+        return realmTypeFile.build()
+    }
 
     @JvmStatic
     fun main(args: Array<String>) {
@@ -38,6 +65,14 @@ object Main {
             log(it+'\n')
         }
 
+        val ba = ByteArrayField.Builder()
+        val ss = ba.build()
+
+        oldGenerator()
+    }
+
+    @JvmStatic
+    fun newGenerator() {
         val response = PluginProtos.CodeGeneratorResponse.newBuilder()
         val request = PluginProtos.CodeGeneratorRequest.parseFrom(System.`in`)
 
@@ -51,9 +86,10 @@ object Main {
         request.protoFileList.forEach { protoFile ->
             protoPackageName = protoFile.options.javaPackage
             protoFile.messageTypeList.forEach {
-                if (it.hasOptions() /*&& it.options.hasExtension(SwiftDescriptor.swiftMessageOptions)*/) {
-                //if (it.hasOptions() && it.options.hasField(SwiftDescriptor.SwiftFileOptions.getDescriptor().fields.first { it.jsonName.contains("generate_realm_object", true) })) {
-                    parseCurrent(it, response)
+                if (it.hasOptions() ) {
+                    if (/*(node.fieldList.isNotEmpty() || node.hasOptions()) && */!protoPackageName.contains("google", true) && !it.name.contains("Swift", true)) {
+
+                    }
                 }
             }
         }
@@ -61,48 +97,47 @@ object Main {
     }
 
     @JvmStatic
-    fun generateRealmPrimitive(clazz: ClassName, defValue: Any): PluginProtos.CodeGeneratorResponse.File  {
-        val realmTypeFile = PluginProtos.CodeGeneratorResponse.File.newBuilder().setName("$prefix${clazz.simpleName()}.kt")
+    fun oldGenerator() {
+        val response = PluginProtos.CodeGeneratorResponse.newBuilder()
+        val request = PluginProtos.CodeGeneratorRequest.parseFrom(System.`in`)
 
+        response.addFile(generateRealmPrimitive(INT, 0))
+        response.addFile(generateRealmPrimitive(LONG, 0L))
+        response.addFile(generateRealmPrimitive(FLOAT, "0f"))
+        response.addFile(generateRealmPrimitive(DOUBLE, 0.0))
+        response.addFile(generateRealmPrimitive(ClassName("kotlin", "String"),"\"\""))
+        response.addFile(generateRealmPrimitive(BOOLEAN, false))
 
-        val classBuilder = TypeSpec.classBuilder(ClassName.bestGuess("$prefix${clazz.simpleName()}"))
-        val fieldBuilder = PropertySpec.builder("value", clazz, KModifier.OPEN)
-                                       .mutable(true)
-                                       .initializer("%L", defValue)
+        request.protoFileList.forEach { protoFile ->
+            protoPackageName = protoFile.options.javaPackage
+            protoFilePackage = protoFile.`package`
+            log("proto package ${protoFile.`package`}")
+            protoFile.messageTypeList.forEach {
+                if (it.hasOptions() /*&& it.options.hasExtension(SwiftDescriptor.swiftMessageOptions)*/) {
+                    //if (it.hasOptions() && it.options.hasField(SwiftDescriptor.SwiftFileOptions.getDescriptor().fields.first { it.jsonName.contains("generate_realm_object", true) })) {
+                    parseCurrent(it, response)
+                    it.descriptorForType.fullName
+                    log("proto full name ${protoFile.`package`}")
 
-        classBuilder.addProperty(fieldBuilder.build())
-                   .addModifiers(KModifier.OPEN)
-                   .superclass(ClassName.bestGuess("io.realm.RealmObject"))
-                   .addFun(FunSpec.constructorBuilder().build())
-                   .addFun(FunSpec.constructorBuilder()
-                                  .addParameter(ParameterSpec.builder("valu", clazz).build())
-                                  .addStatement("this.value = valu")
-                                  .build())
-        //return classBuilder.build()
-        val content = KotlinFile.builder(packageName, "$prefix${clazz.simpleName()}")
-                                .addType(classBuilder.build())
-                                .build()
-                                .toJavaFileObject()
-                                .getCharContent(true)
-                                .toString()
-
-        realmTypeFile.content = content
-        return realmTypeFile.build()
+                }
+            }
+        }
+        response.build().writeTo(System.out)
     }
 
     @JvmStatic
-    fun parseCurrent(node: DescriptorProtos.DescriptorProto, response: PluginProtos.CodeGeneratorResponse.Builder) {
+    fun parseCurrent(node: DescriptorProtos.DescriptorProto, response: PluginProtos.CodeGeneratorResponse.Builder, parentName: String = "") {
 
          if (/*(node.fieldList.isNotEmpty() || node.hasOptions()) && */!protoPackageName.contains("google", true) && !node.name.contains("Swift", true)) {
 
-             val currentName = "$prefix${node.name}${if (protoPackageName.contains("react", true)) "React" else ""}"
+             val currentName = "$prefix$parentName${node.name}${if (protoPackageName.contains("react", true)) "React" else ""}"
              val outFile = PluginProtos.CodeGeneratorResponse.File.newBuilder().setName("$currentName.kt")
 
              val classNameBuilder = TypeSpec.classBuilder(currentName)
                                             .addModifiers(KModifier.OPEN)
                                             .superclass(ClassName.bestGuess("io.realm.RealmObject"))
 
-             val classNameReturns = ClassName.bestGuess("$protoPackageName.${node.name}")
+             val classNameReturns = ClassName.bestGuess("$protoPackageName.${if (parentName.isNotEmpty()) parentName + "." else ""}${node.name}")
 
              val toProtoMethodBuilder = FunSpec.builder("toProto")
                                                .returns(classNameReturns)
@@ -110,19 +145,25 @@ object Main {
              val toProtoBodyBuilder = StringBuilder().append("val p = ")
                                                      .append(protoPackageName)
                                                      .append('.')
+                                                     .append(if (parentName.isNotEmpty()) parentName + "." else "")
                                                      .append(node.name)
                                                      .append(".newBuilder()\n")
 
              val realmProtoConstructor = FunSpec.constructorBuilder()
-                                                .addParameter("protoModel", ClassName.bestGuess("$protoPackageName.${node.name}"))
+                                                .addParameter("protoModel", ClassName.bestGuess("$protoPackageName.${if (parentName.isNotEmpty()) parentName + "." else ""}${node.name}"))
 
              val realmConstructorBodyBuilder = StringBuilder()
 
 
 
              node.fieldList.forEach { field ->
-                 val generatedClass = generateField(field, currentName, node.nestedTypeList, response, toProtoBodyBuilder, realmConstructorBodyBuilder)
+                 val generatedClass = generateField(field, parentName, node.nestedTypeList, response, toProtoBodyBuilder, realmConstructorBodyBuilder)
                  classNameBuilder.addProperty(generatedClass).build()
+             }
+
+             node.nestedTypeList.forEach {
+                 log("nested type = ${it.name}")
+                 parseCurrent(it, response, node.name)
              }
 
              realmProtoConstructor.addStatement(realmConstructorBodyBuilder.toString())
@@ -228,7 +269,7 @@ object Main {
 
     @JvmStatic
     fun log(string: String) {
-        Files.write(Paths.get(logPath), string.toByteArray(), StandardOpenOption.APPEND)
+        Files.write(Paths.get(logPath), "$string\n".toByteArray(), StandardOpenOption.APPEND)
     }
 
     @JvmStatic
@@ -248,7 +289,7 @@ object Main {
         val lastItem = splitted.last()
 
         val convertedTypeName = if (lastItem.isEmpty()) typeName else lastItem
-        log("generate json=${field.typeName} ${field.type.name}\n")
+        log("generate json=${field.typeName} ${field.type.name}")
         val typeSpec = when ((field.type)) {
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT32 -> {
                 getPrimitiveField(INT, field, fieldName, toProtoBodyBuilder, realmConstructorBodyBuilder, field.label, 0)
@@ -284,8 +325,7 @@ object Main {
                 toProtoBodyBuilder?.let {
                     it.append("p.")
                       .append(field.name)
-                      .append(" = ")
-                      .append("io.protostuff.ByteString.copyFrom($fieldName);\n")
+                      .append(" = io.protostuff.ByteString.copyFrom($fieldName);\n")
                 }
 
                 realmConstructorBodyBuilder?.let {
@@ -351,7 +391,7 @@ object Main {
 
                     log("\tnested name=${field.name} ${field.type.name}\n")
 
-                    if (nestedType != null) {
+                    /*if (nestedType != null) {
                         log("\t\tparse name=${field.name} ${field.type.name}\n")
 
                         val originalName = typeName
@@ -407,7 +447,7 @@ object Main {
                                                   .getCharContent(true)
                                                   .toString()
                         response?.addFile(outFile)
-                    }
+                    }*/
                     if (field.label == DescriptorProtos.FieldDescriptorProto.Label.LABEL_REPEATED) {
                         var classType = if (!typeName.contains(prefix)) "$prefix$typeName" else typeName
                         classType = if (field.typeName.contains("react", true)) classType + "React" else classType
