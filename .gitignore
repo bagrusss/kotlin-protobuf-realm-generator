@@ -1,0 +1,8 @@
+log.txt
+build_copy.sh
+run.sh
+.idea
+build
+out
+.gradle
+src/main/kotlin/google/protobuf
