@@ -2,6 +2,7 @@ package bagrusss.generator.fields
 
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.PropertySpec
 
 /**
@@ -10,9 +11,16 @@ import com.squareup.kotlinpoet.PropertySpec
  abstract class PrimitiveField<T>(builder: FieldBuilder<T>): Field<T>(builder) {
 
     override fun getPropSpec(): PropertySpec {
-        val type = ClassName.bestGuess(kotlinFieldType)
-        val propSpecBuilder = PropertySpec.builder(fieldName, type)
-                                          .addModifiers(KModifier.OPEN)
+
+        val propSpecBuilder = if (!repeated) {
+                                  PropertySpec.builder(fieldName, ClassName.bestGuess(kotlinFieldType))
+                              } else {
+                                  val realmListType = ClassName.bestGuess("io.realm.RealmList")
+                                  val typedList = ParameterizedTypeName.get(realmListType,
+                                                                            ClassName.bestGuess(typePrefix + kotlinFieldType.split(".")
+                                                                                                                                           .last()))
+                                  PropertySpec.builder(fieldName, typedList)
+                              }.addModifiers(KModifier.OPEN)
 
         val toProtoBuilder = StringBuilder()
 
@@ -22,17 +30,25 @@ import com.squareup.kotlinpoet.PropertySpec
         if (nullable) {
             propSpecBuilder.nullable(true)
                            .initializer("%L", "null")
+
+            toProtoBuilder.append(fieldName)
+                          .append("?.let {\n\t")
+                          .append("p.")
+
             if (!repeated) {
                 toProtoBuilder.append(fieldName)
-                              .append("?.let {\n\t")
-                              .append("p.")
-                              .append(fieldName)
                               .append(" = ")
                               .append(fieldName)
-                              .append("}\n")
             } else {
-
+                toProtoBuilder.append("addAll")
+                        .append(fieldName.substring(0, 1).toUpperCase())
+                        .append(fieldName.substring(1))
+                        .append('(')
+                        .append(fieldName)
+                        .append(".map { it.value })\n")
             }
+            toProtoBuilder.append("}\n")
+
         }
 
         toProtoInitializer = toProtoBuilder.toString()

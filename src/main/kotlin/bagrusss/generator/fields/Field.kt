@@ -11,6 +11,7 @@ abstract class Field<T>(builder: FieldBuilder<T>) {
     protected val typePrefix           = builder.typePrefix
     protected val typeSuffix           = builder.typeSuffix
     protected val fullProtoTypeName    = builder.fullProtoTypeName
+    protected val protoTypeName        = builder.protoTypeName
     protected val fieldName            = builder.fieldName
     protected val initializerFormat    = builder.initializerFormat
     protected val initializerArgs      = builder.initializerArgs

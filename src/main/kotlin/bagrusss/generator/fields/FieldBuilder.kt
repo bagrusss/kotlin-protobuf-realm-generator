@@ -6,17 +6,18 @@ package bagrusss.generator.fields
  */
 abstract class FieldBuilder<T> {
 
-    var optional: Boolean = false
-    var repeated: Boolean = false
-    var initializerArgs: Array<out Any>? = null
-    var initializerFormat = "%L"
-    var typePrefix = ""
-    var typeSuffix = ""
-    var fullProtoTypeName = ""
-    var fieldName = ""
-    var generateToProto = true
-    var generateFromProto = true
-    var primaryKey = false
+    internal var optional: Boolean = false
+    internal var repeated: Boolean = false
+    internal var initializerArgs: Array<out Any>? = null
+    internal var initializerFormat = "%L"
+    internal var typePrefix = ""
+    internal var typeSuffix = ""
+    internal var fullProtoTypeName = ""
+    internal var protoTypeName = ""
+    internal var fieldName = ""
+    internal var generateToProto = true
+    internal var generateFromProto = true
+    internal var primaryKey = false
 
     abstract fun build(): T
 
