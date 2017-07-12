@@ -1,25 +1,53 @@
 package bagrusss.generator.fields
 
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
+
 
 /**
  * Created by bagrusss on 12.07.17
  */
 class EnumField private constructor(builder: Builder): Field<EnumField>(builder) {
 
-    override fun getPropSpec(): PropertySpec {
-        val type = ClassName.bestGuess(kotlinFieldType)
-        val builder = PropertySpec.builder(fieldName, type)
-        return builder.build()
-    }
-
-    override fun getFieldType() = "kotlin.Int"
-
     class Builder: FieldBuilder<EnumField>() {
 
         override fun build() = EnumField(this)
 
+    }
+
+    override fun getFieldType() = "kotlin.Int"
+
+
+    override fun getPropSpec(): PropertySpec {
+        return PropertySpec.builder(fieldName, ClassName.bestGuess(kotlinFieldType), KModifier.OPEN)
+                           .initializer("%L", -1)
+                           .mutable(true)
+                           .build()
+                           .apply {
+                               val fromProtoBuilder = StringBuilder()
+                               val toProtoBuilder = StringBuilder()
+                               if (!repeated) {
+                                   fromProtoInitializer = fromProtoBuilder.append(fieldName)
+                                                                          .append(" = ")
+                                                                          .append(protoConstructorParameter)
+                                                                          .append('.')
+                                                                          .append(fieldName)
+                                                                          .append(".number\n")
+                                                                          .toString()
+
+                                   toProtoInitializer = toProtoBuilder.append("p.")
+                                                                      .append(fieldName)
+                                                                      .append(" = ")
+                                                                      .append(protoFullTypeName)
+                                                                      .append("valueOf(")
+                                                                      .append(fieldName)
+                                                                      .append(")\n")
+                                                                      .toString()
+                               } else {
+                                   realmListsInitialize(typePrefix + "Int", toProtoBuilder, fromProtoBuilder, true)
+                               }
+                            }
     }
 
 }

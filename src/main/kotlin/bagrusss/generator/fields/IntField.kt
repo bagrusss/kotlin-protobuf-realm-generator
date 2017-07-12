@@ -7,7 +7,7 @@ class IntField private constructor(builder: Builder) : PrimitiveField<IntField>(
 
     override fun getFieldType() = "kotlin.Int"
 
-    inner class Builder : FieldBuilder<IntField>() {
+    class Builder : FieldBuilder<IntField>() {
 
         override fun build(): IntField {
             return IntField(this)

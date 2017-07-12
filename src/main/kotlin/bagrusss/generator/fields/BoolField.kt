@@ -7,7 +7,7 @@ class BoolField private constructor(builder: Builder): PrimitiveField<BoolField>
 
     override fun getFieldType() = "kotlin.Boolean"
 
-    class Builder: FieldBuilder<BoolField>() {
+    inner class Builder: FieldBuilder<BoolField>() {
 
         override fun build() = BoolField(this)
 
