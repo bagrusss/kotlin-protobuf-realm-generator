@@ -41,14 +41,23 @@ import com.squareup.kotlinpoet.PropertySpec
                               .append(fieldName)
             } else {
                 toProtoBuilder.append("addAll")
-                        .append(fieldName.substring(0, 1).toUpperCase())
-                        .append(fieldName.substring(1))
-                        .append('(')
-                        .append(fieldName)
-                        .append(".map { it.value })\n")
+                              .append(fieldName.substring(0, 1).toUpperCase())
+                              .append(fieldName.substring(1))
+                              .append('(')
+                              .append(fieldName)
+                              .append(".map { it.value })\n")
             }
-            toProtoBuilder.append("}\n")
+            toProtoBuilder.append("}")
 
+        } else {
+            propSpecBuilder.nullable(false)
+                           .initializer(initializerFormat, initializerArgs)
+
+            toProtoBuilder.append(fieldName)
+                          .append("p.")
+                          .append(" = ")
+                          .append(fieldName)
+                          .append('\n')
         }
 
         toProtoInitializer = toProtoBuilder.toString()
