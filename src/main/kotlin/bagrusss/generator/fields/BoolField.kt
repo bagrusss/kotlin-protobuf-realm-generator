@@ -5,7 +5,7 @@ package bagrusss.generator.fields
  */
 class BoolField private constructor(builder: Builder): PrimitiveField<BoolField>(builder) {
 
-    override fun getFieldType() = "kotlin.Boolena"
+    override fun getFieldType() = "kotlin.Boolean"
 
     class Builder: FieldBuilder<BoolField>() {
 
