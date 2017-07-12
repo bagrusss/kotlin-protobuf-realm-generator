@@ -6,3 +6,4 @@ build
 out
 .gradle
 src/main/kotlin/google/protobuf
+protoGenerator-1.0.jar

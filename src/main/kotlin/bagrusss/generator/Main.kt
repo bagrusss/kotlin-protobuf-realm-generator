@@ -29,6 +29,7 @@ object Main {
     @JvmStatic
     fun main(args: Array<String>) {
 
+
         val log = File(logPath)
         log.delete()
         log.createNewFile()
