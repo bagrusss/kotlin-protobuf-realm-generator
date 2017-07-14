@@ -30,24 +30,24 @@ object Main {
 
         val classBuilder = TypeSpec.classBuilder(ClassName.bestGuess("$prefix${clazz.simpleName()}"))
         val fieldBuilder = PropertySpec.builder("value", clazz, KModifier.OPEN)
-                .mutable(true)
-                .initializer("%L", defValue)
+                                       .mutable(true)
+                                       .initializer("%L", defValue)
 
         classBuilder.addProperty(fieldBuilder.build())
-                .addModifiers(KModifier.OPEN)
-                .superclass(ClassName.bestGuess("io.realm.RealmObject"))
-                .addFun(FunSpec.constructorBuilder().build())
-                .addFun(FunSpec.constructorBuilder()
-                        .addParameter(ParameterSpec.builder("value", clazz).build())
-                        .addStatement("this.value = value")
-                        .build())
+                    .addModifiers(KModifier.OPEN)
+                    .superclass(ClassName.bestGuess("io.realm.RealmObject"))
+                    .addFun(FunSpec.constructorBuilder().build())
+                    .addFun(FunSpec.constructorBuilder()
+                    .addParameter(ParameterSpec.builder("value", clazz).build())
+                    .addStatement("this.value = value")
+                    .build())
         //return classBuilder.build()
         val content = KotlinFile.builder(packageName, "$prefix${clazz.simpleName()}")
-                .addType(classBuilder.build())
-                .build()
-                .toJavaFileObject()
-                .getCharContent(true)
-                .toString()
+                                .addType(classBuilder.build())
+                                .build()
+                                .toJavaFileObject()
+                                .getCharContent(true)
+                                .toString()
 
         realmTypeFile.content = content
         return realmTypeFile.build()
@@ -157,7 +157,7 @@ object Main {
 
 
              node.fieldList.forEach { field ->
-                 val generatedClass = generateField(field, parentName, node.nestedTypeList, response, toProtoBodyBuilder, realmConstructorBodyBuilder)
+                 val generatedClass = generateField(field, node.name, node.nestedTypeList, response, toProtoBodyBuilder, realmConstructorBodyBuilder)
                  classNameBuilder.addProperty(generatedClass).build()
              }
 
@@ -198,7 +198,7 @@ object Main {
              val javaFile = KotlinFile.builder(packageName, className.name!!).addType(className).build()
              outFile.content = javaFile.toJavaFileObject().getCharContent(true).toString()
              if (!response.fileBuilderList.contains(outFile))
-             response.addFile(outFile)
+                response.addFile(outFile)
          }
 
     }
@@ -379,75 +379,8 @@ object Main {
             else -> {
                 if (field.type == DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE) {
 
-                    typeName = if (convertedTypeName == "") {
-                        field.type.name
-                    } else {
-                        convertedTypeName
-                    }
-
-                    val nestedType = nestedTypes?.find {
-                        it.name == typeName
-                    }
-
                     log("\tnested name=${field.name} ${field.type.name}\n")
 
-                    /*if (nestedType != null) {
-                        log("\t\tparse name=${field.name} ${field.type.name}\n")
-
-                        val originalName = typeName
-                        typeName = parentName + typeName
-                        val outFile = PluginProtos.CodeGeneratorResponse.File.newBuilder().setName(typeName + ".kt")
-
-                        val parentNameOriginal = parentName.replace(prefix, "")
-                        val classNameBuilder = TypeSpec.classBuilder(typeName)
-                                                       .addModifiers(KModifier.OPEN)
-                                                       .superclass(ClassName.bestGuess("io.realm.RealmObject"))
-
-
-                        val originalFullName = "$protoPackageName.$parentNameOriginal.$originalName"
-
-                        val classNameReturnsNested = ClassName.bestGuess(originalFullName)
-
-                        val toProtoMethodBuilderNested = FunSpec.builder("toProto")
-                                                                .returns(classNameReturnsNested)
-
-                        val realmProtoConstructor = FunSpec.constructorBuilder()
-                                                              .addParameter("protoModel", ClassName.bestGuess(originalFullName))
-
-
-                        val toProtoBodyBuilderNested = StringBuilder().append("val p = ")
-                                                                      .append(originalFullName)
-                                                                      .append(".newBuilder()\n")
-
-                        val realmConstructorBodyBuilderNested = StringBuilder()
-
-
-                        nestedType.fieldList.forEach {
-                            // or pass null
-                            val classField = generateField(it, typeName, it.descriptorForType.nestedTypes.map { it.toProto() }, response, toProtoBodyBuilderNested, realmConstructorBodyBuilderNested)
-                            classNameBuilder.addProperty(classField)
-                        }
-
-                        toProtoBodyBuilderNested.append("return p.build()")
-                        toProtoMethodBuilderNested.addStatement(toProtoBodyBuilderNested.toString())
-
-                        val realmDefaultConstructor = FunSpec.constructorBuilder()
-                                                             .build()
-
-
-                        realmProtoConstructor.addStatement(realmConstructorBodyBuilderNested.toString())
-
-                        val nestedClass = classNameBuilder.addFun(toProtoMethodBuilderNested.build())
-                                                          .addFun(realmDefaultConstructor)
-                                                          .addFun(realmProtoConstructor.build())
-                                                          .build()
-
-                        val codeFile = KotlinFile.builder(packageName, nestedClass.name!!).addType(nestedClass).build()
-                        outFile.content = codeFile.toJavaFileObject()
-                                                  .getCharContent(true)
-                                                  .toString()
-                        response?.addFile(outFile)
-                    }*/
                     if (field.label == DescriptorProtos.FieldDescriptorProto.Label.LABEL_REPEATED) {
                         var classType = "$prefix${field.typeName.replace(protoFilePackage, "").replace(".", "")}"
                         classType = if (field.typeName.contains("react", true)) "React" + classType  else classType
