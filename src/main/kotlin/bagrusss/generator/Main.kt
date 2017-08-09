@@ -130,74 +130,64 @@ object Main {
             log("parent=$parentName, current=${node.name}")
             val currentName = "${if (protoPackageName.contains("react", true)) "React" else ""}$prefix${parentName.replace(".", "")}${node.name}"
             log("current name=$currentName")
-            val outFile = PluginProtos.CodeGeneratorResponse.File.newBuilder().setName("$currentName.kt")
+            if (node.fieldList.isNotEmpty()) {
+                val outFile = PluginProtos.CodeGeneratorResponse.File.newBuilder().setName("$currentName.kt")
 
-            val classNameBuilder = TypeSpec.classBuilder(currentName)
-                    .addModifiers(KModifier.OPEN)
-                    .superclass(ClassName.bestGuess("io.realm.RealmObject"))
+                val classNameBuilder = TypeSpec.classBuilder(currentName)
+                        .addModifiers(KModifier.OPEN)
+                        .superclass(ClassName.bestGuess("io.realm.RealmObject"))
 
-            val classNameReturns = ClassName.bestGuess("$protoPackageName.${if (parentName.isNotEmpty()) parentName + "." else ""}${node.name}")
+                val classNameReturns = ClassName.bestGuess("$protoPackageName.${if (parentName.isNotEmpty()) parentName + "." else ""}${node.name}")
 
-            val toProtoMethodBuilder = FunSpec.builder("toProto")
-                    .returns(classNameReturns)
+                val toProtoMethodBuilder = FunSpec.builder("toProto")
+                        .returns(classNameReturns)
 
-            val toProtoBodyBuilder = StringBuilder().append("val p = ")
-                    .append(protoPackageName)
-                    .append('.')
-                    .append(if (parentName.isNotEmpty()) parentName + "." else "")
-                    .append(node.name)
-                    .append(".newBuilder()\n")
+                val toProtoBodyBuilder = StringBuilder().append("val p = ")
+                        .append(protoPackageName)
+                        .append('.')
+                        .append(if (parentName.isNotEmpty()) parentName + "." else "")
+                        .append(node.name)
+                        .append(".newBuilder()\n")
 
-            val realmProtoConstructor = FunSpec.constructorBuilder()
-                    .addParameter("protoModel", ClassName.bestGuess("$protoPackageName.${if (parentName.isNotEmpty()) parentName + "." else ""}${node.name}"))
+                val realmProtoConstructor = FunSpec.constructorBuilder()
+                        .addParameter("protoModel", ClassName.bestGuess("$protoPackageName.${if (parentName.isNotEmpty()) parentName + "." else ""}${node.name}"))
 
-            val realmConstructorBodyBuilder = StringBuilder()
+                val realmConstructorBodyBuilder = StringBuilder()
 
 
 
-            node.fieldList.forEach { field ->
-                val generatedClass = generateField(field, node.name, node.nestedTypeList, response, toProtoBodyBuilder, realmConstructorBodyBuilder)
-                classNameBuilder.addProperty(generatedClass).build()
+                node.fieldList.forEach { field ->
+                    val generatedClass = generateField(field, node.name, node.nestedTypeList, response, toProtoBodyBuilder, realmConstructorBodyBuilder)
+                    classNameBuilder.addProperty(generatedClass).build()
+                }
+
+                realmProtoConstructor.addStatement(realmConstructorBodyBuilder.toString())
+
+                toProtoBodyBuilder.append("return p.build()")
+                toProtoMethodBuilder.addStatement(toProtoBodyBuilder.toString())
+
+                classNameBuilder.addFun(toProtoMethodBuilder.build())
+
+
+                classNameBuilder.addFun(realmProtoConstructor.build())
+
+                val realmDefaultConstructor = FunSpec.constructorBuilder()
+                        .build()
+
+                val className = classNameBuilder.addFun(realmDefaultConstructor).build()
+
+                val javaFile = KotlinFile.builder(packageName, className.name!!).addType(className).build()
+                outFile.content = javaFile.toJavaFileObject().getCharContent(true).toString()
+                if (!response.fileBuilderList.contains(outFile))
+                    response.addFile(outFile)
             }
+
+
 
             node.nestedTypeList.forEach {
                 log("nested type = ${it.name} parent=${node.name}")
                 parseCurrent(it, response, if (parentName.isNotEmpty()) parentName + "." + node.name else node.name)
             }
-
-            realmProtoConstructor.addStatement(realmConstructorBodyBuilder.toString())
-
-            toProtoBodyBuilder.append("return p.build()")
-            toProtoMethodBuilder.addStatement(toProtoBodyBuilder.toString())
-
-            classNameBuilder.addFun(toProtoMethodBuilder.build())
-
-
-            classNameBuilder.addFun(realmProtoConstructor.build())
-
-            /*node.enumTypeList.forEach {
-                val enumBuilder = TypeSpec.enumBuilder(prefix + it.name)
-                                          .addModifiers(KModifier.INTERNAL)
-                                          .addProperty("value", Int::class.java, KModifier.PRIVATE)
-                                          .addFun(FunSpec.constructorBuilder()
-                                                               .addParameter("value", Int::class.java)
-                                                               .addStatement("this.%N = %N", "value", "value")
-                                                               .build())
-                it.valueList.forEach {
-                    enumBuilder.addEnumConstant(it.name, TypeSpec.anonymousClassBuilder("%L", it.number).build())
-                }
-                classNameBuilder.addType(enumBuilder.build())
-            }*/
-
-            val realmDefaultConstructor = FunSpec.constructorBuilder()
-                    .build()
-
-            val className = classNameBuilder.addFun(realmDefaultConstructor).build()
-
-            val javaFile = KotlinFile.builder(packageName, className.name!!).addType(className).build()
-            outFile.content = javaFile.toJavaFileObject().getCharContent(true).toString()
-            if (!response.fileBuilderList.contains(outFile))
-                response.addFile(outFile)
         }
 
     }
