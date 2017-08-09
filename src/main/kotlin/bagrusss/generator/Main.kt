@@ -25,29 +25,30 @@ object Main {
 
     @JvmStatic
     fun generateRealmPrimitive(clazz: ClassName, defValue: Any): PluginProtos.CodeGeneratorResponse.File {
-        val realmTypeFile = PluginProtos.CodeGeneratorResponse.File.newBuilder().setName("$prefix${clazz.simpleName()}.kt")
+        val className = "$prefix${clazz.simpleName()}.kt"
 
+        val realmTypeFile = PluginProtos.CodeGeneratorResponse.File.newBuilder().setName("$className.kt")
 
-        val classBuilder = TypeSpec.classBuilder(ClassName.bestGuess("$prefix${clazz.simpleName()}"))
+        val classBuilder = TypeSpec.classBuilder(ClassName.bestGuess(className))
         val fieldBuilder = PropertySpec.builder("value", clazz, KModifier.OPEN)
-                .mutable(true)
-                .initializer("%L", defValue)
+                                       .mutable(true)
+                                       .initializer("%L", defValue)
 
         classBuilder.addProperty(fieldBuilder.build())
-                .addModifiers(KModifier.OPEN)
-                .superclass(ClassName.bestGuess("io.realm.RealmObject"))
-                .addFun(FunSpec.constructorBuilder().build())
-                .addFun(FunSpec.constructorBuilder()
-                        .addParameter(ParameterSpec.builder("value", clazz).build())
-                        .addStatement("this.value = value")
-                        .build())
+                    .addModifiers(KModifier.OPEN)
+                    .superclass(ClassName.bestGuess("io.realm.RealmObject"))
+                    .addFun(FunSpec.constructorBuilder().build())
+                    .addFun(FunSpec.constructorBuilder()
+                                   .addParameter(ParameterSpec.builder("value", clazz).build())
+                                   .addStatement("this.value = value")
+                                   .build())
         //return classBuilder.build()
         val content = KotlinFile.builder(packageName, "$prefix${clazz.simpleName()}")
-                .addType(classBuilder.build())
-                .build()
-                .toJavaFileObject()
-                .getCharContent(true)
-                .toString()
+                                .addType(classBuilder.build())
+                                .build()
+                                .toJavaFileObject()
+                                .getCharContent(true)
+                                .toString()
 
         realmTypeFile.content = content
         return realmTypeFile.build()
@@ -131,26 +132,29 @@ object Main {
             val currentName = "${if (protoPackageName.contains("react", true)) "React" else ""}$prefix${parentName.replace(".", "")}${node.name}"
             log("current name=$currentName")
             if (node.fieldList.isNotEmpty()) {
-                val outFile = PluginProtos.CodeGeneratorResponse.File.newBuilder().setName("$currentName.kt")
+                val outFile = PluginProtos.CodeGeneratorResponse
+                                          .File
+                                          .newBuilder()
+                                          .setName("$currentName.kt")
 
                 val classNameBuilder = TypeSpec.classBuilder(currentName)
-                        .addModifiers(KModifier.OPEN)
-                        .superclass(ClassName.bestGuess("io.realm.RealmObject"))
+                                               .addModifiers(KModifier.OPEN)
+                                               .superclass(ClassName.bestGuess("io.realm.RealmObject"))
 
                 val classNameReturns = ClassName.bestGuess("$protoPackageName.${if (parentName.isNotEmpty()) parentName + "." else ""}${node.name}")
 
                 val toProtoMethodBuilder = FunSpec.builder("toProto")
-                        .returns(classNameReturns)
+                                                  .returns(classNameReturns)
 
                 val toProtoBodyBuilder = StringBuilder().append("val p = ")
-                        .append(protoPackageName)
-                        .append('.')
-                        .append(if (parentName.isNotEmpty()) parentName + "." else "")
-                        .append(node.name)
-                        .append(".newBuilder()\n")
+                                                        .append(protoPackageName)
+                                                        .append('.')
+                                                        .append(if (parentName.isNotEmpty()) parentName + "." else "")
+                                                        .append(node.name)
+                                                        .append(".newBuilder()\n")
 
                 val realmProtoConstructor = FunSpec.constructorBuilder()
-                        .addParameter("protoModel", ClassName.bestGuess("$protoPackageName.${if (parentName.isNotEmpty()) parentName + "." else ""}${node.name}"))
+                                                    .addParameter("protoModel", ClassName.bestGuess("$protoPackageName.${if (parentName.isNotEmpty()) parentName + "." else ""}${node.name}"))
 
                 val realmConstructorBodyBuilder = StringBuilder()
 
@@ -172,12 +176,17 @@ object Main {
                 classNameBuilder.addFun(realmProtoConstructor.build())
 
                 val realmDefaultConstructor = FunSpec.constructorBuilder()
-                        .build()
+                                                     .build()
 
-                val className = classNameBuilder.addFun(realmDefaultConstructor).build()
+                val className = classNameBuilder.addFun(realmDefaultConstructor)
+                                                .build()
 
-                val javaFile = KotlinFile.builder(packageName, className.name!!).addType(className).build()
-                outFile.content = javaFile.toJavaFileObject().getCharContent(true).toString()
+                val javaFile = KotlinFile.builder(packageName, className.name!!)
+                                         .addType(className)
+                                         .build()
+                outFile.content = javaFile.toJavaFileObject()
+                                          .getCharContent(true)
+                                          .toString()
                 if (!response.fileBuilderList.contains(outFile))
                     response.addFile(outFile)
             }
@@ -203,8 +212,8 @@ object Main {
         val typedList = ParameterizedTypeName.get(realmList, classType)
         toProtoBodyBuilder?.let {
             it.append("p.addAll${realmFieldName.substring(0, 1).toUpperCase() + realmFieldName.substring(1)}(")
-                    .append(if (nonPrimitiveName == null) "$protoFieldName.map { it.value }" else "$protoFieldName.map { it.toProto() }")
-                    .append(")\n")
+              .append(if (nonPrimitiveName == null) "$protoFieldName.map { it.value }" else "$protoFieldName.map { it.toProto() }")
+              .append(")\n")
         }
 
         realmConstructorBodyBuilder?.let {
@@ -226,17 +235,17 @@ object Main {
                           defaultValue: Any): PropertySpec.Builder {
         toProtoBodyBuilder?.let {
             it.append("p.")
-                    .append(realmFieldName)
-                    .append(" = ")
-                    .append(realmFieldName)
-                    .append("\n")
+              .append(realmFieldName)
+              .append(" = ")
+              .append(realmFieldName)
+              .append("\n")
         }
 
         realmConstructorBodyBuilder?.let {
             it.append(realmFieldName)
-                    .append(" = protoModel.")
-                    .append(realmFieldName)
-                    .append("\n")
+              .append(" = protoModel.")
+              .append(realmFieldName)
+              .append("\n")
         }
 
 
@@ -313,15 +322,15 @@ object Main {
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES -> {
                 toProtoBodyBuilder?.let {
                     it.append("p.")
-                            .append(field.name)
-                            .append(" = io.protostuff.ByteString.copyFrom($fieldName);\n")
+                      .append(field.name)
+                      .append(" = io.protostuff.ByteString.copyFrom($fieldName);\n")
                 }
 
                 realmConstructorBodyBuilder?.let {
                     it.append(fieldName)
-                            .append(" = protoModel.")
-                            .append(field.name)
-                            .append(".toByteArray()\n")
+                      .append(" = protoModel.")
+                      .append(field.name)
+                      .append(".toByteArray()\n")
                 }
 
                 PropertySpec.builder(fieldName, ClassName.bestGuess("kotlin.ByteArray"), KModifier.OPEN)
@@ -340,24 +349,22 @@ object Main {
             }
 
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM -> {
-                //val hasType = parent?.enumTypeList?.find { it.name.contains(convertedTypeName, true) || field.type.name.contains(it.name, true) }
                 toProtoBodyBuilder?.let {
                     val packageName = if (field.typeName.contains("proto", true)) "ru.rocketbank.protomodel.api" else protoPackageName
                     it.append("p.")
-                            .append(field.name)
-                            .append(" = ")
-                            .append(packageName)
-                            .append('.')
-                            .append(field.typeName.substring(field.typeName.indexOf(splitted[2])))
-                            //.append(if (hasType != null) "${parentName.replace(prefix, "")}.$convertedTypeName" else "$protoPackageName.$convertedTypeName")
-                            .append(".valueOf($fieldName)\n")
+                      .append(field.name)
+                      .append(" = ")
+                      .append(packageName)
+                      .append('.')
+                      .append(field.typeName.substring(field.typeName.indexOf(splitted[2])))
+                      .append(".valueOf($fieldName)\n")
                 }
 
                 realmConstructorBodyBuilder?.let {
                     it.append(fieldName)
-                            .append(" = protoModel.")
-                            .append(field.name)
-                            .append(".number;\n")
+                      .append(" = protoModel.")
+                      .append(field.name)
+                      .append(".number;\n")
                 }
 
                 PropertySpec.builder(fieldName, Int::class.java, KModifier.OPEN).apply {
@@ -384,19 +391,19 @@ object Main {
                             when (field.label) {
                                 DescriptorProtos.FieldDescriptorProto.Label.LABEL_OPTIONAL -> {
                                     it.append("${field.name}?.let {\n")
-                                            .append("\tp.")
-                                            .append(field.name)
-                                            .append(" = ")
-                                            .append("it.toProto()\n}\n")
+                                      .append("\tp.")
+                                      .append(field.name)
+                                      .append(" = ")
+                                      .append("it.toProto()\n}\n")
                                     builder.nullable(true)
-                                            .initializer("%L", "null")
+                                           .initializer("%L", "null")
                                 }
                                 DescriptorProtos.FieldDescriptorProto.Label.LABEL_REQUIRED -> {
                                     it.append("p.")
-                                            .append(field.name)
-                                            .append(" = ")
-                                            .append(field.name)
-                                            .append(".toProto()\n")
+                                      .append(field.name)
+                                      .append(" = ")
+                                      .append(field.name)
+                                      .append(".toProto()\n")
                                     builder.addModifiers(KModifier.LATEINIT)
                                 }
                                 else -> {
@@ -410,18 +417,18 @@ object Main {
                             when (field.label) {
                                 DescriptorProtos.FieldDescriptorProto.Label.LABEL_OPTIONAL -> {
                                     it.append("if (protoModel.has")
-                                            .append(field.name.substring(0, 1).toUpperCase() + field.name.substring(1))
-                                            .append("())\n \t")
-                                            .append(field.name)
-                                            .append(" = ")
-                                            .append(customTypeName)
-                                            .append("(protoModel.${field.name})\n\n")
+                                      .append(field.name.substring(0, 1).toUpperCase() + field.name.substring(1))
+                                      .append("())\n \t")
+                                      .append(field.name)
+                                      .append(" = ")
+                                      .append(customTypeName)
+                                      .append("(protoModel.${field.name})\n\n")
                                 }
                                 DescriptorProtos.FieldDescriptorProto.Label.LABEL_REQUIRED -> {
                                     it.append(field.name)
-                                            .append(" = ")
-                                            .append(customTypeName)
-                                            .append("(protoModel.${field.name})\n")
+                                      .append(" = ")
+                                      .append(customTypeName)
+                                      .append("(protoModel.${field.name})\n")
                                 }
                                 else -> {
 
