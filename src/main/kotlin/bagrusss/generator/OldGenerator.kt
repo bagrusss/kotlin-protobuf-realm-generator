@@ -3,12 +3,8 @@ package bagrusss.generator
 import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.compiler.PluginProtos
 import com.squareup.kotlinpoet.*
-import java.io.File
 import java.io.InputStream
 import java.io.PrintStream
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.nio.file.StandardOpenOption
 
 @Deprecated("shit code, but it works!")
 class OldGenerator(private val input: InputStream,
@@ -17,19 +13,14 @@ class OldGenerator(private val input: InputStream,
 
     private companion object {
 
-        @JvmField val packageName = "com.serenity.data_impl.realm.model"
+        @JvmField val realmPackageName = "com.serenity.data_impl.realm.model"
+        @JvmField var javaPackageName = ""
         @JvmField var protoPackageName = ""
-        @JvmField var protoFilePackage = ""
         @JvmField val prefix = "Realm"
 
-        @JvmField val logPath = System.getProperty("user.dir") + "/log.txt"
     }
 
-    fun log(string: String) {
-        Files.write(Paths.get(logPath), "$string\n".toByteArray(), StandardOpenOption.APPEND)
-    }
-
-    fun generateRealmPrimitive(clazz: ClassName, defValue: Any): PluginProtos.CodeGeneratorResponse.File {
+    private fun generateRealmPrimitive(clazz: ClassName, defValue: Any): PluginProtos.CodeGeneratorResponse.File {
         val className = "$prefix${clazz.simpleName()}"
 
         val realmTypeFile = PluginProtos.CodeGeneratorResponse
@@ -51,7 +42,7 @@ class OldGenerator(private val input: InputStream,
                                    .addStatement("this.value = value")
                                    .build())
 
-        val content = KotlinFile.builder(packageName, className)
+        val content = KotlinFile.builder(realmPackageName, className)
                                 .addType(classBuilder.build())
                                 .build()
                                 .toJavaFileObject()
@@ -62,12 +53,12 @@ class OldGenerator(private val input: InputStream,
         return realmTypeFile.build()
     }
 
-    fun parseCurrent(node: DescriptorProtos.DescriptorProto, response: PluginProtos.CodeGeneratorResponse.Builder, parentName: String = "") {
+    private fun parseCurrent(node: DescriptorProtos.DescriptorProto, response: PluginProtos.CodeGeneratorResponse.Builder, parentName: String = "") {
 
-        if (/*(node.fieldList.isNotEmpty() || node.hasOptions()) && */!protoPackageName.contains("google", true) && !node.name.contains("Swift", true)) {
-            log("parent=$parentName, current=${node.name}")
-            val currentName = "${if (protoPackageName.contains("react", true)) "React" else ""}${prefix}${parentName.replace(".", "")}${node.name}"
-            log("current name=$currentName")
+        if (/*(node.fieldList.isNotEmpty() || node.hasOptions()) && */!javaPackageName.contains("google", true) && !node.name.contains("Swift", true)) {
+            Logger.log("parent=$parentName, current=${node.name}")
+            val currentName = "${if (protoPackageName.contains("react", true)) "React" else ""}$prefix${parentName.replace(".", "")}${node.name}"
+            Logger.log("current name=$currentName")
             if (node.fieldList.isNotEmpty()) {
                 val outFile = PluginProtos.CodeGeneratorResponse
                                           .File
@@ -78,7 +69,7 @@ class OldGenerator(private val input: InputStream,
                                                .addModifiers(KModifier.OPEN)
                                                .superclass(ClassName.bestGuess("io.realm.RealmObject"))
 
-                val classNameReturns = ClassName.bestGuess("${protoPackageName}.${if (parentName.isNotEmpty()) parentName + "." else ""}${node.name}")
+                val classNameReturns = ClassName.bestGuess("$protoPackageName.${if (parentName.isNotEmpty()) parentName + "." else ""}${node.name}")
 
                 val toProtoMethodBuilder = FunSpec.builder("toProto")
                                                   .returns(classNameReturns)
@@ -91,12 +82,12 @@ class OldGenerator(private val input: InputStream,
                                                         .append(".newBuilder()\n")
 
                 val realmProtoConstructor = FunSpec.constructorBuilder()
-                        .addParameter("protoModel", ClassName.bestGuess("${protoPackageName}.${if (parentName.isNotEmpty()) parentName + "." else ""}${node.name}"))
+                                                   .addParameter("protoModel", ClassName.bestGuess("$protoPackageName.${if (parentName.isNotEmpty()) parentName + "." else ""}${node.name}"))
 
                 val realmConstructorBodyBuilder = StringBuilder()
 
                 node.fieldList.forEach { field ->
-                    val generatedClass = generateField(field, node.name, node.nestedTypeList, response, toProtoBodyBuilder, realmConstructorBodyBuilder)
+                    val generatedClass = generateField(field, node.name, toProtoBodyBuilder, realmConstructorBodyBuilder)
                     classNameBuilder.addProperty(generatedClass).build()
                 }
 
@@ -116,7 +107,7 @@ class OldGenerator(private val input: InputStream,
                 val className = classNameBuilder.addFun(realmDefaultConstructor)
                                                 .build()
 
-                val javaFile = KotlinFile.builder(packageName, className.name!!)
+                val javaFile = KotlinFile.builder(realmPackageName, className.name!!)
                                          .addType(className)
                                          .build()
                 outFile.content = javaFile.toJavaFileObject()
@@ -128,7 +119,7 @@ class OldGenerator(private val input: InputStream,
 
 
             node.nestedTypeList.forEach {
-                log("nested type = ${it.name} parent=${node.name}")
+                Logger.log("nested type = ${it.name} parent=${node.name}")
                 parseCurrent(it, response, if (parentName.isNotEmpty()) parentName + "." + node.name else node.name)
             }
         }
@@ -158,13 +149,12 @@ class OldGenerator(private val input: InputStream,
         }
     }
 
-    fun getPrimitiveField(classType: ClassName,
-                          field: DescriptorProtos.FieldDescriptorProto,
-                          realmFieldName: String,
-                          toProtoBodyBuilder: StringBuilder?,
-                          realmConstructorBodyBuilder: StringBuilder?,
-                          label: DescriptorProtos.FieldDescriptorProto.Label,
-                          defaultValue: Any): PropertySpec.Builder {
+    private fun getPrimitiveField(classType: ClassName,
+                                  field: DescriptorProtos.FieldDescriptorProto,
+                                  realmFieldName: String,
+                                  toProtoBodyBuilder: StringBuilder?,
+                                  realmConstructorBodyBuilder: StringBuilder?,
+                                  defaultValue: Any): PropertySpec.Builder {
         toProtoBodyBuilder?.let {
             it.append("p.")
               .append(realmFieldName)
@@ -197,40 +187,35 @@ class OldGenerator(private val input: InputStream,
 
     }
 
-    fun generateField(field: DescriptorProtos.FieldDescriptorProto,
-                      parentName: String = "",
-                      nestedTypes: List<DescriptorProtos.DescriptorProto>? = null,
-                      response: PluginProtos.CodeGeneratorResponse.Builder? = null,
-                      toProtoBodyBuilder: StringBuilder? = null,
-                      realmConstructorBodyBuilder: StringBuilder? = null): PropertySpec {
+    private fun generateField(field: DescriptorProtos.FieldDescriptorProto,
+                              parentName: String = "",
+                              toProtoBodyBuilder: StringBuilder,
+                              realmConstructorBodyBuilder: StringBuilder): PropertySpec {
         val fieldName = when (field.jsonName) {
             "package" -> "_package"
             else -> field.jsonName
         }
 
-        var typeName = field.typeName
-        val splitted = typeName.split(".")
-        val lastItem = splitted.last()
+        val splitted = field.typeName.split(".")
 
-        val convertedTypeName = if (lastItem.isEmpty()) typeName else lastItem
-        log("generate json=${field.typeName} ${field.type.name} jsonName=${field.jsonName}")
+        Logger.log("generate json=${field.typeName} ${field.type.name} jsonName=${field.jsonName}")
         val typeSpec = when ((field.type)) {
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT32 -> {
-                getPrimitiveField(INT, field, fieldName, toProtoBodyBuilder, realmConstructorBodyBuilder, field.label, 0)
+                getPrimitiveField(INT, field, fieldName, toProtoBodyBuilder, realmConstructorBodyBuilder, 0)
             }
 
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT64 -> {
 
-                getPrimitiveField(LONG, field, fieldName, toProtoBodyBuilder, realmConstructorBodyBuilder, field.label, 0L)
+                getPrimitiveField(LONG, field, fieldName, toProtoBodyBuilder, realmConstructorBodyBuilder, 0L)
             }
 
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_FLOAT -> {
 
-                getPrimitiveField(FLOAT, field, fieldName, toProtoBodyBuilder, realmConstructorBodyBuilder, field.label, "0f")
+                getPrimitiveField(FLOAT, field, fieldName, toProtoBodyBuilder, realmConstructorBodyBuilder, "0f")
             }
 
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_DOUBLE -> {
-                getPrimitiveField(DOUBLE, field, fieldName, toProtoBodyBuilder, realmConstructorBodyBuilder, field.label, 0.0)
+                getPrimitiveField(DOUBLE, field, fieldName, toProtoBodyBuilder, realmConstructorBodyBuilder, 0.0)
             }
 
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_STRING -> {
@@ -240,16 +225,14 @@ class OldGenerator(private val input: InputStream,
 
                     getRealmList(typedClass, field.name, fieldName, toProtoBodyBuilder, realmConstructorBodyBuilder)
                 } else {
-                    getPrimitiveField(ClassName.bestGuess("kotlin.String"), field, fieldName, toProtoBodyBuilder, realmConstructorBodyBuilder, field.label, "\"\"")
+                    getPrimitiveField(ClassName.bestGuess("kotlin.String"), field, fieldName, toProtoBodyBuilder, realmConstructorBodyBuilder, "\"\"")
                 }
             }
 
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES -> {
-                toProtoBodyBuilder?.let {
-                    it.append("p.")
-                      .append(field.name)
-                      .append(" = io.protostuff.ByteString.copyFrom($fieldName);\n")
-                }
+                toProtoBodyBuilder.append("p.")
+                                  .append(field.name)
+                                  .append(" = io.protostuff.ByteString.copyFrom($fieldName);\n")
 
                 realmConstructorBodyBuilder?.let {
                     it.append(fieldName)
@@ -269,13 +252,13 @@ class OldGenerator(private val input: InputStream,
 
                     getRealmList(typedClass, field.name, fieldName, toProtoBodyBuilder, realmConstructorBodyBuilder)
                 } else {
-                    getPrimitiveField(BOOLEAN, field, fieldName, toProtoBodyBuilder, realmConstructorBodyBuilder, field.label, false)
+                    getPrimitiveField(BOOLEAN, field, fieldName, toProtoBodyBuilder, realmConstructorBodyBuilder, false)
                 }
             }
 
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM -> {
                 toProtoBodyBuilder?.let {
-                    val packageName = if (field.typeName.contains("proto", true)) "ru.rocketbank.protomodel.api" else protoPackageName
+                    val packageName = if (field.typeName.contains("proto", true)) "ProtoApi" else protoPackageName
                     it.append("p.")
                       .append(field.name)
                       .append(" = ")
@@ -299,14 +282,14 @@ class OldGenerator(private val input: InputStream,
 
             else -> {
                 if (field.type == DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE) {
-                    var customTypeName = "${prefix}${field.typeName.replace(protoFilePackage, "").replace(".", "")}"
-                    log("custom type parent = $parentName, customType=$customTypeName\n")
+                    var customTypeName = "$prefix${field.typeName.replace(protoPackageName, "").replace(".", "")}"
+                    Logger.log("custom type parent = $parentName, customType=$customTypeName\n")
 
                     if (field.label == DescriptorProtos.FieldDescriptorProto.Label.LABEL_REPEATED) {
                         customTypeName = if (field.typeName.contains("react", true)) "React" + customTypeName else customTypeName
                         val typedClass = ClassName.bestGuess(customTypeName)
 
-                        getRealmList(typedClass, field.name, fieldName, toProtoBodyBuilder, realmConstructorBodyBuilder, "${if (field.typeName.contains("proto", true)) "ru.rocketbank.protomodel.api" else protoPackageName}.${field.typeName.substring(field.typeName.indexOf(splitted[2]))}")
+                        getRealmList(typedClass, field.name, fieldName, toProtoBodyBuilder, realmConstructorBodyBuilder, "${if (field.typeName.contains("proto", true)) "ProtoApi" else protoPackageName}.${field.typeName.substring(field.typeName.indexOf(splitted[2]))}")
                     } else {
                         customTypeName = if (field.typeName.contains("react", true)) "React" + customTypeName else customTypeName
                         //поле с кастомным типом
@@ -377,13 +360,11 @@ class OldGenerator(private val input: InputStream,
     }
 
     fun generate() {
-        val log = File(logPath)
-        log.delete()
-        log.createNewFile()
-        log("args: \n")
+        Logger.prepare()
+        Logger.log("args: $params\n")
 
         val response = PluginProtos.CodeGeneratorResponse.newBuilder()
-        val request = PluginProtos.CodeGeneratorRequest.parseFrom(System.`in`)
+        val request = PluginProtos.CodeGeneratorRequest.parseFrom(input)
 
         response.addFile(generateRealmPrimitive(INT, 0))
         response.addFile(generateRealmPrimitive(LONG, 0L))
@@ -393,18 +374,18 @@ class OldGenerator(private val input: InputStream,
         response.addFile(generateRealmPrimitive(BOOLEAN, false))
 
         request.protoFileList.forEach { protoFile ->
-            protoPackageName = protoFile.options.javaPackage
-            protoFilePackage = protoFile.`package`
-            log("proto package ${protoFile.`package`}")
+            javaPackageName = protoFile.options.javaPackage
+            protoPackageName = protoFile.`package`
+            Logger.log("proto package ${protoFile.`package`}")
             protoFile.messageTypeList.forEach {
                 if (it.hasOptions() /*&& it.options.hasExtension(SwiftDescriptor.swiftMessageOptions)*/) {
                     //if (it.hasOptions() && it.options.hasField(SwiftDescriptor.SwiftFileOptions.getDescriptor().fields.first { it.jsonName.contains("generate_realm_object", true) })) {
                     parseCurrent(it, response)
-                    log("proto full name ${it.name}")
+                    Logger.log("proto full name ${it.name}")
                 }
             }
         }
-        response.build().writeTo(System.out)
+        response.build().writeTo(output)
     }
 
 }

@@ -7,6 +7,10 @@ class LongField(builder: Builder): PrimitiveField<LongField>(builder) {
 
     override fun getFieldType() = "kotlin.Long"
 
+    init {
+
+    }
+
     class Builder: FieldBuilder<LongField>() {
 
         override fun build() = LongField(this)

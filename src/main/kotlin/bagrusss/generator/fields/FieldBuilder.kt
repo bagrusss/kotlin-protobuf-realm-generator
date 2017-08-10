@@ -22,7 +22,7 @@ abstract class FieldBuilder<T> {
 
     abstract fun build(): T
 
-    fun nullable(isOptional: Boolean) = apply {
+    fun optional(isOptional: Boolean) = apply {
         if (isOptional) {
             initializerFormat = "%L"
             initializerArgs = arrayOf("null")
@@ -32,7 +32,7 @@ abstract class FieldBuilder<T> {
 
     fun repeated(isRepeated: Boolean) = apply {
         if (isRepeated) {
-            nullable(true)
+            optional(true)
         }
         repeated = isRepeated
     }
