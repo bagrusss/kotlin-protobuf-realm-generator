@@ -126,12 +126,12 @@ class OldGenerator(private val input: InputStream,
 
     }
 
-    fun getRealmList(classType: ClassName,
-                     protoFieldName: String,
-                     realmFieldName: String,
-                     toProtoBodyBuilder: StringBuilder?,
-                     realmConstructorBodyBuilder: StringBuilder?,
-                     nonPrimitiveName: String? = null): PropertySpec.Builder {
+    private fun getRealmList(classType: ClassName,
+                             protoFieldName: String,
+                             realmFieldName: String,
+                             toProtoBodyBuilder: StringBuilder?,
+                             realmConstructorBodyBuilder: StringBuilder?,
+                             nonPrimitiveName: String? = null): PropertySpec.Builder {
         val realmList = ClassName.bestGuess("io.realm.RealmList")
         val typedList = ParameterizedTypeName.get(realmList, classType)
         toProtoBodyBuilder?.let {
