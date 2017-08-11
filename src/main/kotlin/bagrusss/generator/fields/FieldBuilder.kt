@@ -20,7 +20,7 @@ abstract class FieldBuilder<T> {
     internal var generateFromProto = true
     internal var primaryKey = false
 
-    abstract fun build(): T
+    abstract fun build(): Field<T>
 
     fun optional(isOptional: Boolean) = apply {
         if (isOptional) {

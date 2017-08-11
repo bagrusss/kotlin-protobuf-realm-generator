@@ -110,11 +110,11 @@ class OldGenerator(private val input: InputStream,
                                                 .build()
 
                 outFile.content = KotlinFile.builder(realmPackageName, className.name!!)
-                                         .addType(className)
-                                         .build()
-                                         .toJavaFileObject()
-                                         .getCharContent(true)
-                                         .toString()
+                                            .addType(className)
+                                            .build()
+                                            .toJavaFileObject()
+                                            .getCharContent(true)
+                                            .toString()
 
                 if (!response.fileBuilderList.contains(outFile))
                     response.addFile(outFile)

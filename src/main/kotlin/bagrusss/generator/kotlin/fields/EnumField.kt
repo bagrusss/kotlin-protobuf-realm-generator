@@ -41,7 +41,7 @@ class EnumField private constructor(builder: Builder): KotlinField<EnumField>(bu
                                                                       .append(fieldName)
                                                                       .append(" = ")
                                                                       .append(protoFullTypeName)
-                                                                      .append("valueOf(")
+                                                                      .append(".valueOf(")
                                                                       .append(fieldName)
                                                                       .append(")\n")
                                                                       .toString()

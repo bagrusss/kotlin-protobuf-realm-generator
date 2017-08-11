@@ -39,7 +39,7 @@ import com.squareup.kotlinpoet.PropertySpec
         if (primaryKey)
             propSpecBuilder.addAnnotation(ClassName.bestGuess("io.realm.annotations.PrimaryKey"))
 
-        if (nullable) {
+        if (optional) {
             propSpecBuilder.nullable(true)
                            .initializer("%L", "null")
 

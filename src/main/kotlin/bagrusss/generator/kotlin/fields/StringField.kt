@@ -10,7 +10,7 @@ class StringField private constructor(builder: Builder): KotlinPrimitiveField<St
 
     override fun getFieldType() = "kotlin.String"
 
-    inner class Builder: FieldBuilder<StringField>() {
+    class Builder: FieldBuilder<StringField>() {
 
         override fun build() = StringField(this)
 

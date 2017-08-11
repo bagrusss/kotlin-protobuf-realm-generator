@@ -1,7 +1,7 @@
 package bagrusss.generator.kotlin.model
 
+import bagrusss.generator.kotlin.fields.KotlinField
 import bagrusss.generator.model.Model
-import bagrusss.generator.model.ModelBuilder
 import com.squareup.kotlinpoet.*
 
 /**
@@ -22,7 +22,7 @@ class KotlinClassModel private constructor(builder: Builder): KotlinModel(builde
     private val body: String
 
 
-    inner class Builder(packageName: String, className: String, protoClassName: String): ModelBuilder(packageName, className, protoClassName) {
+    class Builder(packageName: String, className: String, protoClassName: String): KotlinModelBuilder(packageName, className, protoClassName) {
 
         override fun build(): Model {
             return KotlinClassModel(this)
@@ -32,11 +32,13 @@ class KotlinClassModel private constructor(builder: Builder): KotlinModel(builde
     init {
         toProtoMethodBuilder.addStatement("val p = ${builder.protoClassFullName}.newBuilder()")
 
-        builder.fieldsList.forEach {
-            classNameBuilder.addProperty(it.getPropSpec())
-            toProtoMethodBuilder.addStatement(it.toProtoInitializer)
-            realmProtoConstructor.addStatement(it.fromProtoInitializer)
-        }
+        builder.fieldsList
+               .map { it as KotlinField }
+               .forEach {
+                   classNameBuilder.addProperty(it.getPropSpec())
+                   toProtoMethodBuilder.addStatement(it.toProtoInitializer)
+                   realmProtoConstructor.addStatement(it.fromProtoInitializer)
+               }
 
         toProtoMethodBuilder.addStatement("return p.build()")
 

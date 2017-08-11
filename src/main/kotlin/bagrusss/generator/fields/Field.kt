@@ -1,12 +1,10 @@
 package bagrusss.generator.fields
 
-import com.squareup.kotlinpoet.PropertySpec
-
 /**
  * Created by bagrusss on 12.07.17
  */
 abstract class Field<T>(builder: FieldBuilder<T>) {
-    protected val nullable             = builder.optional
+    protected val optional             = builder.optional
     protected val repeated             = builder.repeated
     protected val typePrefix           = builder.typePrefix
     protected val typeSuffix           = builder.typeSuffix
