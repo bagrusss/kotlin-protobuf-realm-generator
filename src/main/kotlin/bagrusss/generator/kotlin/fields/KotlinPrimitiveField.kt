@@ -94,7 +94,7 @@ import com.squareup.kotlinpoet.PropertySpec
 
         } else {
             propSpecBuilder.nullable(false)
-                           .initializer(initializerFormat, initializerArgs)
+                           .initializer("%L", initializerArgs)
 
             toProtoBuilder.append("p.")
                           .append(fieldName)

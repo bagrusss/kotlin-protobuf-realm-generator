@@ -11,6 +11,11 @@ class DoubleField private constructor(builder: Builder): KotlinPrimitiveField<Do
 
     class Builder: FieldBuilder<DoubleField>() {
 
+        init {
+            initializer(0.0)
+        }
+
+
         override fun build() = DoubleField(this)
 
     }

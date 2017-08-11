@@ -12,6 +12,10 @@ class StringField private constructor(builder: Builder): KotlinPrimitiveField<St
 
     class Builder: FieldBuilder<StringField>() {
 
+        init {
+            initializer("\"\"")
+        }
+
         override fun build() = StringField(this)
 
     }

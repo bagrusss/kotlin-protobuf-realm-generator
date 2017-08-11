@@ -15,6 +15,10 @@ class LongField(builder: Builder): KotlinPrimitiveField<LongField>(builder) {
 
     class Builder: FieldBuilder<LongField>() {
 
+        init {
+            initializer(0L)
+        }
+
         override fun build() = LongField(this)
 
     }

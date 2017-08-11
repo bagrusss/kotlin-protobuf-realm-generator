@@ -11,6 +11,10 @@ class IntField private constructor(builder: Builder) : KotlinPrimitiveField<IntF
 
     class Builder : FieldBuilder<IntField>() {
 
+        init {
+            initializer(0)
+        }
+
         override fun build(): IntField {
             return IntField(this)
         }

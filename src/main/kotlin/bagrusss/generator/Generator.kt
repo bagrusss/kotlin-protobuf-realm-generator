@@ -61,10 +61,6 @@ class Generator(private val input: InputStream,
 
         request.protoFileList.forEach { protoFile ->
             protoFilePackage = protoFile.`package`
-            val protoPackageDir = File("$realmPath${File.separator}$protoFilePackage")
-            if (!protoPackageDir.exists()) {
-                protoPackageDir.mkdir()
-            }
             Logger.log("proto package ${protoFile.`package`}")
             protoFile.messageTypeList.forEach {
                 if (it.hasOptions() /*&& it.options.hasExtension(SwiftDescriptor.swiftMessageOptions)*/) {
@@ -84,6 +80,11 @@ class Generator(private val input: InputStream,
             val realmPackage = "$realmPackage.$protoFilePackage"
             val className = "${if (parentName.isNotEmpty()) parentName.replace(".", "") else prefix}${node.name}"
             val protoFullName = "$protoFilePackage.${node.name}"
+
+            val protoPackageDir = File("$realmPath${File.separator}$protoFilePackage")
+            if (!protoPackageDir.exists()) {
+                protoPackageDir.mkdir()
+            }
 
             if (node.fieldList.isNotEmpty()) {
                 val classModelBuilder = KotlinClassModel.Builder(realmPackage, className, protoFullName)

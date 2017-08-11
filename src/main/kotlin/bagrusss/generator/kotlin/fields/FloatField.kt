@@ -11,6 +11,11 @@ class FloatField private constructor(builder: Builder): KotlinPrimitiveField<Flo
 
     class Builder: FieldBuilder<FloatField>() {
 
+        init {
+            initializer("0f")
+        }
+
+
         override fun build() = FloatField(this)
 
     }

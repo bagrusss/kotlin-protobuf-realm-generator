@@ -8,7 +8,7 @@ abstract class FieldBuilder<T> {
 
     internal var optional: Boolean = false
     internal var repeated: Boolean = false
-    internal var initializerArgs: Array<out Any>? = null
+    internal var initializerArgs: Any? = null
     internal var initializerFormat = "%L"
     internal var typePrefix = ""
     internal var typeSuffix = ""
@@ -25,7 +25,7 @@ abstract class FieldBuilder<T> {
     fun optional(isOptional: Boolean) = apply {
         if (isOptional) {
             initializerFormat = "%L"
-            initializerArgs = arrayOf("null")
+            initializerArgs = "null"
         }
         optional = isOptional
     }
@@ -37,14 +37,14 @@ abstract class FieldBuilder<T> {
         repeated = isRepeated
     }
 
-    fun initializer(initializerFormat: String, vararg initializerArgs: Any) = apply {
+    fun initializer(initializerFormat: String, initializerArgs: Any) = apply {
         if (!initializerFormat.contains("%"))
             throw IllegalStateException("format must contain % symbol")
         this.initializerFormat = initializerFormat
         this.initializerArgs = initializerArgs
     }
 
-    fun initializer(initializer: String) = apply {
+    fun initializer(initializer: Any) = apply {
         initializer("%L", initializer)
     }
 

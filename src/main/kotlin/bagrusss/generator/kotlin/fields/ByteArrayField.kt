@@ -12,6 +12,10 @@ class ByteArrayField private constructor(builder: Builder): KotlinField<ByteArra
 
     class Builder: FieldBuilder<ByteArrayField>() {
 
+        init {
+            initializer("ByteArray()")
+        }
+
         override fun build() = ByteArrayField(this)
 
     }
