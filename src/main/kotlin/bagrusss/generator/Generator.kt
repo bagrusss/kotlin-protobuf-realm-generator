@@ -65,8 +65,12 @@ class Generator(private val input: InputStream,
             protoFile.messageTypeList.forEach {
                 if (it.hasOptions() /*&& it.options.hasExtension(SwiftDescriptor.swiftMessageOptions)*/) {
                     //if (it.hasOptions() && it.options.hasField(SwiftDescriptor.SwiftFileOptions.getDescriptor().fields.first { it.jsonName.contains("generate_realm_object", true) })) {
-                    parseCurrent(it, response)
-                    Logger.log("proto full name ${it.name}")
+                    //try {
+                        parseCurrent(it, response)
+                        Logger.log("proto full name ${it.name}")
+                    /*} catch (t: Throwable) {
+                        throw Exception(it.name, t)
+                    }*/
                 }
             }
         }
@@ -75,7 +79,7 @@ class Generator(private val input: InputStream,
 
     private fun parseCurrent(node: DescriptorProtos.DescriptorProto, response: PluginProtos.CodeGeneratorResponse.Builder, parentName: String = "") {
 
-        if (/*(node.fieldList.isNotEmpty() || node.hasOptions()) && */ node.hasOptions() && !protoFilePackage.contains("google", true) && !node.name.contains("Swift", true)) {
+        if (!protoFilePackage.contains("google", true) && !node.name.contains("Swift", true)) {
             Logger.log("parent=$parentName, current=${node.name}")
             val realmPackage = "$realmPackage.$protoFilePackage"
             val className = "${if (parentName.isNotEmpty()) parentName.replace(".", "") else prefix}${node.name}"
@@ -140,6 +144,7 @@ class Generator(private val input: InputStream,
         fieldBuilder.optional(field.label == OPTIONAL)
                     .repeated(field.label == REPEATED)
                     .fieldName(field.name)
+                    .realmPackage(realmPackage)
                     .prefix(prefix)
 
         return fieldBuilder.build()

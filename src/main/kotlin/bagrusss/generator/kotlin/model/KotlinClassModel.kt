@@ -35,9 +35,13 @@ class KotlinClassModel private constructor(builder: Builder): KotlinModel(builde
         builder.fieldsList
                .map { it as KotlinField }
                .forEach {
-                   classNameBuilder.addProperty(it.getPropSpec())
-                   toProtoMethodBuilder.addStatement(it.toProtoInitializer)
-                   realmProtoConstructor.addStatement(it.fromProtoInitializer)
+                   //try {
+                       classNameBuilder.addProperty(it.getPropSpec())
+                       toProtoMethodBuilder.addStatement(it.toProtoInitializer)
+                       realmProtoConstructor.addStatement(it.fromProtoInitializer)
+                   /*} catch (t: Throwable) {
+                       throw Exception(it.getPropSpec().name)
+                   }*/
                }
 
         toProtoMethodBuilder.addStatement("return p.build()")

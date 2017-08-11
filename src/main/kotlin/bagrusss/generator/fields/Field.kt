@@ -17,6 +17,7 @@ abstract class Field<T>(builder: FieldBuilder<T>) {
     protected val generateFromProto    = builder.generateFromProto
     protected val primaryKey           = builder.primaryKey
     protected val parentName           = builder.parentName
+    protected val realmPackage         = builder.realmPackage
 
     protected val protoConstructorParameter = "protoModel"
 
@@ -37,9 +38,8 @@ abstract class Field<T>(builder: FieldBuilder<T>) {
         else toProtoBuilder.append(".map { it.toProto() })")
 
         realmProtoConstructorBuilder.append(".")
-                                    .append(fieldName.substring(0, 1).toUpperCase())
-                                    .append(fieldName.substring(1))
-                                    .append("Count > 0) {\n\t")
+                                    .append(fieldName)
+                                    .append("Count > 0) {\n")
                                     .append(fieldName)
                                     .append(" = RealmList()")
                                     .append(fieldName)
@@ -48,7 +48,9 @@ abstract class Field<T>(builder: FieldBuilder<T>) {
                                     .append('.')
                                     .append(fieldName)
                                     .append("List.map { ")
-                                    .append(typePrefix + classTypeName)
+                                    .append(classTypeName)
                                     .append("(it) })\n}")
+        toProtoInitializer = toProtoBuilder.toString()
+        fromProtoInitializer = realmProtoConstructorBuilder.toString()
     }
 }

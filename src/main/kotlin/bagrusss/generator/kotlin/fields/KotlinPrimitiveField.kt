@@ -23,7 +23,7 @@ import com.squareup.kotlinpoet.PropertySpec
                               } else {
                                   val realmListType = ClassName.bestGuess("io.realm.RealmList")
                                   val typedList = ParameterizedTypeName.get(realmListType,
-                                                                            ClassName.bestGuess(typePrefix + kotlinFieldType.split(".")
+                                                                            ClassName(realmPackage, typePrefix + kotlinFieldType.split(".")
                                                                                                                                            .last())
                                                                                                                                            .apply {
                                                                                                                                                classTypeName = this.simpleName()
@@ -44,7 +44,7 @@ import com.squareup.kotlinpoet.PropertySpec
                            .initializer("%L", "null")
 
             toProtoBuilder.append(fieldName)
-                          .append("?.let {\n\t")
+                          .append("?.let {\n")
                           .append("p.")
 
             realmProtoConstructorBuilder.append("if (")
@@ -57,7 +57,7 @@ import com.squareup.kotlinpoet.PropertySpec
                 realmProtoConstructorBuilder.append(".has")
                                             .append(fieldName.substring(0, 1).toUpperCase())
                                             .append(fieldName.substring(1))
-                                            .append("())\n\t")
+                                            .append("())\n")
                                             .append(fieldName)
                                             .append(" = ")
                                             .append(protoConstructorParameter)
@@ -68,26 +68,22 @@ import com.squareup.kotlinpoet.PropertySpec
                 toProtoBuilder.append("addAll")
                               .append(fieldName.substring(0, 1).toUpperCase())
                               .append(fieldName.substring(1))
-                              .append('(')
-                              .append(fieldName)
-                              .append(".map { it.value })\n")
+                              .append("(it.map { it.value })\n")
 
                 realmProtoConstructorBuilder.append(".")
-                                            .append(fieldName.substring(0, 1).toUpperCase())
-                                            .append(fieldName.substring(1))
-                                            .append("Count > 0) {\n\t")
                                             .append(fieldName)
-                                            .append(" = RealmList()")
+                                            .append("Count > 0) {\n")
                                             .append(fieldName)
-                                            .append(".addAll(")
+                                            .append(" = RealmList()\n")
+                                            .append(fieldName)
+                                            .append("!!.addAll(")
                                             .append(protoConstructorParameter)
                                             .append('.')
                                             .append(fieldName)
                                             .append("List.map { ")
-                                            .append(typePrefix + classTypeName)
+                                            .append(classTypeName)
                                             .append("(it) })\n}")
 
-                realmListsInitialize(classTypeName, toProtoBuilder, realmProtoConstructorBuilder, true)
             }
             toProtoBuilder.append("}\n")
             realmProtoConstructorBuilder.append('\n')
