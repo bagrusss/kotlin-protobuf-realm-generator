@@ -7,7 +7,7 @@ abstract class Model {
     protected val className: ClassName
 
     constructor(builder: ModelBuilder) {
-        className = ClassName(builder.packageName, builder.className)
+        className = ClassName(builder.realmPackageName, builder.realmClassName)
     }
 
     constructor(packageName: String, className: String) {

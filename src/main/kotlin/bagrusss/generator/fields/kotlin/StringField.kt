@@ -1,10 +1,12 @@
-package bagrusss.generator.fields
+package bagrusss.generator.fields.kotlin
+
+import bagrusss.generator.fields.FieldBuilder
 
 
 /**
  * Created by bagrusss on 12.07.17
  */
-class StringField private constructor(builder: StringField.Builder): PrimitiveField<StringField>(builder) {
+class StringField private constructor(builder: Builder): KotlinPrimitiveField<StringField>(builder) {
 
     override fun getFieldType() = "kotlin.String"
 

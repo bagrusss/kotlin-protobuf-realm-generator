@@ -1,5 +1,6 @@
-package bagrusss.generator.fields
+package bagrusss.generator.fields.kotlin
 
+import bagrusss.generator.fields.FieldBuilder
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
@@ -8,7 +9,7 @@ import com.squareup.kotlinpoet.PropertySpec
 /**
  * Created by bagrusss on 12.07.17
  */
-class EnumField private constructor(builder: Builder): Field<EnumField>(builder) {
+class EnumField private constructor(builder: Builder): KotlinField<EnumField>(builder) {
 
     class Builder: FieldBuilder<EnumField>() {
 

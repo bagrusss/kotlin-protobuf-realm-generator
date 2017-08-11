@@ -2,16 +2,14 @@ package bagrusss.generator.model
 
 import com.squareup.kotlinpoet.*
 
-class KotlinPrimitiveModel(private val realmPackage: String,
+class KotlinPrimitiveModel(realmPackage: String,
                            prefix: String,
-                           private val primitiveClassName: ClassName,
-                           private val defValue: Any): KotlinModel(realmPackage, prefix + primitiveClassName.simpleName()) {
+                           primitiveClassName: ClassName,
+                           defValue: Any): KotlinModel(realmPackage, prefix + primitiveClassName.simpleName()) {
+
+    private val body: String
 
     init {
-
-    }
-
-    override fun getModelBody(): String {
         val classBuilder = TypeSpec.classBuilder(className)
         val fieldBuilder = PropertySpec.builder("value", primitiveClassName, KModifier.OPEN)
                                        .mutable(true)
@@ -26,12 +24,14 @@ class KotlinPrimitiveModel(private val realmPackage: String,
                                    .addStatement("this.value = value")
                                    .build())
 
-        return KotlinFile.builder(realmPackage, className.simpleName())
+        body = KotlinFile.builder(realmPackage, className.simpleName())
                          .addType(classBuilder.build())
                          .build()
                          .toJavaFileObject()
                          .getCharContent(true)
                          .toString()
     }
+
+    override fun getModelBody() = body
 
 }

@@ -1,9 +1,11 @@
-package bagrusss.generator.fields
+package bagrusss.generator.fields.kotlin
+
+import bagrusss.generator.fields.FieldBuilder
 
 /**
  * Created by bagrusss on 12.07.17
  */
-class LongField(builder: Builder): PrimitiveField<LongField>(builder) {
+class LongField(builder: Builder): KotlinPrimitiveField<LongField>(builder) {
 
     override fun getFieldType() = "kotlin.Long"
 

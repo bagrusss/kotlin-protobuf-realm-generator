@@ -1,5 +1,6 @@
-package bagrusss.generator.fields
+package bagrusss.generator.fields.kotlin
 
+import bagrusss.generator.fields.FieldBuilder
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterizedTypeName
@@ -7,8 +8,9 @@ import com.squareup.kotlinpoet.PropertySpec
 
 /**
  * Created by bagrusss on 12.07.17
+ * used for primitive types and strings
  */
- abstract class PrimitiveField<T>(builder: FieldBuilder<T>): Field<T>(builder) {
+ abstract class KotlinPrimitiveField<T>(builder: FieldBuilder<T>): KotlinField<T>(builder) {
 
     override fun getPropSpec(): PropertySpec {
 

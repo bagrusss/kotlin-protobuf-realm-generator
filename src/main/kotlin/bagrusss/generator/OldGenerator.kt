@@ -70,7 +70,8 @@ class OldGenerator(private val input: InputStream,
                                                .addModifiers(KModifier.OPEN)
                                                .superclass(ClassName.bestGuess("io.realm.RealmObject"))
 
-                val classNameReturns = ClassName.bestGuess("$protoPackageName.${if (parentName.isNotEmpty()) parentName + "." else ""}${node.name}")
+                val protoClass = "$protoPackageName.${if (parentName.isNotEmpty()) parentName + "." else ""}${node.name}"
+                val classNameReturns = ClassName.bestGuess(protoClass)
 
                 val toProtoMethodBuilder = FunSpec.builder("toProto")
                                                   .returns(classNameReturns)
@@ -83,7 +84,7 @@ class OldGenerator(private val input: InputStream,
                                                         .append(".newBuilder()\n")
 
                 val realmProtoConstructor = FunSpec.constructorBuilder()
-                                                   .addParameter("protoModel", ClassName.bestGuess("$protoPackageName.${if (parentName.isNotEmpty()) parentName + "." else ""}${node.name}"))
+                                                   .addParameter("protoModel", ClassName.bestGuess(protoClass))
 
                 val realmConstructorBodyBuilder = StringBuilder()
 
@@ -108,12 +109,13 @@ class OldGenerator(private val input: InputStream,
                 val className = classNameBuilder.addFun(realmDefaultConstructor)
                                                 .build()
 
-                val javaFile = KotlinFile.builder(realmPackageName, className.name!!)
+                outFile.content = KotlinFile.builder(realmPackageName, className.name!!)
                                          .addType(className)
                                          .build()
-                outFile.content = javaFile.toJavaFileObject()
-                                          .getCharContent(true)
-                                          .toString()
+                                         .toJavaFileObject()
+                                         .getCharContent(true)
+                                         .toString()
+
                 if (!response.fileBuilderList.contains(outFile))
                     response.addFile(outFile)
             }

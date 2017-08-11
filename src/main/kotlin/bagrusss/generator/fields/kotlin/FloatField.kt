@@ -1,9 +1,11 @@
-package bagrusss.generator.fields
+package bagrusss.generator.fields.kotlin
+
+import bagrusss.generator.fields.FieldBuilder
 
 /**
  * Created by bagrusss on 12.07.17
  */
-class FloatField private constructor(builder: Builder): PrimitiveField<FloatField>(builder) {
+class FloatField private constructor(builder: Builder): KotlinPrimitiveField<FloatField>(builder) {
 
     override fun getFieldType() = "kotlin.Float"
 

@@ -1,5 +1,6 @@
-package bagrusss.generator.fields
+package bagrusss.generator.fields.kotlin
 
+import bagrusss.generator.fields.FieldBuilder
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
@@ -7,7 +8,7 @@ import com.squareup.kotlinpoet.PropertySpec
 /**
  * Created by bagrusss on 12.07.17
  */
-class ByteArrayField private constructor(builder: Builder): Field<ByteArrayField>(builder){
+class ByteArrayField private constructor(builder: Builder): KotlinField<ByteArrayField>(builder) {
 
     class Builder: FieldBuilder<ByteArrayField>() {
 
@@ -38,6 +39,5 @@ class ByteArrayField private constructor(builder: Builder): Field<ByteArrayField
                                                     .toString()
         }
     }
-
 
 }

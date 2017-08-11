@@ -1,11 +1,12 @@
-package bagrusss.generator.fields
+package bagrusss.generator.fields.kotlin
 
+import bagrusss.generator.fields.FieldBuilder
 import com.squareup.kotlinpoet.PropertySpec
 
 /**
  * Created by bagrusss on 12.07.17
  */
-class MessageField private constructor(builder: MessageField.Builder): Field<MessageField>(builder) {
+class MessageField private constructor(builder: Builder): KotlinField<MessageField>(builder) {
 
     class Builder: FieldBuilder<MessageField>() {
         override fun build() = MessageField(this)

@@ -9,7 +9,13 @@ object Main {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        OldGenerator(System.`in`, System.out, args).generate()
+        //OldGenerator(System.`in`, System.out, args).generate()
+        val currentDir = System.getProperty("user.dir")
+        Generator(System.`in`,
+                  System.out,
+                  currentDir + "/${System.getenv("realm_path")}",
+                  System.getenv("realm_package"),
+                  "Realm").generate()
     }
 
 }

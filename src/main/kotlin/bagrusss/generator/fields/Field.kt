@@ -22,10 +22,6 @@ abstract class Field<T>(builder: FieldBuilder<T>) {
 
     protected val protoConstructorParameter = "protoModel"
 
-    protected val propertySpec by lazy { getPropSpec() }
-    protected val kotlinFieldType by lazy { getFieldType() }
-
-    protected abstract fun getPropSpec(): PropertySpec
     protected abstract fun getFieldType(): String
 
     lateinit var toProtoInitializer: String
@@ -33,28 +29,28 @@ abstract class Field<T>(builder: FieldBuilder<T>) {
 
     protected fun realmListsInitialize(classTypeName: String?, toProtoBuilder: StringBuilder, realmProtoConstructorBuilder: StringBuilder, isPrimitive: Boolean) {
         toProtoBuilder.append("addAll")
-                .append(fieldName.substring(0, 1).toUpperCase())
-                .append(fieldName.substring(1))
-                .append('(')
-                .append(fieldName)
+                      .append(fieldName.substring(0, 1).toUpperCase())
+                      .append(fieldName.substring(1))
+                      .append('(')
+                      .append(fieldName)
 
         if (isPrimitive)
-                toProtoBuilder.append(".map { it.value })\n")
-        else toProtoBuilder.append(".map { it.toProto() })\n")
+                toProtoBuilder.append(".map { it.value })")
+        else toProtoBuilder.append(".map { it.toProto() })")
 
         realmProtoConstructorBuilder.append(".")
-                .append(fieldName.substring(0, 1).toUpperCase())
-                .append(fieldName.substring(1))
-                .append("Count > 0) {\n\t")
-                .append(fieldName)
-                .append(" = RealmList()")
-                .append(fieldName)
-                .append(".addAll(")
-                .append(protoConstructorParameter)
-                .append('.')
-                .append(fieldName)
-                .append("List.map { ")
-                .append(typePrefix + classTypeName)
-                .append("(it) })\n}")
+                                    .append(fieldName.substring(0, 1).toUpperCase())
+                                    .append(fieldName.substring(1))
+                                    .append("Count > 0) {\n\t")
+                                    .append(fieldName)
+                                    .append(" = RealmList()")
+                                    .append(fieldName)
+                                    .append(".addAll(")
+                                    .append(protoConstructorParameter)
+                                    .append('.')
+                                    .append(fieldName)
+                                    .append("List.map { ")
+                                    .append(typePrefix + classTypeName)
+                                    .append("(it) })\n}")
     }
 }

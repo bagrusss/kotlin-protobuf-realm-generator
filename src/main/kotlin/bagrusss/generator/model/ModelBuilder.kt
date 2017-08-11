@@ -1,13 +1,18 @@
 package bagrusss.generator.model
 
-import bagrusss.generator.fields.Field
+import bagrusss.generator.fields.kotlin.KotlinField
+import java.util.*
 
-abstract class ModelBuilder(val packageName: String,
-                            val className: String) {
+abstract class ModelBuilder(val realmPackageName: String,
+                            val realmClassName: String,
+                            val protoClassFullName: String) {
 
-    abstract fun <T> addField(field: Field<T>): ModelBuilder
+    val fieldsList: LinkedList<KotlinField<*>> = LinkedList()
+
+    fun <T> addField(field: KotlinField<T>) = apply {
+        fieldsList.add(field)
+    }
 
     abstract fun build(): Model
 
-    abstract fun setPrefix(prefix: String): ModelBuilder
 }

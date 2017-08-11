@@ -4,20 +4,19 @@ import bagrusss.generator.model.KotlinPrimitiveModel
 import bagrusss.generator.model.Model
 import com.google.protobuf.compiler.PluginProtos
 import com.squareup.kotlinpoet.*
+import java.io.File
 import java.io.InputStream
 import java.io.PrintStream
 
 class Generator(private val input: InputStream,
                 private val output: PrintStream,
                 private val realmPath: String,
-                private val realmPackage: String) {
+                private val realmPackage: String,
+                private val prefix: String) {
 
     private companion object {
 
-        @JvmField val packageName = "com.serenity.data_impl.realm.model"
-        @JvmField var protoPackageName = ""
         @JvmField var protoFilePackage = ""
-        @JvmField val prefix = "Realm"
 
     }
 
@@ -34,12 +33,12 @@ class Generator(private val input: InputStream,
         val primitives = listOf(Pair(INT, 0),
                                 Pair(LONG, 0L),
                                 Pair(DOUBLE, 0.0),
-                                Pair(FLOAT, 0f),
+                                Pair(FLOAT, "0f"),
                                 Pair(BOOLEAN, false),
                                 Pair(ClassName("kotlin", "String"), "\"\""))
 
         primitives.forEach {
-            val primitiveModel: Model = KotlinPrimitiveModel(realmPackage, "Realm", it.first, it.second)
+            val primitiveModel: Model = KotlinPrimitiveModel(realmPackage, prefix, it.first, it.second)
             val realmTypeFile = PluginProtos.CodeGeneratorResponse
                                             .File
                                             .newBuilder()
@@ -52,8 +51,11 @@ class Generator(private val input: InputStream,
 
 
         request.protoFileList.forEach { protoFile ->
-            protoPackageName = protoFile.options.javaPackage
             protoFilePackage = protoFile.`package`
+            val protoPackageDir = File("$realmPath${File.separator}$protoFilePackage")
+            if (!protoPackageDir.exists()) {
+                protoPackageDir.mkdir()
+            }
             Logger.log("proto package ${protoFile.`package`}")
             protoFile.messageTypeList.forEach {
                 if (it.hasOptions() /*&& it.options.hasExtension(SwiftDescriptor.swiftMessageOptions)*/) {
