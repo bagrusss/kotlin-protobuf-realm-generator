@@ -1,6 +1,6 @@
 package bagrusss.generator
 
-import bagrusss.generator.model.KotlinPrimitiveModel
+import bagrusss.generator.kotlin.model.KotlinPrimitiveModel
 import bagrusss.generator.model.Model
 import com.google.protobuf.compiler.PluginProtos
 import com.squareup.kotlinpoet.*

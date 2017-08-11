@@ -1,4 +1,4 @@
-package bagrusss.generator.fields.kotlin
+package bagrusss.generator.kotlin.fields
 
 import bagrusss.generator.fields.FieldBuilder
 import com.squareup.kotlinpoet.PropertySpec

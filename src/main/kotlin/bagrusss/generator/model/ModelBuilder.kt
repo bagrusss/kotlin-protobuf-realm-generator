@@ -1,6 +1,6 @@
 package bagrusss.generator.model
 
-import bagrusss.generator.fields.kotlin.KotlinField
+import bagrusss.generator.kotlin.fields.KotlinField
 import java.util.*
 
 abstract class ModelBuilder(val realmPackageName: String,
