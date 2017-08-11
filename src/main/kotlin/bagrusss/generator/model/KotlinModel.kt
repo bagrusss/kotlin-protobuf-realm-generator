@@ -1,21 +1,18 @@
 package bagrusss.generator.model
 
-import bagrusss.generator.fields.Field
+import com.squareup.kotlinpoet.ClassName
+
+abstract class KotlinModel : Model {
 
 
-/**
- * Created by bagrusss on 10.08.17
- */
-class KotlinModel private constructor(builder: Builder) {
+    protected constructor(builder: ModelBuilder) : super(builder)
 
-    inner class Builder(val className: String) {
+    constructor(packageName: String, className: String) : super(packageName, className)
 
-        fun <T> addField(field: Field<T>) {
+    constructor(clazz: ClassName) : super(clazz)
 
-        }
+    override fun getFileExtension() = ".kt"
 
-        fun build(): KotlinModel {
-            return KotlinModel(this)
-        }
-    }
+    override fun getFileName() = className.simpleName() + ".kt"
+
 }

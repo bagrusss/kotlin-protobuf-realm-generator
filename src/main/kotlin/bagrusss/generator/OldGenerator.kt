@@ -3,6 +3,7 @@ package bagrusss.generator
 import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.compiler.PluginProtos
 import com.squareup.kotlinpoet.*
+import java.io.File
 import java.io.InputStream
 import java.io.PrintStream
 
@@ -13,7 +14,7 @@ class OldGenerator(private val input: InputStream,
 
     private companion object {
 
-        @JvmField val realmPackageName = "com.serenity.data_impl.realm.model"
+        @JvmField var realmPackageName = "com.serenity.data_impl.realm.model"
         @JvmField var javaPackageName = ""
         @JvmField var protoPackageName = ""
         @JvmField val prefix = "Realm"
@@ -361,7 +362,12 @@ class OldGenerator(private val input: InputStream,
 
     fun generate() {
         Logger.prepare()
-        Logger.log("args: $params\n")
+        Logger.log("params:")
+        params.forEach {
+            Logger.log(it)
+        }
+        val realmPath = System.getenv()["realm_package"]
+        realmPackageName = realmPath!!.replace("/", ".")
 
         val response = PluginProtos.CodeGeneratorResponse.newBuilder()
         val request = PluginProtos.CodeGeneratorRequest.parseFrom(input)

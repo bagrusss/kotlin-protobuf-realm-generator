@@ -1,6 +1,24 @@
 package bagrusss.generator.model
 
-abstract class Model(val packageName: String,
-                     val ClassName: String) {
+import com.squareup.kotlinpoet.ClassName
 
+abstract class Model {
+
+    protected val className: ClassName
+
+    constructor(builder: ModelBuilder) {
+        className = ClassName(builder.packageName, builder.className)
+    }
+
+    constructor(packageName: String, className: String) {
+        this.className = ClassName(packageName, className)
+    }
+
+    constructor(clazz: ClassName) {
+        className = clazz
+    }
+
+    abstract fun getFileExtension(): String
+    abstract fun getFileName(): String
+    abstract fun getModelBody(): String
 }
