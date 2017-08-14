@@ -20,10 +20,11 @@ class MessageField private constructor(builder: Builder): KotlinField<MessageFie
     }
 
     override fun getPropSpec(): PropertySpec {
-        return PropertySpec.builder(fieldName, ClassName("$realmPackage.$protoPackage", protoFullTypeName))
+        return PropertySpec.builder(fieldName, ClassName("", "$realmPackage.$protoPackage.$protoFullTypeName"))
                            .addModifiers(KModifier.OPEN)
                            .mutable(true)
-                           .nullable(optional)
+                           .nullable(true)
+                           .initializer("%L", "null")
                            .build()
     }
 

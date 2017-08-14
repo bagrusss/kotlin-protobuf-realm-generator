@@ -66,7 +66,7 @@ class Generator(private val input: InputStream,
                 if (it.hasOptions() /*&& it.options.hasExtension(SwiftDescriptor.swiftMessageOptions)*/) {
                     //if (it.hasOptions() && it.options.hasField(SwiftDescriptor.SwiftFileOptions.getDescriptor().fields.first { it.jsonName.contains("generate_realm_object", true) })) {
                     //try {
-                        parseCurrent(it, response)
+                        parseCurrent(it)
                         Logger.log("proto full name ${it.name}")
                     /*} catch (t: Throwable) {
                         throw Exception(it.name, t)
@@ -77,12 +77,17 @@ class Generator(private val input: InputStream,
         response.build().writeTo(output)
     }
 
-    private fun parseCurrent(node: DescriptorProtos.DescriptorProto, response: PluginProtos.CodeGeneratorResponse.Builder, parentName: String = "") {
+    private fun parseCurrent(node: DescriptorProtos.DescriptorProto, parentNameOriginal: String = "", parentNameRealm: String = "") {
         if (!protoFilePackage.contains("google", true) && !node.name.contains("Swift", true)) {
-            Logger.log("parent=$parentName, current=${node.name}")
+            Logger.log("parent=$parentNameRealm, current=${node.name}")
             val realmPackage = "$realmPackage.$protoFilePackage"
-            val className = "${if (parentName.isNotEmpty()) parentName.replace(".", "") else prefix}${node.name}"
-            val protoFullName = "$protoFilePackage.${node.name}"
+            val className = "${if (parentNameRealm.isNotEmpty()) parentNameRealm.replace(".", "") else prefix}${node.name}"
+            val protoFullName = "$protoFilePackage.${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
+
+            node.nestedTypeList.forEach {
+                Logger.log("nested type = ${it.name} parent=${node.name}")
+                parseCurrent(it, node.name, className)
+            }
 
             val protoPackageDir = File("$realmPath${File.separator}$protoFilePackage")
             if (!protoPackageDir.exists()) {
@@ -103,11 +108,6 @@ class Generator(private val input: InputStream,
 
             }
 
-
-            node.nestedTypeList.forEach {
-                Logger.log("nested type = ${it.name} parent=${node.name}")
-                parseCurrent(it, response, className)
-            }
         }
 
     }
@@ -127,12 +127,11 @@ class Generator(private val input: InputStream,
                 val clearedFullName = field.typeName.replace(protoFilePackage, "").replace(".", "")
                 MessageField.Builder()
                             .fullProtoTypeName("$prefix$clearedFullName")
-                            .protoPackage(protoFilePackage)
             }
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES -> {
                 ByteArrayField.Builder()
             }
-            
+
             else -> BoolField.Builder()
         }
 
@@ -142,6 +141,8 @@ class Generator(private val input: InputStream,
                     .fieldName(field.name)
                     .realmPackage(realmPackage)
                     .prefix(prefix)
+                    .protoPackage(protoFilePackage)
+
 
         return fieldBuilder.build()
     }
