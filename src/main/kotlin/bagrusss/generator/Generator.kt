@@ -122,9 +122,7 @@ class Generator(private val input: InputStream,
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_FLOAT -> FloatField.Builder()
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_DOUBLE -> DoubleField.Builder()
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_STRING -> StringField.Builder()
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM -> {
-                EnumField.Builder().fullProtoTypeName(field.typeName.substring(1))
-            }
+            DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM -> EnumField.Builder().fullProtoTypeName(field.typeName.substring(1))
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_BOOL -> BoolField.Builder()
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE -> {
                 val builder = MessageField.Builder()
@@ -136,9 +134,7 @@ class Generator(private val input: InputStream,
                 val clearedFullName =  field.typeName.substring(protoPackage.length + 1).replace(".", "")
 
                 builder.fullProtoTypeName("$prefix$clearedFullName")
-                       .protoPackage(protoPackage + '.')
-
-                builder
+                       .protoPackage("$protoPackage.")
             }
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES -> {
                 ByteArrayField.Builder()
@@ -152,6 +148,7 @@ class Generator(private val input: InputStream,
                     .repeated(field.label == REPEATED)
                     .fieldName(field.name)
                     .realmPackage(realmPackage)
+                    .primaryKey(field.hasOptions())
                     .prefix(prefix)
 
 

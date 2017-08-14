@@ -11,8 +11,8 @@ abstract class KotlinField<T>(builder: FieldBuilder<T>): Field<T>(builder) {
 
     abstract fun getPropSpec(): PropertySpec
 
-    open fun repeatedToProto(): String = ""
-    open fun repeatedFromProto(): String = ""
+    open fun repeatedToProto() = ""
+    open fun repeatedFromProto() = ""
 
     //abstract fun toProto(): String
     //abstract fun fromProto(): String
