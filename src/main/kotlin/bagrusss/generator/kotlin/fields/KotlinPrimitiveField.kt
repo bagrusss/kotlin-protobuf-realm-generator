@@ -86,8 +86,6 @@ import com.squareup.kotlinpoet.PropertySpec
 
             }
             toProtoBuilder.append(" }")
-            realmProtoConstructorBuilder.append('\n')
-
         } else {
             propSpecBuilder.nullable(false)
                            .initializer("%L", initializerArgs)

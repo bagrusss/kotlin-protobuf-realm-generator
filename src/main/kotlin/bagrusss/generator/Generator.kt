@@ -12,6 +12,7 @@ import java.io.File
 import java.io.InputStream
 import java.io.PrintStream
 import java.io.PrintWriter
+import java.util.TreeSet
 
 class Generator(private val input: InputStream,
                 private val output: PrintStream,
@@ -26,6 +27,8 @@ class Generator(private val input: InputStream,
         @JvmField val REPEATED = DescriptorProtos.FieldDescriptorProto.Label.LABEL_REPEATED
         @JvmField val REQUIRED = DescriptorProtos.FieldDescriptorProto.Label.LABEL_REQUIRED
     }
+
+    private val packagesSet = TreeSet<String>()
 
     private fun writeClass(path: String, fileName: String, classBody: String) {
         val file = File(path, fileName)
@@ -61,16 +64,14 @@ class Generator(private val input: InputStream,
 
         request.protoFileList.forEach { protoFile ->
             protoFilePackage = protoFile.`package`
+            packagesSet.add(protoFilePackage)
+
             Logger.log("proto package ${protoFile.`package`}")
             protoFile.messageTypeList.forEach {
                 if (it.hasOptions() /*&& it.options.hasExtension(SwiftDescriptor.swiftMessageOptions)*/) {
                     //if (it.hasOptions() && it.options.hasField(SwiftDescriptor.SwiftFileOptions.getDescriptor().fields.first { it.jsonName.contains("generate_realm_object", true) })) {
-                    //try {
-                        parseCurrent(it)
-                        Logger.log("proto full name ${it.name}")
-                    /*} catch (t: Throwable) {
-                        throw Exception(it.name, t)
-                    }*/
+                    parseCurrent(it)
+                    Logger.log("proto full name ${it.name}")
                 }
             }
         }
@@ -124,9 +125,18 @@ class Generator(private val input: InputStream,
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM -> EnumField.Builder().fullProtoTypeName(field.typeName.substring(1))
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_BOOL -> BoolField.Builder()
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE -> {
-                val clearedFullName = field.typeName.replace(protoFilePackage, "").replace(".", "")
-                MessageField.Builder()
-                            .fullProtoTypeName("$prefix$clearedFullName")
+                val builder = MessageField.Builder()
+                val protoPackage = if (field.typeName.contains(protoFilePackage)) {
+                                       protoFilePackage
+                                   } else {
+                                       packagesSet.first { field.typeName.contains(it) }
+                                   }
+                val clearedFullName =  field.typeName.substring(protoPackage.length + 1).replace(".", "")
+
+                builder.fullProtoTypeName("$prefix$clearedFullName")
+                       .protoPackage(protoPackage + '.')
+
+                builder
             }
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES -> {
                 ByteArrayField.Builder()
@@ -141,7 +151,6 @@ class Generator(private val input: InputStream,
                     .fieldName(field.name)
                     .realmPackage(realmPackage)
                     .prefix(prefix)
-                    .protoPackage(protoFilePackage)
 
 
         return fieldBuilder.build()
