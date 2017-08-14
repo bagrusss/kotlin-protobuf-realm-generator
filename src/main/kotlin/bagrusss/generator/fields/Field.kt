@@ -37,7 +37,7 @@ abstract class Field<T>(builder: FieldBuilder<T>) {
 
         if (isPrimitive)
                 toProtoBuilder.append(".map { it.value })")
-        else toProtoBuilder.append(".map { it.toProto() })")
+        else toProtoBuilder.append(".map { it.toProtoInitializer() })")
 
         realmProtoConstructorBuilder.append("if (")
                                     .append(protoConstructorParameter)

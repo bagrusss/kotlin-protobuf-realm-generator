@@ -46,7 +46,7 @@ abstract class FieldBuilder<T> {
         this.initializerArgs = initializerArgs
     }
 
-    fun initializer(initializer: Any) = apply {
+    open fun initializer(initializer: Any) = apply {
         initializer("%L", initializer)
     }
 
