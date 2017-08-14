@@ -85,7 +85,7 @@ import com.squareup.kotlinpoet.PropertySpec
                                             .append("(it) })\n}")
 
             }
-            toProtoBuilder.append("}\n")
+            toProtoBuilder.append("\n}")
             realmProtoConstructorBuilder.append('\n')
 
         } else {

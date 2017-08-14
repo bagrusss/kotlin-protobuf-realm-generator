@@ -9,32 +9,7 @@ import com.squareup.kotlinpoet.PropertySpec
 /**
  * Created by bagrusss on 12.07.17
  */
-class EnumField private constructor(builder: Builder): KotlinField<EnumField>(builder) {
-
-    init {
-        val fromProtoBuilder = StringBuilder()
-        val toProtoBuilder = StringBuilder()
-        if (!repeated) {
-            fromProtoInitializer = fromProtoBuilder.append(fieldName)
-                                                   .append(" = ")
-                                                   .append(protoConstructorParameter)
-                                                   .append('.')
-                                                   .append(fieldName)
-                                                   .append(".number\n")
-                                                   .toString()
-
-            toProtoInitializer = toProtoBuilder.append("p.")
-                                               .append(fieldName)
-                                               .append(" = ")
-                                               .append(protoFullTypeName)
-                                               .append(".valueOf(")
-                                               .append(fieldName)
-                                               .append(")\n")
-                                               .toString()
-        } else {
-            realmListsInitialize(typePrefix + "Int", toProtoBuilder, fromProtoBuilder, true)
-        }
-    }
+class EnumField private constructor(builder: Builder): KotlinPrimitiveField<EnumField>(builder) {
 
     class Builder: FieldBuilder<EnumField>() {
 
@@ -46,9 +21,31 @@ class EnumField private constructor(builder: Builder): KotlinField<EnumField>(bu
 
 
     override fun getPropSpec(): PropertySpec {
-        return PropertySpec.builder(fieldName, ClassName.bestGuess(kotlinFieldType), KModifier.OPEN)
-                           .mutable(true)
-                           .build()
+        return if (!repeated) {
+            PropertySpec.builder(fieldName, ClassName.bestGuess(kotlinFieldType), KModifier.OPEN)
+                        .mutable(true)
+                        .initializer("%L", -1)
+                        .build().apply {
+                val fromProtoBuilder = StringBuilder()
+                val toProtoBuilder = StringBuilder()
+                fromProtoInitializer = fromProtoBuilder.append(fieldName)
+                                                       .append(" = ")
+                                                       .append(protoConstructorParameter)
+                                                       .append('.')
+                                                       .append(fieldName)
+                                                       .append(".number\n")
+                                                       .toString()
+
+                toProtoInitializer = toProtoBuilder.append("p.")
+                                                   .append(fieldName)
+                                                   .append(" = ")
+                                                   .append(protoFullTypeName)
+                                                   .append(".valueOf(")
+                                                   .append(fieldName)
+                                                   .append(")\n")
+                                                   .toString()
+            }
+        } else super.getPropSpec()
     }
 
 }
