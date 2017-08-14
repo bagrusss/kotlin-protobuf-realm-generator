@@ -11,7 +11,7 @@ object Main {
     fun main(args: Array<String>) {
         //OldGenerator(System.`in`, System.out, args).generate()
         val currentDir = System.getProperty("user.dir")
-        Generator(System.`in`,
+        KotlinGenerator(System.`in`,
                   System.out,
                   currentDir + "/${System.getenv("realm_path")}",
                   System.getenv("realm_package"),

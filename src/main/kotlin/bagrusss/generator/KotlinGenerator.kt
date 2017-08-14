@@ -14,11 +14,11 @@ import java.io.PrintStream
 import java.io.PrintWriter
 import java.util.TreeSet
 
-class Generator(private val input: InputStream,
-                private val output: PrintStream,
-                private val realmPath: String,
-                private val realmPackage: String,
-                private val prefix: String) {
+class KotlinGenerator(private val input: InputStream,
+                      private val output: PrintStream,
+                      private val realmPath: String,
+                      private val realmPackage: String,
+                      private val prefix: String) {
 
     private companion object {
         @JvmField var protoFilePackage = ""
@@ -99,8 +99,8 @@ class Generator(private val input: InputStream,
                 val classModelBuilder = KotlinClassModel.Builder(realmPackage, className, protoFullName)
 
                 node.fieldList.forEach { field ->
-                    val kotlinProperty = generateProperty(field)
-                    classModelBuilder.addField(kotlinProperty)
+                    val property = generateProperty(field)
+                    classModelBuilder.addField(property)
                 }
 
                 val model: Model = classModelBuilder.build()
@@ -124,6 +124,7 @@ class Generator(private val input: InputStream,
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_STRING -> StringField.Builder()
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM -> EnumField.Builder().fullProtoTypeName(field.typeName.substring(1))
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_BOOL -> BoolField.Builder()
+            DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES -> ByteArrayField.Builder()
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE -> {
                 val builder = MessageField.Builder()
                 val protoPackage = if (field.typeName.contains(protoFilePackage)) {
@@ -133,11 +134,8 @@ class Generator(private val input: InputStream,
                                    }
                 val clearedFullName =  field.typeName.substring(protoPackage.length + 1).replace(".", "")
 
-                builder.fullProtoTypeName("$prefix$clearedFullName")
+                builder.fullProtoTypeName(clearedFullName)
                        .protoPackage("$protoPackage.")
-            }
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES -> {
-                ByteArrayField.Builder()
             }
 
             else -> BoolField.Builder()

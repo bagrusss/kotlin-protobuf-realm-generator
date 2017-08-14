@@ -10,6 +10,8 @@ import com.squareup.kotlinpoet.PropertySpec
  */
 class ByteArrayField private constructor(builder: Builder): KotlinField<ByteArrayField>(builder) {
 
+    override fun isPrimitive() = false
+
     class Builder: FieldBuilder<ByteArrayField>() {
 
         override fun build() = ByteArrayField(this)
@@ -28,14 +30,14 @@ class ByteArrayField private constructor(builder: Builder): KotlinField<ByteArra
                                                       .append(protoConstructorParameter)
                                                       .append('.')
                                                       .append(fieldName)
-                                                      .append(".toByteArray()\n")
+                                                      .append(".toByteArray()")
                                                       .toString()
 
                 toProtoInitializer = StringBuilder().append("p.")
                                                     .append(fieldName)
                                                     .append(" = io.protostuff.ByteString.copyFrom(")
                                                     .append(fieldName)
-                                                    .append(")\n")
+                                                    .append(')')
                                                     .toString()
         }
     }
