@@ -1,5 +1,7 @@
 package bagrusss.generator
 
+import bagrusss.generator.generator.KotlinGenerator
+
 
 /**
  * Created by bagrusss on 10.04.17
@@ -12,10 +14,10 @@ object Main {
         //OldGenerator(System.`in`, System.out, args).generate()
         val currentDir = System.getProperty("user.dir")
         KotlinGenerator(System.`in`,
-                  System.out,
-                  currentDir + "/${System.getenv("realm_path")}",
-                  System.getenv("realm_package"),
-                  "Realm").generate()
+                System.out,
+                currentDir + "/${System.getenv("realm_path")}",
+                System.getenv("realm_package"),
+                "Realm").generate()
     }
 
 }

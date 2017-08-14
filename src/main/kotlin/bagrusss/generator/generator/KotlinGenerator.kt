@@ -1,5 +1,6 @@
-package bagrusss.generator
+package bagrusss.generator.generator
 
+import bagrusss.generator.Logger
 import bagrusss.generator.fields.Field
 import bagrusss.generator.kotlin.fields.*
 import bagrusss.generator.kotlin.model.KotlinClassModel
@@ -18,7 +19,7 @@ class KotlinGenerator(private val input: InputStream,
                       private val output: PrintStream,
                       private val realmPath: String,
                       private val realmPackage: String,
-                      private val prefix: String) {
+                      private val prefix: String): Generator() {
 
     private companion object {
         @JvmField var protoFilePackage = ""
@@ -38,7 +39,7 @@ class KotlinGenerator(private val input: InputStream,
         }
     }
 
-    fun generate() {
+    override fun generate() {
         Logger.prepare()
 
         val response = PluginProtos.CodeGeneratorResponse.newBuilder()
@@ -66,12 +67,13 @@ class KotlinGenerator(private val input: InputStream,
             protoFilePackage = protoFile.`package`
             packagesSet.add(protoFilePackage)
 
+
             Logger.log("proto package ${protoFile.`package`}")
             protoFile.messageTypeList.forEach {
+
                 if (it.hasOptions() /*&& it.options.hasExtension(SwiftDescriptor.swiftMessageOptions)*/) {
                     //if (it.hasOptions() && it.options.hasField(SwiftDescriptor.SwiftFileOptions.getDescriptor().fields.first { it.jsonName.contains("generate_realm_object", true) })) {
                     parseCurrent(it)
-                    Logger.log("proto full name ${it.name}")
                 }
             }
         }
@@ -79,18 +81,19 @@ class KotlinGenerator(private val input: InputStream,
     }
 
     private fun parseCurrent(node: DescriptorProtos.DescriptorProto, parentNameOriginal: String = "", parentNameRealm: String = "") {
-        if (!protoFilePackage.contains("google", true) && !node.name.contains("Swift", true)) {
+        filter = {!protoFilePackage.contains("google", true) && !node.name.contains("Swift", true)}
+        if (filter.invoke()) {
             Logger.log("parent=$parentNameRealm, current=${node.name}")
-            val realmPackage = "$realmPackage.$protoFilePackage"
+            val realmPackage = "$realmPackage.${protoFilePackage}"
             val className = "${if (parentNameRealm.isNotEmpty()) parentNameRealm.replace(".", "") else prefix}${node.name}"
-            val protoFullName = "$protoFilePackage.${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
+            val protoFullName = "${protoFilePackage}.${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
 
             node.nestedTypeList.forEach {
                 Logger.log("nested type = ${it.name} parent=${node.name}")
                 parseCurrent(it, "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else "" }${node.name}", className)
             }
 
-            val protoPackageDir = File("$realmPath${File.separator}$protoFilePackage")
+            val protoPackageDir = File("$realmPath${File.separator}${protoFilePackage}")
             if (!protoPackageDir.exists()) {
                 protoPackageDir.mkdir()
             }
@@ -105,7 +108,7 @@ class KotlinGenerator(private val input: InputStream,
 
                 val model: Model = classModelBuilder.build()
 
-                writeClass("$realmPath${File.separator}$protoFilePackage", model.getFileName(), model.getModelBody())
+                writeClass("$realmPath${File.separator}${protoFilePackage}", model.getFileName(), model.getModelBody())
 
             }
 
@@ -128,7 +131,7 @@ class KotlinGenerator(private val input: InputStream,
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE -> {
                 val builder = MessageField.Builder()
                 val protoPackage = if (field.typeName.contains(protoFilePackage)) {
-                                       protoFilePackage
+                    protoFilePackage
                                    } else {
                                        packagesSet.first { field.typeName.contains(it) }
                                    }

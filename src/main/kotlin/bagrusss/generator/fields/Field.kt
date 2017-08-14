@@ -27,38 +27,4 @@ abstract class Field<T>(builder: FieldBuilder<T>) {
 
     lateinit var toProtoInitializer: String
     lateinit var fromProtoInitializer: String
-
-    protected fun realmListsInitialize(classTypeName: String?, toProtoBuilder: StringBuilder, realmProtoConstructorBuilder: StringBuilder, isPrimitive: Boolean) {
-        toProtoBuilder.append("addAll")
-                      .append(fieldName.substring(0, 1).toUpperCase())
-                      .append(fieldName.substring(1))
-                      .append('(')
-                      .append(fieldName)
-
-        if (isPrimitive)
-                toProtoBuilder.append(".map { it.value })")
-        else toProtoBuilder.append(".map { it.toProtoInitializer() })")
-
-        realmProtoConstructorBuilder.append("if (")
-                                    .append(protoConstructorParameter)
-                                    .append(".")
-                                    .append(fieldName)
-                                    .append("Count > 0) {\n")
-                                    .append(fieldName)
-                                    .append(" = RealmList()\n")
-                                    .append(protoConstructorParameter)
-                                    .append('.')
-                                    .append(fieldName)
-                                    .append("List.addAll(")
-                                    .append(protoConstructorParameter)
-                                    .append('.')
-                                    .append(fieldName)
-                                    .append("List.map { ")
-                                    .append(realmPackage)
-                                    .append('.')
-                                    .append(classTypeName)
-                                    .append("(it) })\n}")
-        toProtoInitializer = toProtoBuilder.toString()
-        fromProtoInitializer = realmProtoConstructorBuilder.toString()
-    }
 }
