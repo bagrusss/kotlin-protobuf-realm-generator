@@ -1,6 +1,8 @@
 package bagrusss.generator.kotlin.fields
 
 import bagrusss.generator.fields.FieldBuilder
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
 
 /**
@@ -8,16 +10,23 @@ import com.squareup.kotlinpoet.PropertySpec
  */
 class MessageField private constructor(builder: Builder): KotlinField<MessageField>(builder) {
 
+    init {
+        toProtoInitializer = ""
+        fromProtoInitializer = ""
+    }
+
     class Builder: FieldBuilder<MessageField>() {
         override fun build() = MessageField(this)
     }
 
     override fun getPropSpec(): PropertySpec {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return PropertySpec.builder(fieldName, ClassName("$realmPackage.$protoPackage", protoFullTypeName))
+                           .addModifiers(KModifier.OPEN)
+                           .mutable(true)
+                           .nullable(optional)
+                           .build()
     }
 
-    override fun getFieldType(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getFieldType() = protoFullTypeName
 
 }

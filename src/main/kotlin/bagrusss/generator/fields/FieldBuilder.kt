@@ -20,6 +20,7 @@ abstract class FieldBuilder<T> {
     internal var generateFromProto = true
     internal var primaryKey = false
     internal var realmPackage = ""
+    internal var protoPackage = ""
 
     abstract fun build(): Field<T>
 
@@ -83,6 +84,10 @@ abstract class FieldBuilder<T> {
 
     fun realmPackage(pkg: String) = apply {
         this.realmPackage = pkg
+    }
+
+    fun protoPackage(pkg: String) = apply {
+        this.protoPackage = pkg
     }
 
 

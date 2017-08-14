@@ -78,7 +78,6 @@ class Generator(private val input: InputStream,
     }
 
     private fun parseCurrent(node: DescriptorProtos.DescriptorProto, response: PluginProtos.CodeGeneratorResponse.Builder, parentName: String = "") {
-
         if (!protoFilePackage.contains("google", true) && !node.name.contains("Swift", true)) {
             Logger.log("parent=$parentName, current=${node.name}")
             val realmPackage = "$realmPackage.$protoFilePackage"
@@ -114,32 +113,29 @@ class Generator(private val input: InputStream,
     }
 
     private fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*> {
+        Logger.log("field name=${field.name}, fieldType=${field.typeName}")
+
         val fieldBuilder = when (field.type) {
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT32 -> {
-                IntField.Builder()
+            DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT32 -> IntField.Builder()
+            DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT64 -> LongField.Builder()
+            DescriptorProtos.FieldDescriptorProto.Type.TYPE_FLOAT -> FloatField.Builder()
+            DescriptorProtos.FieldDescriptorProto.Type.TYPE_DOUBLE -> DoubleField.Builder()
+            DescriptorProtos.FieldDescriptorProto.Type.TYPE_STRING -> StringField.Builder()
+            DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM -> EnumField.Builder().fullProtoTypeName(field.typeName.substring(1))
+            DescriptorProtos.FieldDescriptorProto.Type.TYPE_BOOL -> BoolField.Builder()
+            DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE -> {
+                val clearedFullName = field.typeName.replace(protoFilePackage, "").replace(".", "")
+                MessageField.Builder()
+                            .fullProtoTypeName("$prefix$clearedFullName")
+                            .protoPackage(protoFilePackage)
             }
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT64 -> {
-                LongField.Builder()
+            DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES -> {
+                ByteArrayField.Builder()
             }
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_FLOAT -> {
-                FloatField.Builder()
-            }
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_DOUBLE -> {
-                DoubleField.Builder()
-            }
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_STRING -> {
-                StringField.Builder()
-            }
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM -> {
-                EnumField.Builder().fullProtoTypeName(field.typeName.substring(1))
-            }
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_BOOL -> {
-                BoolField.Builder()
-            }
-            else -> { //message
-                BoolField.Builder()
-            }
+            
+            else -> BoolField.Builder()
         }
+
 
         fieldBuilder.optional(field.label == OPTIONAL)
                     .repeated(field.label == REPEATED)

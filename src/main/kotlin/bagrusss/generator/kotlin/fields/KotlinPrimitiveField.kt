@@ -44,7 +44,7 @@ import com.squareup.kotlinpoet.PropertySpec
                            .initializer("%L", "null")
 
             toProtoBuilder.append(fieldName)
-                          .append("?.let {\n")
+                          .append("?.let { ")
                           .append("p.")
 
             realmProtoConstructorBuilder.append("if (")
@@ -85,7 +85,7 @@ import com.squareup.kotlinpoet.PropertySpec
                                             .append("(it) })\n}")
 
             }
-            toProtoBuilder.append("\n}")
+            toProtoBuilder.append(" }")
             realmProtoConstructorBuilder.append('\n')
 
         } else {
@@ -96,7 +96,6 @@ import com.squareup.kotlinpoet.PropertySpec
                           .append(fieldName)
                           .append(" = ")
                           .append(fieldName)
-                          .append('\n')
 
             realmProtoConstructorBuilder.append(fieldName)
                                         .append(" = ")
