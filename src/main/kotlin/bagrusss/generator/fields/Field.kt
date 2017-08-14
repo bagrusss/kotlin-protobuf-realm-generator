@@ -19,7 +19,6 @@ abstract class Field<T>(builder: FieldBuilder<T>) {
     protected val parentName           = builder.parentName
     protected val realmPackage         = builder.realmPackage
     protected val protoPackage         = builder.protoPackage
-    protected val isEnum               = builder.isEnum
 
     protected val protoConstructorParameter = "protoModel"
 

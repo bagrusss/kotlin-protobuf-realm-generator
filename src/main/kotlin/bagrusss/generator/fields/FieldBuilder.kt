@@ -21,7 +21,6 @@ abstract class FieldBuilder<T> {
     internal var primaryKey = false
     internal var realmPackage = ""
     internal var protoPackage = ""
-    internal var isEnum = false
 
     abstract fun build(): Field<T>
 
@@ -90,10 +89,5 @@ abstract class FieldBuilder<T> {
     fun protoPackage(pkg: String) = apply {
         this.protoPackage = pkg
     }
-
-    fun enum(enum: Boolean) = apply {
-        this.isEnum = enum
-    }
-
 
 }

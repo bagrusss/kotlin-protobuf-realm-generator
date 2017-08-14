@@ -13,10 +13,6 @@ class EnumField private constructor(builder: Builder): KotlinPrimitiveField<Enum
 
     class Builder: FieldBuilder<EnumField>() {
 
-        init {
-            enum(true)
-        }
-
         override fun build() = EnumField(this)
 
     }
@@ -51,5 +47,9 @@ class EnumField private constructor(builder: Builder): KotlinPrimitiveField<Enum
             }
         } else super.getPropSpec()
     }
+
+    override fun repeatedToProto() = "$protoFullTypeName.valueOf(it.value)"
+
+    override fun repeatedFromProto() = "it.number"
 
 }
