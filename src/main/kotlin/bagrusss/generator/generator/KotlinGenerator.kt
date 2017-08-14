@@ -108,7 +108,7 @@ class KotlinGenerator(private val input: InputStream,
 
                 val model: Model = classModelBuilder.build()
 
-                writeClass("$realmPath${File.separator}${protoFilePackage}", model.getFileName(), model.getModelBody())
+                writeClass("$realmPath${File.separator}$protoFilePackage", model.getFileName(), model.getModelBody())
 
             }
 
@@ -117,7 +117,6 @@ class KotlinGenerator(private val input: InputStream,
     }
 
     private fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*> {
-        Logger.log("field name=${field.name}, fieldType=${field.typeName}")
 
         val fieldBuilder = when (field.type) {
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT32 -> IntField.Builder()
