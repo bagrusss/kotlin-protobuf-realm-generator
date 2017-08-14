@@ -87,7 +87,7 @@ class Generator(private val input: InputStream,
 
             node.nestedTypeList.forEach {
                 Logger.log("nested type = ${it.name} parent=${node.name}")
-                parseCurrent(it, node.name, className)
+                parseCurrent(it, "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else "" }${node.name}", className)
             }
 
             val protoPackageDir = File("$realmPath${File.separator}$protoFilePackage")
@@ -122,7 +122,9 @@ class Generator(private val input: InputStream,
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_FLOAT -> FloatField.Builder()
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_DOUBLE -> DoubleField.Builder()
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_STRING -> StringField.Builder()
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM -> EnumField.Builder().fullProtoTypeName(field.typeName.substring(1))
+            DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM -> {
+                EnumField.Builder().fullProtoTypeName(field.typeName.substring(1))
+            }
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_BOOL -> BoolField.Builder()
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE -> {
                 val builder = MessageField.Builder()

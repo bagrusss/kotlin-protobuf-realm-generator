@@ -68,7 +68,7 @@ import com.squareup.kotlinpoet.PropertySpec
                 toProtoBuilder.append("addAll")
                               .append(fieldName.substring(0, 1).toUpperCase())
                               .append(fieldName.substring(1))
-                              .append("(it.map { it.value })\n")
+                              .append("(it.map { it.value })")
 
                 realmProtoConstructorBuilder.append(".")
                                             .append(fieldName)
