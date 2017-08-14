@@ -13,6 +13,10 @@ class EnumField private constructor(builder: Builder): KotlinPrimitiveField<Enum
 
     class Builder: FieldBuilder<EnumField>() {
 
+        init {
+            enum(true)
+        }
+
         override fun build() = EnumField(this)
 
     }

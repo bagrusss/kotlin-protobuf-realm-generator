@@ -68,7 +68,8 @@ import com.squareup.kotlinpoet.PropertySpec
                 toProtoBuilder.append("addAll")
                               .append(fieldName.substring(0, 1).toUpperCase())
                               .append(fieldName.substring(1))
-                              .append("(it.map { it.value })")
+                              .append("(it.map { ${if (isEnum) "$protoFullTypeName.valueOf(it.value)" else "it.value" } })")
+
 
                 realmProtoConstructorBuilder.append(".")
                                             .append(fieldName)
@@ -82,7 +83,7 @@ import com.squareup.kotlinpoet.PropertySpec
                                             .append(fieldName)
                                             .append("List.map { ")
                                             .append(classTypeName)
-                                            .append("(it) })\n}")
+                                            .append("(it${if (isEnum) ".number" else "" }) })}")
 
             }
             toProtoBuilder.append(" }")
