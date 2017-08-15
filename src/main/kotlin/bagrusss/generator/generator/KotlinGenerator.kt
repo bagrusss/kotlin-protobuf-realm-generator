@@ -129,10 +129,10 @@ class KotlinGenerator(private val input: InputStream,
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES -> ByteArrayField.Builder()
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE -> {
                 val builder = MessageField.Builder()
-                val protoPackage = if (field.typeName.contains(protoFilePackage)) {
+                val protoPackage = if (field.typeName.indexOf(protoFilePackage) == 1) {
                     protoFilePackage
                                    } else {
-                                       packagesSet.first { field.typeName.contains(it) }
+                                       packagesSet.first { field.typeName.indexOf(it) == 1 }
                                    }
                 val clearedFullName =  field.typeName.substring(protoPackage.length + 1).replace(".", "")
 
