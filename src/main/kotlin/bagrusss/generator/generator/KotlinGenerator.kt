@@ -32,6 +32,10 @@ class KotlinGenerator(private val input: InputStream,
     private val packagesSet = TreeSet<String>()
 
     private fun writeClass(path: String, fileName: String, classBody: String) {
+        val protoPackageDir = File(path)
+        if (!protoPackageDir.exists()) {
+            protoPackageDir.mkdir()
+        }
         val file = File(path, fileName)
         file.createNewFile()
         PrintWriter(file).use {
@@ -84,18 +88,13 @@ class KotlinGenerator(private val input: InputStream,
         filter = {!protoFilePackage.contains("google", true) && !node.name.contains("Swift", true)}
         if (filter.invoke()) {
             Logger.log("parent=$parentNameRealm, current=${node.name}")
-            val realmPackage = "$realmPackage.${protoFilePackage}"
+            val realmPackage = "$realmPackage.$protoFilePackage"
             val className = "${if (parentNameRealm.isNotEmpty()) parentNameRealm.replace(".", "") else prefix}${node.name}"
-            val protoFullName = "${protoFilePackage}.${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
+            val protoFullName = "$protoFilePackage.${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
 
             node.nestedTypeList.forEach {
                 Logger.log("nested type = ${it.name} parent=${node.name}")
                 parseCurrent(it, "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else "" }${node.name}", className)
-            }
-
-            val protoPackageDir = File("$realmPath${File.separator}${protoFilePackage}")
-            if (!protoPackageDir.exists()) {
-                protoPackageDir.mkdir()
             }
 
             if (node.fieldList.isNotEmpty()) {
