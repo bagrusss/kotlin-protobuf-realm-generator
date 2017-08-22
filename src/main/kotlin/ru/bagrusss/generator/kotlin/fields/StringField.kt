@@ -22,7 +22,7 @@ class StringField private constructor(builder: Builder): KotlinPrimitiveField<St
 
     companion object {
         @JvmStatic
-        fun newBuilder() = BoolField.Builder()
+        fun newBuilder() = Builder()
     }
 
 }

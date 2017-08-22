@@ -22,6 +22,6 @@ class FloatField private constructor(builder: Builder): KotlinPrimitiveField<Flo
 
     companion object {
         @JvmStatic
-        fun newBuilder() = BoolField.Builder()
+        fun newBuilder() = Builder()
     }
 }

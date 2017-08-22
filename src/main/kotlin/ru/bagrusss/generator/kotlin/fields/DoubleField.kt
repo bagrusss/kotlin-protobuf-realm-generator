@@ -21,7 +21,7 @@ class DoubleField private constructor(builder: Builder): KotlinPrimitiveField<Do
 
     companion object {
         @JvmStatic
-        fun newBuilder() = BoolField.Builder()
+        fun newBuilder() = Builder()
     }
 
 }

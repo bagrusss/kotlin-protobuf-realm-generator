@@ -21,7 +21,7 @@ class LongField(builder: Builder): KotlinPrimitiveField<LongField>(builder) {
 
     companion object {
         @JvmStatic
-        fun newBuilder() = BoolField.Builder()
+        fun newBuilder() = Builder()
     }
 
 }

@@ -44,7 +44,7 @@ class ByteArrayField private constructor(builder: Builder): KotlinField<ByteArra
 
     companion object {
         @JvmStatic
-        fun newBuilder() = BoolField.Builder()
+        fun newBuilder() = Builder()
     }
 
 }

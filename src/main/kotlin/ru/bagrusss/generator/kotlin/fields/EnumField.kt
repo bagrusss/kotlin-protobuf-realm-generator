@@ -54,7 +54,7 @@ class EnumField private constructor(builder: Builder): KotlinPrimitiveField<Enum
 
     companion object {
         @JvmStatic
-        fun newBuilder() = BoolField.Builder()
+        fun newBuilder() = Builder()
     }
 
 }

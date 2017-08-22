@@ -28,7 +28,7 @@ class MessageField private constructor(builder: Builder): KotlinField<MessageFie
 
     companion object {
         @JvmStatic
-        fun newBuilder() = BoolField.Builder()
+        fun newBuilder() = Builder()
     }
 
 }

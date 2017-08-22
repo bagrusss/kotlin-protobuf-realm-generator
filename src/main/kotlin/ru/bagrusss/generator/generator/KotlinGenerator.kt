@@ -127,7 +127,7 @@ class KotlinGenerator(private val input: InputStream,
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_BOOL -> BoolField.newBuilder()
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES -> ByteArrayField.newBuilder()
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE -> {
-                val builder = MessageField.Builder()
+                val builder = MessageField.newBuilder()
                 val protoPackage = if (field.typeName.indexOf(protoFilePackage) == 1)
                                        protoFilePackage
                                    else packagesSet.first { field.typeName.indexOf(it) == 1 }

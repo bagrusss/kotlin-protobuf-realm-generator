@@ -23,6 +23,6 @@ class IntField private constructor(builder: Builder) : KotlinPrimitiveField<IntF
 
     companion object {
         @JvmStatic
-        fun newBuilder() = BoolField.Builder()
+        fun newBuilder() = Builder()
     }
 }
