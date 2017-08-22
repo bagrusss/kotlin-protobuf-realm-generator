@@ -2,7 +2,6 @@ package ru.bagrusss.generator.generator
 
 import ru.bagrusss.generator.Logger
 import ru.bagrusss.generator.fields.Field
-import bagrusss.generator.kotlin.fields.*
 import ru.bagrusss.generator.kotlin.model.KotlinClassModel
 import ru.bagrusss.generator.kotlin.model.KotlinPrimitiveModel
 import ru.bagrusss.generator.model.Model
@@ -91,7 +90,7 @@ class KotlinGenerator(private val input: InputStream,
             Logger.log("parent=$parentNameRealm, current=${node.name}")
             val realmPackage = "$realmPackage.${protoFilePackage}"
             val className = "${if (parentNameRealm.isNotEmpty()) parentNameRealm.replace(".", "") else prefix}${node.name}"
-            val protoFullName = "${protoFilePackage}.${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
+            val protoFullName = "$protoFilePackage.${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
 
             node.nestedTypeList.forEach {
                 Logger.log("nested type = ${it.name} parent=${node.name}")
@@ -108,7 +107,7 @@ class KotlinGenerator(private val input: InputStream,
 
                 val model: Model = classModelBuilder.build()
 
-                writeClass("$realmPath${File.separator}${protoFilePackage}", model.getFileName(), model.getModelBody())
+                writeClass("$realmPath${File.separator}$protoFilePackage", model.getFileName(), model.getModelBody())
 
             }
 
@@ -119,21 +118,20 @@ class KotlinGenerator(private val input: InputStream,
     private fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*> {
 
         val fieldBuilder = when (field.type) {
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT32 -> IntField.Builder()
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT64 -> LongField.Builder()
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_FLOAT -> FloatField.Builder()
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_DOUBLE -> DoubleField.Builder()
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_STRING -> StringField.Builder()
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM -> EnumField.Builder().fullProtoTypeName(field.typeName.substring(1))
+            DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT32 -> IntField.newBuilder()
+            DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT64 -> LongField.newBuilder()
+            DescriptorProtos.FieldDescriptorProto.Type.TYPE_FLOAT -> FloatField.newBuilder()
+            DescriptorProtos.FieldDescriptorProto.Type.TYPE_DOUBLE -> DoubleField.newBuilder()
+            DescriptorProtos.FieldDescriptorProto.Type.TYPE_STRING -> StringField.newBuilder()
+            DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM -> EnumField.newBuilder().fullProtoTypeName(field.typeName.substring(1))
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_BOOL -> BoolField.newBuilder()
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES -> ByteArrayField.Builder()
+            DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES -> ByteArrayField.newBuilder()
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE -> {
                 val builder = MessageField.Builder()
-                val protoPackage = if (field.typeName.indexOf(protoFilePackage) == 1) {
-                    protoFilePackage
-                                   } else {
-                                       packagesSet.first { field.typeName.indexOf(it) == 1 }
-                                   }
+                val protoPackage = if (field.typeName.indexOf(protoFilePackage) == 1)
+                                       protoFilePackage
+                                   else packagesSet.first { field.typeName.indexOf(it) == 1 }
+
                 val clearedFullName =  field.typeName.substring(protoPackage.length + 1).replace(".", "")
 
                 builder.fullProtoTypeName(clearedFullName)

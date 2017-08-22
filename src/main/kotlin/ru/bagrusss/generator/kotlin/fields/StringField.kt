@@ -1,6 +1,6 @@
-package bagrusss.generator.kotlin.fields
+package ru.bagrusss.generator.kotlin.fields
 
-import bagrusss.generator.fields.FieldBuilder
+import ru.bagrusss.generator.fields.FieldBuilder
 
 
 /**
@@ -10,7 +10,7 @@ class StringField private constructor(builder: Builder): KotlinPrimitiveField<St
 
     override fun getFieldType() = "kotlin.String"
 
-    class Builder: FieldBuilder<StringField>() {
+    class Builder internal constructor(): FieldBuilder<StringField>() {
 
         init {
             initializer("\"\"")
@@ -18,6 +18,11 @@ class StringField private constructor(builder: Builder): KotlinPrimitiveField<St
 
         override fun build() = StringField(this)
 
+    }
+
+    companion object {
+        @JvmStatic
+        fun newBuilder() = BoolField.Builder()
     }
 
 }

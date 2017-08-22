@@ -1,6 +1,6 @@
-package bagrusss.generator.kotlin.fields
+package ru.bagrusss.generator.kotlin.fields
 
-import bagrusss.generator.fields.FieldBuilder
+import ru.bagrusss.generator.fields.FieldBuilder
 
 /**
  * Created by bagrusss on 12.07.17
@@ -9,11 +9,7 @@ class LongField(builder: Builder): KotlinPrimitiveField<LongField>(builder) {
 
     override fun getFieldType() = "kotlin.Long"
 
-    init {
-
-    }
-
-    class Builder: FieldBuilder<LongField>() {
+    class Builder internal constructor(): FieldBuilder<LongField>() {
 
         init {
             initializer(0L)
@@ -21,6 +17,11 @@ class LongField(builder: Builder): KotlinPrimitiveField<LongField>(builder) {
 
         override fun build() = LongField(this)
 
+    }
+
+    companion object {
+        @JvmStatic
+        fun newBuilder() = BoolField.Builder()
     }
 
 }

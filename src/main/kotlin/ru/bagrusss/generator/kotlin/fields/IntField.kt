@@ -1,6 +1,6 @@
-package bagrusss.generator.kotlin.fields
+package ru.bagrusss.generator.kotlin.fields
 
-import bagrusss.generator.fields.FieldBuilder
+import ru.bagrusss.generator.fields.FieldBuilder
 
 /**
  * Created by bagrusss on 12.07.17
@@ -9,7 +9,7 @@ class IntField private constructor(builder: Builder) : KotlinPrimitiveField<IntF
 
     override fun getFieldType() = "kotlin.Int"
 
-    class Builder : FieldBuilder<IntField>() {
+    class Builder internal constructor(): FieldBuilder<IntField>() {
 
         init {
             initializer(0)
@@ -19,5 +19,10 @@ class IntField private constructor(builder: Builder) : KotlinPrimitiveField<IntF
             return IntField(this)
         }
 
+    }
+
+    companion object {
+        @JvmStatic
+        fun newBuilder() = BoolField.Builder()
     }
 }
