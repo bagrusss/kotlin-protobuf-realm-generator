@@ -1,4 +1,4 @@
-package bagrusss.generator.model
+package ru.bagrusss.generator.model
 
 abstract class ModelBuilder(val realmPackageName: String,
                             val realmClassName: String,

@@ -1,4 +1,4 @@
-package bagrusss.generator
+package ru.bagrusss.generator
 
 import java.io.File
 import java.nio.file.Files

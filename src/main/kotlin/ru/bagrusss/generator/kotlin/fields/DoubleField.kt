@@ -9,15 +9,19 @@ class DoubleField private constructor(builder: Builder): KotlinPrimitiveField<Do
 
     override fun getFieldType() = "kotlin.Double"
 
-    class Builder: FieldBuilder<DoubleField>() {
+    class Builder internal constructor(): FieldBuilder<DoubleField>() {
 
         init {
             initializer(0.0)
         }
 
-
         override fun build() = DoubleField(this)
 
+    }
+
+    companion object {
+        @JvmStatic
+        fun newBuilder() = BoolField.Builder()
     }
 
 }

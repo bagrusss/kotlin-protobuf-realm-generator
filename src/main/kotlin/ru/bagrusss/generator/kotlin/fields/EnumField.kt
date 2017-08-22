@@ -11,7 +11,7 @@ import com.squareup.kotlinpoet.PropertySpec
  */
 class EnumField private constructor(builder: Builder): KotlinPrimitiveField<EnumField>(builder) {
 
-    class Builder: FieldBuilder<EnumField>() {
+    class Builder internal constructor(): FieldBuilder<EnumField>() {
 
         override fun build() = EnumField(this)
 
@@ -51,5 +51,10 @@ class EnumField private constructor(builder: Builder): KotlinPrimitiveField<Enum
     override fun repeatedToProtoInitializer() = "$protoFullTypeName.valueOf(it.value)"
 
     override fun repeatedFromProtoInitializer() = "it.number"
+
+    companion object {
+        @JvmStatic
+        fun newBuilder() = BoolField.Builder()
+    }
 
 }

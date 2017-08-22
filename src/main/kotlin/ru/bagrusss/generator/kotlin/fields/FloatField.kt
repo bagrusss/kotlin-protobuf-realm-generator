@@ -9,7 +9,7 @@ class FloatField private constructor(builder: Builder): KotlinPrimitiveField<Flo
 
     override fun getFieldType() = "kotlin.Float"
 
-    class Builder: FieldBuilder<FloatField>() {
+    class Builder internal constructor(): FieldBuilder<FloatField>() {
 
         init {
             initializer("0f")
@@ -18,5 +18,10 @@ class FloatField private constructor(builder: Builder): KotlinPrimitiveField<Flo
 
         override fun build() = FloatField(this)
 
+    }
+
+    companion object {
+        @JvmStatic
+        fun newBuilder() = BoolField.Builder()
     }
 }

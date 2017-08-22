@@ -1,6 +1,6 @@
-package bagrusss.generator
+package ru.bagrusss.generator
 
-import bagrusss.generator.generator.KotlinGenerator
+import ru.bagrusss.generator.generator.KotlinGenerator
 
 
 /**

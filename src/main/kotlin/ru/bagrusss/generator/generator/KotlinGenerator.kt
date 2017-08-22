@@ -1,14 +1,15 @@
-package bagrusss.generator.generator
+package ru.bagrusss.generator.generator
 
-import bagrusss.generator.Logger
-import bagrusss.generator.fields.Field
+import ru.bagrusss.generator.Logger
+import ru.bagrusss.generator.fields.Field
 import bagrusss.generator.kotlin.fields.*
-import bagrusss.generator.kotlin.model.KotlinClassModel
-import bagrusss.generator.kotlin.model.KotlinPrimitiveModel
-import bagrusss.generator.model.Model
+import ru.bagrusss.generator.kotlin.model.KotlinClassModel
+import ru.bagrusss.generator.kotlin.model.KotlinPrimitiveModel
+import ru.bagrusss.generator.model.Model
 import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.compiler.PluginProtos
 import com.squareup.kotlinpoet.*
+import ru.bagrusss.generator.kotlin.fields.*
 import java.io.File
 import java.io.InputStream
 import java.io.PrintStream
@@ -88,9 +89,9 @@ class KotlinGenerator(private val input: InputStream,
         filter = {!protoFilePackage.contains("google", true) && !node.name.contains("Swift", true)}
         if (filter.invoke()) {
             Logger.log("parent=$parentNameRealm, current=${node.name}")
-            val realmPackage = "$realmPackage.$protoFilePackage"
+            val realmPackage = "$realmPackage.${protoFilePackage}"
             val className = "${if (parentNameRealm.isNotEmpty()) parentNameRealm.replace(".", "") else prefix}${node.name}"
-            val protoFullName = "$protoFilePackage.${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
+            val protoFullName = "${protoFilePackage}.${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
 
             node.nestedTypeList.forEach {
                 Logger.log("nested type = ${it.name} parent=${node.name}")
@@ -107,7 +108,7 @@ class KotlinGenerator(private val input: InputStream,
 
                 val model: Model = classModelBuilder.build()
 
-                writeClass("$realmPath${File.separator}$protoFilePackage", model.getFileName(), model.getModelBody())
+                writeClass("$realmPath${File.separator}${protoFilePackage}", model.getFileName(), model.getModelBody())
 
             }
 
@@ -124,7 +125,7 @@ class KotlinGenerator(private val input: InputStream,
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_DOUBLE -> DoubleField.Builder()
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_STRING -> StringField.Builder()
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM -> EnumField.Builder().fullProtoTypeName(field.typeName.substring(1))
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_BOOL -> BoolField.Builder()
+            DescriptorProtos.FieldDescriptorProto.Type.TYPE_BOOL -> BoolField.newBuilder()
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES -> ByteArrayField.Builder()
             DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE -> {
                 val builder = MessageField.Builder()

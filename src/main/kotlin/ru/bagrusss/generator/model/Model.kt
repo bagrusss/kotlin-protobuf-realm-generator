@@ -1,4 +1,4 @@
-package bagrusss.generator.model
+package ru.bagrusss.generator.model
 
 import com.squareup.kotlinpoet.ClassName
 

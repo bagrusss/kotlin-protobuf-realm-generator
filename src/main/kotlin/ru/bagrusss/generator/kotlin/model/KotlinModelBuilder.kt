@@ -1,7 +1,7 @@
-package bagrusss.generator.kotlin.model
+package ru.bagrusss.generator.kotlin.model
 
-import bagrusss.generator.fields.Field
-import bagrusss.generator.model.ModelBuilder
+import ru.bagrusss.generator.fields.Field
+import ru.bagrusss.generator.model.ModelBuilder
 import java.util.*
 
 abstract class KotlinModelBuilder(realmPackage: String,

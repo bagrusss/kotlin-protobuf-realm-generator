@@ -1,4 +1,4 @@
-package bagrusss.generator.generator
+package ru.bagrusss.generator.generator
 
 abstract class Generator {
 

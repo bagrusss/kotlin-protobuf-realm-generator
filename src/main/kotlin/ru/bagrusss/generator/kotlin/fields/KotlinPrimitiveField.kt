@@ -1,6 +1,6 @@
-package bagrusss.generator.kotlin.fields
+package ru.bagrusss.generator.kotlin.fields
 
-import bagrusss.generator.fields.FieldBuilder
+import ru.bagrusss.generator.fields.FieldBuilder
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterizedTypeName

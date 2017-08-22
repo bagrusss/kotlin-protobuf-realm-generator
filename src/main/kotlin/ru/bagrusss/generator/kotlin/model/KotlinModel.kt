@@ -1,7 +1,7 @@
-package bagrusss.generator.kotlin.model
+package ru.bagrusss.generator.kotlin.model
 
-import bagrusss.generator.model.Model
-import bagrusss.generator.model.ModelBuilder
+import ru.bagrusss.generator.model.Model
+import ru.bagrusss.generator.model.ModelBuilder
 import com.squareup.kotlinpoet.ClassName
 
 abstract class KotlinModel : Model {

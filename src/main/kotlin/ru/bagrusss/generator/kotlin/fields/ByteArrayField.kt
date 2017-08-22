@@ -12,7 +12,7 @@ class ByteArrayField private constructor(builder: Builder): KotlinField<ByteArra
 
     override fun isPrimitive() = false
 
-    class Builder: FieldBuilder<ByteArrayField>() {
+    class Builder internal constructor(): FieldBuilder<ByteArrayField>() {
 
         override fun build() = ByteArrayField(this)
 
@@ -40,6 +40,11 @@ class ByteArrayField private constructor(builder: Builder): KotlinField<ByteArra
                                                     .append(')')
                                                     .toString()
         }
+    }
+
+    companion object {
+        @JvmStatic
+        fun newBuilder() = BoolField.Builder()
     }
 
 }

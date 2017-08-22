@@ -1,7 +1,7 @@
-package bagrusss.generator.kotlin.model
+package ru.bagrusss.generator.kotlin.model
 
-import bagrusss.generator.kotlin.fields.KotlinField
-import bagrusss.generator.model.Model
+import ru.bagrusss.generator.kotlin.fields.KotlinField
+import ru.bagrusss.generator.model.Model
 import com.squareup.kotlinpoet.*
 
 /**

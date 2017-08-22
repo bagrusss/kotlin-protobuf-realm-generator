@@ -1,4 +1,4 @@
-package bagrusss.generator.fields
+package ru.bagrusss.generator.fields
 
 
 /**

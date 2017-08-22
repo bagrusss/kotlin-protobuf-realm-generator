@@ -1,4 +1,4 @@
-package bagrusss.generator.fields
+package ru.bagrusss.generator.fields
 
 /**
  * Created by bagrusss on 12.07.17
