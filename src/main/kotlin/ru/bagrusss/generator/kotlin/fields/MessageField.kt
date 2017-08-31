@@ -24,7 +24,7 @@ class MessageField private constructor(builder: Builder): KotlinField<MessageFie
     override fun fromProtoInitializer() = "$realmPackage.$protoPackage$typePrefix$protoFullTypeName($protoConstructorParameter.$fieldName)"
 
     override fun repeatedToProtoInitializer() = "it.toProto()"
-    override fun repeatedFromProtoInitializer() = ""
+    override fun repeatedFromProtoInitializer() = "it"
 
     companion object {
         @JvmStatic
