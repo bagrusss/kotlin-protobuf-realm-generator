@@ -15,11 +15,15 @@ import java.io.PrintStream
 import java.io.PrintWriter
 import java.util.TreeSet
 
+internal typealias ProtobufType = DescriptorProtos.FieldDescriptorProto.Type
+
+
 class KotlinGenerator(private val input: InputStream,
                       private val output: PrintStream,
                       private val realmPath: String,
                       private val realmPackage: String,
-                      private val prefix: String): Generator() {
+                      private val prefix: String,
+                      serializer: Serializer): Generator(serializer) {
 
     private companion object {
         @JvmField var protoFilePackage = ""
@@ -30,6 +34,7 @@ class KotlinGenerator(private val input: InputStream,
     }
 
     private val packagesSet = TreeSet<String>()
+
 
     private fun writeClass(path: String, fileName: String, classBody: String) {
         val protoPackageDir = File(path)
@@ -118,15 +123,15 @@ class KotlinGenerator(private val input: InputStream,
     private fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*> {
 
         val fieldBuilder = when (field.type) {
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT32 -> IntField.newBuilder()
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT64 -> LongField.newBuilder()
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_FLOAT -> FloatField.newBuilder()
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_DOUBLE -> DoubleField.newBuilder()
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_STRING -> StringField.newBuilder()
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM -> EnumField.newBuilder().fullProtoTypeName(field.typeName.substring(1))
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_BOOL -> BoolField.newBuilder()
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES -> ByteArrayField.newBuilder()
-            DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE -> {
+            ProtobufType.TYPE_INT32 -> IntField.newBuilder()
+            ProtobufType.TYPE_INT64 -> LongField.newBuilder()
+            ProtobufType.TYPE_FLOAT -> FloatField.newBuilder()
+            ProtobufType.TYPE_DOUBLE -> DoubleField.newBuilder()
+            ProtobufType.TYPE_STRING -> StringField.newBuilder()
+            ProtobufType.TYPE_ENUM -> EnumField.newBuilder().fullProtoTypeName(field.typeName.substring(1))
+            ProtobufType.TYPE_BOOL -> BoolField.newBuilder()
+            ProtobufType.TYPE_BYTES -> ByteArrayField.newBuilder()
+            ProtobufType.TYPE_MESSAGE -> {
                 val builder = MessageField.newBuilder()
                 val protoPackage = if (field.typeName.indexOf(protoFilePackage) == 1)
                                        protoFilePackage

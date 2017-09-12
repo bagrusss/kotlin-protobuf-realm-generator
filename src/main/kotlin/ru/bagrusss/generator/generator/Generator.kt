@@ -1,6 +1,6 @@
 package ru.bagrusss.generator.generator
 
-abstract class Generator {
+abstract class Generator(serializer: Serializer) {
 
     /**
      * Used for filter generator results

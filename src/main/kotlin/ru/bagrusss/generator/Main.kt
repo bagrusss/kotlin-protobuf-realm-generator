@@ -1,6 +1,6 @@
 package ru.bagrusss.generator
 
-import ru.bagrusss.generator.generator.KotlinGenerator
+import ru.bagrusss.generator.generator.*
 
 
 /**
@@ -11,13 +11,20 @@ object Main {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        //OldGenerator(System.`in`, System.out, args).generate()
         val currentDir = System.getProperty("user.dir")
-        KotlinGenerator(System.`in`,
-                System.out,
-                currentDir + "/${System.getenv("realm_path")}",
-                System.getenv("realm_package"),
-                "Realm").generate()
+
+        val realmPath = currentDir + "/${System.getenv("realm_path")}"
+        val realmPackage = System.getenv("realm_package")
+
+        val config = Config.newBuilder()
+                           .realmPath(realmPath)
+                           .realmPackage(realmPackage)
+                           .lang(Lang.KOTLIN)
+                           .serializer(Serializer.PROTOSTUFF)
+                           .build()
+
+        GeneratorFactory(config, System.`in`, System.out).generator.generate()
+
     }
 
 }
