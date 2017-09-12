@@ -35,6 +35,7 @@ class KotlinGenerator(private val input: InputStream,
     }
 
     private val packagesSet = TreeSet<String>()
+    private val protoToJavaPackagesMap = HashMap<String, String>()
 
 
     private fun writeClass(path: String, fileName: String, classBody: String) {
@@ -51,7 +52,8 @@ class KotlinGenerator(private val input: InputStream,
 
 
     override fun filter(node: DescriptorProtos.DescriptorProto): Boolean {
-        return !protoFileJavaPackage.contains("google", true) && !node.name.contains("Swift", true)
+        return !protoFileJavaPackage.contains("google", true)
+                && !node.name.contains("Swift", true)
     }
 
     override fun generate() {
@@ -82,6 +84,7 @@ class KotlinGenerator(private val input: InputStream,
             protoFilePackage = protoFile.`package`
             protoFileJavaPackage = protoFile.options.javaPackage
             packagesSet.add(protoFilePackage)
+            protoToJavaPackagesMap.put(protoFilePackage, protoFileJavaPackage)
 
 
             Logger.log("proto package java ${protoFile.options.javaPackage}")
@@ -132,7 +135,12 @@ class KotlinGenerator(private val input: InputStream,
             ProtobufType.TYPE_FLOAT -> FloatField.newBuilder()
             ProtobufType.TYPE_DOUBLE -> DoubleField.newBuilder()
             ProtobufType.TYPE_STRING -> StringField.newBuilder()
-            ProtobufType.TYPE_ENUM -> EnumField.newBuilder().fullProtoTypeName(field.typeName.substring(1))
+            ProtobufType.TYPE_ENUM -> {
+                val protoPackage = packagesSet.first { field.typeName.indexOf(it) == 1 }
+                val clearTypeName =  field.typeName.substring(1).replace(protoPackage, "")
+                val javaPackage = protoToJavaPackagesMap[protoPackage]
+                EnumField.newBuilder().fullProtoTypeName("$javaPackage$clearTypeName")
+            }
             ProtobufType.TYPE_BOOL -> BoolField.newBuilder()
             ProtobufType.TYPE_BYTES -> ByteArrayField.newBuilder()
             ProtobufType.TYPE_MESSAGE -> {

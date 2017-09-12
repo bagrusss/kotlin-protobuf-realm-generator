@@ -36,7 +36,7 @@ class ByteArrayField private constructor(builder: Builder): KotlinField<ByteArra
                 toProtoInitializer = StringBuilder().append("p.")
                                                     .append(fieldName)
                                                     //.append(" = io.protostuff.ByteString.copyFrom(")
-                                                    .append(" = com.google.protobuf.copyFrom(")
+                                                    .append(" = com.google.protobuf.ByteString.copyFrom(")
                                                     .append(fieldName)
                                                     .append(')')
                                                     .toString()
