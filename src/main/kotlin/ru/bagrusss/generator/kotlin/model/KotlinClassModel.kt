@@ -14,10 +14,10 @@ class KotlinClassModel private constructor(builder: Builder): KotlinModel(builde
                                            .superclass(ClassName.bestGuess("io.realm.RealmObject"))
 
     private val toProtoMethodBuilder = FunSpec.builder("toProto")
-                                              .returns(ClassName.bestGuess(builder.protoClassFullName))
+                                              .returns(ClassName("", builder.protoClassFullName))
 
     private val realmProtoConstructor = FunSpec.constructorBuilder()
-                                               .addParameter("protoModel", ClassName.bestGuess(builder.protoClassFullName))
+                                               .addParameter("protoModel", ClassName("", builder.protoClassFullName))
 
     private val body: String
 

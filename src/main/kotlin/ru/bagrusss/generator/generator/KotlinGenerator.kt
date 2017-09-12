@@ -27,6 +27,7 @@ class KotlinGenerator(private val input: InputStream,
 
     private companion object {
         @JvmField var protoFilePackage = ""
+        @JvmField var protoFileJavaPackage = ""
 
         @JvmField val OPTIONAL = DescriptorProtos.FieldDescriptorProto.Label.LABEL_OPTIONAL
         @JvmField val REPEATED = DescriptorProtos.FieldDescriptorProto.Label.LABEL_REPEATED
@@ -50,7 +51,7 @@ class KotlinGenerator(private val input: InputStream,
 
 
     override fun filter(node: DescriptorProtos.DescriptorProto): Boolean {
-        return !protoFilePackage.contains("google", true) && !node.name.contains("Swift", true)
+        return !protoFileJavaPackage.contains("google", true) && !node.name.contains("Swift", true)
     }
 
     override fun generate() {
@@ -79,10 +80,11 @@ class KotlinGenerator(private val input: InputStream,
 
         request.protoFileList.forEach { protoFile ->
             protoFilePackage = protoFile.`package`
+            protoFileJavaPackage = protoFile.options.javaPackage
             packagesSet.add(protoFilePackage)
 
 
-            Logger.log("proto package ${protoFile.`package`}")
+            Logger.log("proto package java ${protoFile.options.javaPackage}")
             protoFile.messageTypeList.forEach {
 
                 if (it.hasOptions() /*&& it.options.hasExtension(SwiftDescriptor.swiftMessageOptions)*/) {
@@ -98,7 +100,7 @@ class KotlinGenerator(private val input: InputStream,
         if (filter(node)) {
             val realmPackage = "$realmPackage.$protoFilePackage"
             val className = "${if (parentNameRealm.isNotEmpty()) parentNameRealm.replace(".", "") else prefix}${node.name}"
-            val protoFullName = "$protoFilePackage.${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
+            val protoFullName = "$protoFileJavaPackage.${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
 
             node.nestedTypeList.forEach {
                 parseCurrent(it, "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else "" }${node.name}", className)
@@ -106,6 +108,7 @@ class KotlinGenerator(private val input: InputStream,
 
             if (node.fieldList.isNotEmpty()) {
                 val classModelBuilder = KotlinClassModel.Builder(realmPackage, className, protoFullName)
+                Logger.log("generate $protoFullName")
                 node.fieldList.forEach { field ->
                     val property = generateProperty(field)
                     classModelBuilder.addField(property)
