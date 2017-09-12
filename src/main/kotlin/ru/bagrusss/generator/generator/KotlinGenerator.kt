@@ -48,6 +48,11 @@ class KotlinGenerator(private val input: InputStream,
         }
     }
 
+
+    override fun filter(node: DescriptorProtos.DescriptorProto): Boolean {
+        return !protoFilePackage.contains("google", true) && !node.name.contains("Swift", true)
+    }
+
     override fun generate() {
         Logger.prepare()
 
@@ -90,21 +95,17 @@ class KotlinGenerator(private val input: InputStream,
     }
 
     private fun parseCurrent(node: DescriptorProtos.DescriptorProto, parentNameOriginal: String = "", parentNameRealm: String = "") {
-        filter = {!protoFilePackage.contains("google", true) && !node.name.contains("Swift", true)}
-        if (filter.invoke()) {
-            Logger.log("parent=$parentNameRealm, current=${node.name}")
-            val realmPackage = "$realmPackage.${protoFilePackage}"
+        if (filter(node)) {
+            val realmPackage = "$realmPackage.$protoFilePackage"
             val className = "${if (parentNameRealm.isNotEmpty()) parentNameRealm.replace(".", "") else prefix}${node.name}"
             val protoFullName = "$protoFilePackage.${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
 
             node.nestedTypeList.forEach {
-                Logger.log("nested type = ${it.name} parent=${node.name}")
                 parseCurrent(it, "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else "" }${node.name}", className)
             }
 
             if (node.fieldList.isNotEmpty()) {
                 val classModelBuilder = KotlinClassModel.Builder(realmPackage, className, protoFullName)
-
                 node.fieldList.forEach { field ->
                     val property = generateProperty(field)
                     classModelBuilder.addField(property)
@@ -121,7 +122,7 @@ class KotlinGenerator(private val input: InputStream,
     }
 
     private fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*> {
-
+        Logger.log("Field_ name=${field.name}, type=${field.typeName}, field=$field")
         val fieldBuilder = when (field.type) {
             ProtobufType.TYPE_INT32 -> IntField.newBuilder()
             ProtobufType.TYPE_INT64 -> LongField.newBuilder()
@@ -143,7 +144,7 @@ class KotlinGenerator(private val input: InputStream,
                        .protoPackage("$protoPackage.")
             }
 
-            else -> BoolField.Builder()
+            else -> throw UnsupportedOperationException("name=${field.name}, type=${field.typeName}")
         }
 
 

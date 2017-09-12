@@ -1,12 +1,11 @@
 package ru.bagrusss.generator.generator
 
+import com.google.protobuf.DescriptorProtos
+
 abstract class Generator(serializer: Serializer) {
 
-    /**
-     * Used for filter generator results
-     */
-    protected var filter : () -> Boolean = { true }
-
     abstract fun generate()
+
+    abstract fun filter(node: DescriptorProtos.DescriptorProto): Boolean
 
 }

@@ -40,7 +40,8 @@ class EnumField private constructor(builder: Builder): KotlinPrimitiveField<Enum
                                                    .append(fieldName)
                                                    .append(" = ")
                                                    .append(protoFullTypeName)
-                                                   .append(".valueOf(")
+                                                   //.append(".valueOf(")
+                                                   .append(".forNumber(")
                                                    .append(fieldName)
                                                    .append(")\n")
                                                    .toString()
@@ -48,7 +49,8 @@ class EnumField private constructor(builder: Builder): KotlinPrimitiveField<Enum
         } else super.getPropSpec()
     }
 
-    override fun repeatedToProtoInitializer() = "$protoFullTypeName.valueOf(it.value)"
+    //override fun repeatedToProtoInitializer() = "$protoFullTypeName.valueOf(it.value)"
+    override fun repeatedToProtoInitializer() = "$protoFullTypeName.forNumber(it.value)"
 
     override fun repeatedFromProtoInitializer() = "it.number"
 
