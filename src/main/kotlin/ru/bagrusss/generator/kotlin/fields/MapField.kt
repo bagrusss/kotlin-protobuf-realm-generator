@@ -23,10 +23,11 @@ class MapField private constructor(builder: Builder) : KotlinField<MapField>(bui
     override fun isPrimitive() = false
 
     override fun repeatedToProtoFill(): String {
-        return StringBuilder().append("addAll")
-                              .append(fieldName.substring(0, 1).toUpperCase())
-                              .append(fieldName.substring(1))
-                              .append("(it.map { ${repeatedToProtoInitializer()} })")
+        return StringBuilder().append("it.forEach {")
+                              .append("p.")
+                              .append(fieldName)
+                              .append("Map.put(it.key, it.value)")
+                              .append('}')
                               .toString()
     }
 

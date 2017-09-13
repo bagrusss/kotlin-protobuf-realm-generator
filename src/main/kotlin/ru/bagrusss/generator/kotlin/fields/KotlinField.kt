@@ -54,13 +54,13 @@ abstract class KotlinField<T>(builder: FieldBuilder<T>): Field<T>(builder) {
 
             toProtoBuilder.append(fieldName)
                           .append("?.let { ")
-                          .append("p.")
 
             realmProtoConstructorBuilder.append("if (")
                                         .append(protoConstructorParameter)
 
             if (!repeated) {
-                toProtoBuilder.append(fieldName)
+                toProtoBuilder.append("p.")
+                              .append(fieldName)
                               .append(" = ")
                               .append(toProtoInitializer())
 
@@ -106,7 +106,7 @@ abstract class KotlinField<T>(builder: FieldBuilder<T>): Field<T>(builder) {
     open fun fromProtoInitializer() = ""
 
     open fun repeatedToProtoFill(): String {
-        return StringBuilder().append("addAll")
+        return StringBuilder().append("p.addAll")
                               .append(fieldName.substring(0, 1).toUpperCase())
                               .append(fieldName.substring(1))
                               .append("(it.map { ${repeatedToProtoInitializer()} })")
