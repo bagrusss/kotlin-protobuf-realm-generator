@@ -7,7 +7,7 @@ import com.squareup.kotlinpoet.*
 /**
  * Created by bagrusss on 10.08.17
  */
-class KotlinClassModel private constructor(builder: Builder): KotlinModel(builder) {
+class KotlinClassModel private constructor(builder: BuilderRealm): KotlinModel(builder) {
 
     private val classNameBuilder = TypeSpec.classBuilder(builder.realmClassName)
                                            .addModifiers(KModifier.OPEN)
@@ -24,11 +24,11 @@ class KotlinClassModel private constructor(builder: Builder): KotlinModel(builde
     private val isMap = builder.isMap
 
 
-    class Builder(packageName: String, className: String, protoClassName: String): KotlinModelBuilder(packageName, className, protoClassName) {
+    class BuilderRealm: KotlinRealmModelBuilder() {
 
         internal var isMap = false
 
-        fun isMap(isMap: Boolean) = apply {
+        override fun isMap(isMap: Boolean) = apply {
             this.isMap = isMap
         }
 

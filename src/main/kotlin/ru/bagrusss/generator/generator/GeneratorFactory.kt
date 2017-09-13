@@ -1,5 +1,6 @@
 package ru.bagrusss.generator.generator
 
+import ru.bagrusss.generator.kotlin.KotlinEntityFactory
 import java.io.InputStream
 import java.io.PrintStream
 
@@ -7,7 +8,7 @@ class GeneratorFactory(configs: Config,
                        input: InputStream,
                        output: PrintStream) {
 
-    val generator: Generator
+    val generator: DefaultRealmGenerator
 
     init {
         when (configs.lang) {
@@ -18,7 +19,7 @@ class GeneratorFactory(configs: Config,
                                             configs.realmPath,
                                             configs.realmPackage,
                                             configs.prefix,
-                                            configs.serializer)
+                                            KotlinEntityFactory(configs.serializer))
             }
             Lang.JAVA -> throw UnsupportedOperationException("Java not supported yet!")
         }
