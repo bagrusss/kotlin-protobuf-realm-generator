@@ -21,8 +21,16 @@ class KotlinClassModel private constructor(builder: Builder): KotlinModel(builde
 
     private val body: String
 
+    private val isMap = builder.isMap
+
 
     class Builder(packageName: String, className: String, protoClassName: String): KotlinModelBuilder(packageName, className, protoClassName) {
+
+        internal var isMap = false
+
+        fun isMap(isMap: Boolean) = apply {
+            this.isMap = isMap
+        }
 
         override fun build(): Model {
             return KotlinClassModel(this)
@@ -42,8 +50,10 @@ class KotlinClassModel private constructor(builder: Builder): KotlinModel(builde
 
         toProtoMethodBuilder.addStatement("return p.build()")
 
-        classNameBuilder.addFun(toProtoMethodBuilder.build())
-        classNameBuilder.addFun(realmProtoConstructor.build())
+        if (!isMap) {
+            classNameBuilder.addFun(toProtoMethodBuilder.build())
+            classNameBuilder.addFun(realmProtoConstructor.build())
+        }
 
         val realmDefaultConstructor = FunSpec.constructorBuilder()
                                              .build()

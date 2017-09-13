@@ -111,7 +111,11 @@ class KotlinGenerator(private val input: InputStream,
 
             if (node.fieldList.isNotEmpty()) {
                 val classModelBuilder = KotlinClassModel.Builder(realmPackage, className, protoFullName)
+                                                        .isMap(node.options.mapEntry)
+
                 Logger.log("generate $protoFullName")
+                Logger.log("options = ${node.options} isMap = ${node.options.mapEntry} \n")
+
                 node.fieldList.forEach { field ->
                     val property = generateProperty(field)
                     classModelBuilder.addField(property)
