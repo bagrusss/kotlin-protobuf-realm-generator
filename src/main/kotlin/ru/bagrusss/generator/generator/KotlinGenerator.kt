@@ -8,6 +8,7 @@ import ru.bagrusss.generator.model.Model
 import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.compiler.PluginProtos
 import com.squareup.kotlinpoet.*
+import google.protobuf.SwiftDescriptor
 import ru.bagrusss.generator.kotlin.fields.*
 import java.io.File
 import java.io.InputStream
@@ -36,6 +37,7 @@ class KotlinGenerator(private val input: InputStream,
 
     private val packagesSet = TreeSet<String>()
     private val protoToJavaPackagesMap = HashMap<String, String>()
+    private val mapsSet = TreeSet<String>()
 
 
     private fun writeClass(path: String, fileName: String, classBody: String) {
@@ -110,11 +112,14 @@ class KotlinGenerator(private val input: InputStream,
             }
 
             if (node.fieldList.isNotEmpty()) {
+                val isMap = node.options.mapEntry
                 val classModelBuilder = KotlinClassModel.Builder(realmPackage, className, protoFullName)
-                                                        .isMap(node.options.mapEntry)
+                                                        .isMap(isMap)
+                if (isMap)
+                    mapsSet.add("$protoFilePackage.${node.name}")
 
-                Logger.log("generate $protoFullName")
-                Logger.log("options = ${node.options} isMap = ${node.options.mapEntry} \n")
+                Logger.log("generate $protoFullName, nodeName = ${node.name}")
+                Logger.log("options = ${node.options} isMap = $isMap \n")
 
                 node.fieldList.forEach { field ->
                     val property = generateProperty(field)
@@ -133,6 +138,12 @@ class KotlinGenerator(private val input: InputStream,
 
     private fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*> {
         Logger.log("Field_ name=${field.name}, type=${field.typeName}, field=$field")
+
+        /*val extension = field.options.getExtension(SwiftDescriptor.swiftFieldOptions)
+        extension.allFields.forEach { k, v ->
+            Logger.log("field extensions $k, $v")
+        }*/
+
         val fieldBuilder = when (field.type) {
             ProtobufType.TYPE_INT32 -> IntField.newBuilder()
             ProtobufType.TYPE_INT64 -> LongField.newBuilder()
@@ -148,7 +159,8 @@ class KotlinGenerator(private val input: InputStream,
             ProtobufType.TYPE_BOOL -> BoolField.newBuilder()
             ProtobufType.TYPE_BYTES -> ByteArrayField.newBuilder()
             ProtobufType.TYPE_MESSAGE -> {
-                val builder = MessageField.newBuilder()
+                val fullProtoName = field.typeName.substring(1)
+                val builder = if (!mapsSet.contains(fullProtoName)) MessageField.newBuilder() else MapField.newBuilder()
                 val protoPackage = if (field.typeName.indexOf(protoFilePackage) == 1)
                                        protoFilePackage
                                    else packagesSet.first { field.typeName.indexOf(it) == 1 }
@@ -167,7 +179,7 @@ class KotlinGenerator(private val input: InputStream,
                     .repeated(field.label == REPEATED)
                     .fieldName(field.name)
                     .realmPackage(realmPackage)
-                    .primaryKey(field.hasOptions())
+                    .primaryKey(field.hasOptions() || field.name == "id")
                     .prefix(prefix)
 
 

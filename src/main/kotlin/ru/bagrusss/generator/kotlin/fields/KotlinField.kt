@@ -17,7 +17,7 @@ abstract class KotlinField<T>(builder: FieldBuilder<T>): Field<T>(builder) {
 
     open fun getPropSpec(): PropertySpec {
 
-        var classTypeName: String? = null
+        var classTypeName = ""
 
         val propSpecBuilder = if (!repeated) {
                                   PropertySpec.builder(fieldName, if (isPrimitive())
@@ -73,25 +73,11 @@ abstract class KotlinField<T>(builder: FieldBuilder<T>): Field<T>(builder) {
                                             .append(fromProtoInitializer())
 
             } else {
-                toProtoBuilder.append("addAll")
-                              .append(fieldName.substring(0, 1).toUpperCase())
-                              .append(fieldName.substring(1))
-                              .append("(it.map { ${repeatedToProtoInitializer()} })")
+                val toProtoFill = repeatedToProtoFill()
+                toProtoBuilder.append(toProtoFill)
 
-
-                realmProtoConstructorBuilder.append(".")
-                                            .append(fieldName)
-                                            .append("Count > 0) {\n")
-                                            .append(fieldName)
-                                            .append(" = RealmList()\n")
-                                            .append(fieldName)
-                                            .append("!!.addAll(")
-                                            .append(protoConstructorParameter)
-                                            .append('.')
-                                            .append(fieldName)
-                                            .append("List.map { ")
-                                            .append(classTypeName)
-                                            .append("(${repeatedFromProtoInitializer()}) })}")
+                val constructorFill = repeatedFromProtoFill(classTypeName)
+                realmProtoConstructorBuilder.append(constructorFill)
 
             }
             toProtoBuilder.append(" }")
@@ -118,4 +104,29 @@ abstract class KotlinField<T>(builder: FieldBuilder<T>): Field<T>(builder) {
 
     open fun toProtoInitializer() = ""
     open fun fromProtoInitializer() = ""
+
+    open fun repeatedToProtoFill(): String {
+        return StringBuilder().append("addAll")
+                              .append(fieldName.substring(0, 1).toUpperCase())
+                              .append(fieldName.substring(1))
+                              .append("(it.map { ${repeatedToProtoInitializer()} })")
+                              .toString()
+    }
+
+    open fun repeatedFromProtoFill(classTypeName: String): String {
+        return StringBuilder().append(".")
+                              .append(fieldName)
+                              .append("Count > 0) {\n")
+                              .append(fieldName)
+                              .append(" = RealmList()\n")
+                              .append(fieldName)
+                              .append("!!.addAll(")
+                              .append(protoConstructorParameter)
+                              .append('.')
+                              .append(fieldName)
+                              .append("List.map { ")
+                              .append(classTypeName)
+                              .append("(${repeatedFromProtoInitializer()}) })}")
+                              .toString()
+    }
 }
