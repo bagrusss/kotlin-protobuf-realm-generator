@@ -32,7 +32,7 @@ abstract class FieldBuilder<T> {
         optional = isOptional
     }
 
-    fun repeated(isRepeated: Boolean) = apply {
+    open fun repeated(isRepeated: Boolean) = apply {
         if (isRepeated) {
             optional(true)
         }

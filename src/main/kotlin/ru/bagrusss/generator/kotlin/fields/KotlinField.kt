@@ -12,12 +12,12 @@ abstract class KotlinField<T>(builder: FieldBuilder<T>): Field<T>(builder) {
     protected val propertySpec by lazy { getPropSpec() }
     protected val kotlinFieldType by lazy { getFieldType() }
 
+    private var classTypeName = ""
+
     open fun repeatedToProtoInitializer() = ""
     open fun repeatedFromProtoInitializer() = ""
 
     open fun getPropSpec(): PropertySpec {
-
-        var classTypeName = ""
 
         val propSpecBuilder = if (!repeated) {
                                   PropertySpec.builder(fieldName, if (isPrimitive())
@@ -76,7 +76,7 @@ abstract class KotlinField<T>(builder: FieldBuilder<T>): Field<T>(builder) {
                 val toProtoFill = repeatedToProtoFill()
                 toProtoBuilder.append(toProtoFill)
 
-                val constructorFill = repeatedFromProtoFill(classTypeName)
+                val constructorFill = repeatedFromProtoFill()
                 realmProtoConstructorBuilder.append(constructorFill)
 
             }
@@ -113,7 +113,7 @@ abstract class KotlinField<T>(builder: FieldBuilder<T>): Field<T>(builder) {
                               .toString()
     }
 
-    open fun repeatedFromProtoFill(classTypeName: String): String {
+    open fun repeatedFromProtoFill(): String {
         return StringBuilder().append(".")
                               .append(fieldName)
                               .append("Count > 0) {\n")

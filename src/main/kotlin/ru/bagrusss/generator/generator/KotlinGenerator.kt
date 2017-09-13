@@ -98,25 +98,34 @@ class KotlinGenerator(private val input: InputStream,
                 }
             }
         }
+
+        Logger.log("maps:")
+        mapsSet.forEach {
+            Logger.log(it)
+        }
+
         response.build().writeTo(output)
+
+
     }
 
     private fun parseCurrent(node: DescriptorProtos.DescriptorProto, parentNameOriginal: String = "", parentNameRealm: String = "") {
         if (filter(node)) {
             val realmPackage = "$realmPackage.$protoFilePackage"
-            val className = "${if (parentNameRealm.isNotEmpty()) parentNameRealm.replace(".", "") else prefix}${node.name}"
-            val protoFullName = "$protoFileJavaPackage.${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
+            val realmClassName = "${if (parentNameRealm.isNotEmpty()) parentNameRealm.replace(".", "") else prefix}${node.name}"
+            val fullName = "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
+            val protoFullName = "$protoFileJavaPackage.$fullName"
 
             node.nestedTypeList.forEach {
-                parseCurrent(it, "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else "" }${node.name}", className)
+                parseCurrent(it, "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else "" }${node.name}", realmClassName)
             }
 
             if (node.fieldList.isNotEmpty()) {
                 val isMap = node.options.mapEntry
-                val classModelBuilder = KotlinClassModel.Builder(realmPackage, className, protoFullName)
+                val classModelBuilder = KotlinClassModel.Builder(realmPackage, realmClassName, protoFullName)
                                                         .isMap(isMap)
                 if (isMap)
-                    mapsSet.add("$protoFilePackage.${node.name}")
+                    mapsSet.add("$protoFilePackage.$fullName")
 
                 Logger.log("generate $protoFullName, nodeName = ${node.name}")
                 Logger.log("options = ${node.options} isMap = $isMap \n")
@@ -160,7 +169,12 @@ class KotlinGenerator(private val input: InputStream,
             ProtobufType.TYPE_BYTES -> ByteArrayField.newBuilder()
             ProtobufType.TYPE_MESSAGE -> {
                 val fullProtoName = field.typeName.substring(1)
-                val builder = if (!mapsSet.contains(fullProtoName)) MessageField.newBuilder() else MapField.newBuilder()
+                val builder = if (!mapsSet.contains(fullProtoName))
+                                  MessageField.newBuilder()
+                              else {
+                                  Logger.log("map field builder")
+                                  MapField.newBuilder()
+                              }
                 val protoPackage = if (field.typeName.indexOf(protoFilePackage) == 1)
                                        protoFilePackage
                                    else packagesSet.first { field.typeName.indexOf(it) == 1 }
@@ -179,7 +193,7 @@ class KotlinGenerator(private val input: InputStream,
                     .repeated(field.label == REPEATED)
                     .fieldName(field.name)
                     .realmPackage(realmPackage)
-                    .primaryKey(field.hasOptions() || field.name == "id")
+                    .primaryKey(field.hasOptions())
                     .prefix(prefix)
 
 
