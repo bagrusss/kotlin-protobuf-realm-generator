@@ -26,3 +26,16 @@ abstract class Field<T>(builder: FieldBuilder<T>) {
     lateinit var toProtoInitializer: String
     lateinit var fromProtoInitializer: String
 }
+
+enum class TYPE {
+    BOOL,
+    INT,
+    LONG,
+    FLOAT,
+    DOUBLE,
+    STRING,
+    BYTES,
+    ENUM,
+    MESSAGE,
+    MAP
+}

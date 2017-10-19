@@ -1,4 +1,4 @@
-package ru.bagrusss.generator.react
+package ru.bagrusss.generator.react.kotlin.field
 
 import ru.bagrusss.generator.fields.FieldBuilder
 

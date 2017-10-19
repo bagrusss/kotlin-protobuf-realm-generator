@@ -4,39 +4,28 @@ import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.compiler.PluginProtos
 import ru.bagrusss.generator.Logger
 import ru.bagrusss.generator.fields.Field
+import ru.bagrusss.generator.fields.TYPE
+import ru.bagrusss.generator.generator.Generator
 import ru.bagrusss.generator.realm.kotlin.fields.RealmFieldBuilder
 import ru.bagrusss.generator.model.Model
 import java.io.File
 import java.io.InputStream
 import java.io.PrintStream
 import java.io.PrintWriter
-import java.util.TreeSet
 
 internal typealias ProtobufType = DescriptorProtos.FieldDescriptorProto.Type
 
-abstract class DefaultRealmGenerator(private val input: InputStream,
-                                     private val output: PrintStream,
-                                     protected val realmPath: String,
+abstract class DefaultRealmGenerator(input: InputStream,
+                                     output: PrintStream,
+                                     private val realmPath: String,
                                      protected val realmPackage: String,
                                      protected val prefix: String,
-                                     private val entitiesFactory: RealmEntityFactory) {
-
-    protected var protoFilePackage = ""
-    protected var protoFileJavaPackage = ""
-
-    protected val OPTIONAL = DescriptorProtos.FieldDescriptorProto.Label.LABEL_OPTIONAL
-    protected val REPEATED = DescriptorProtos.FieldDescriptorProto.Label.LABEL_REPEATED
-
-    protected val packagesSet = TreeSet<String>()
-    protected val protoToJavaPackagesMap = HashMap<String, String>()
-    protected val mapsSet = TreeSet<String>()
+                                     private val entitiesFactory: RealmEntityFactory): Generator(input, output) {
 
 
     abstract fun generatePrimitives(responseBuilder: PluginProtos.CodeGeneratorResponse.Builder)
 
-    abstract fun filter(node: DescriptorProtos.DescriptorProto): Boolean
-
-    open fun generate() {
+    override fun generate() {
         Logger.prepare()
 
         val response = PluginProtos.CodeGeneratorResponse.newBuilder()
@@ -61,7 +50,8 @@ abstract class DefaultRealmGenerator(private val input: InputStream,
             }
         }
 
-        response.build().writeTo(output)
+        response.build()
+                .writeTo(output)
 
 
     }
