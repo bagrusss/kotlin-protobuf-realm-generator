@@ -1,12 +1,12 @@
 package ru.bagrusss.generator.generator
 
-class Config private constructor(builder: ConfigBuilder) {
+class RealmConfig private constructor(builder: ConfigBuilder) {
 
-    val lang = builder.lang
-    val serializer = builder.serializer
-    val realmPath = builder.realmPath
-    val realmPackage = builder.realmPackage
-    val prefix = builder.prefix
+    val lang            = builder.lang
+    val serializer      = builder.serializer
+    val realmPath       = builder.realmPath
+    val realmPackage    = builder.realmPackage
+    val prefix          = builder.prefix
 
     init {
         if (realmPackage.isEmpty())
@@ -44,7 +44,7 @@ class Config private constructor(builder: ConfigBuilder) {
             this.prefix = prefix
         }
 
-        fun build(): Config = Config(this)
+        fun build(): RealmConfig = RealmConfig(this)
     }
 
     companion object {

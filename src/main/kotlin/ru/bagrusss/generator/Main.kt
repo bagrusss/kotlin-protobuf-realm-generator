@@ -1,6 +1,7 @@
 package ru.bagrusss.generator
 
 import ru.bagrusss.generator.generator.*
+import ru.bagrusss.generator.react.kotlin.KotlinReactGenerator
 
 
 /**
@@ -16,7 +17,7 @@ object Main {
         val realmPath = currentDir + "/${System.getenv("realm_path")}"
         val realmPackage = System.getenv("realm_package")
 
-        val config = Config.newBuilder()
+        val config = RealmConfig.newBuilder()
                            .realmPath(realmPath)
                            .realmPackage(realmPackage)
                            .lang(Lang.KOTLIN)
@@ -25,6 +26,9 @@ object Main {
 
         GeneratorFactory(config, System.`in`, System.out).generator.generate()
 
+
+        val reactPath = System.getProperty("react_path")
+        KotlinReactGenerator(System.`in`, System.out, reactPath).generate()
     }
 
 }

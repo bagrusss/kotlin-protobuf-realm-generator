@@ -15,6 +15,8 @@ abstract class KotlinRealmField<T>(builder: RealmFieldBuilder<T>): RealmField<T>
     open fun repeatedToProtoInitializer() = ""
     open fun repeatedFromProtoInitializer() = ""
 
+    protected abstract fun getFieldType(): String
+
     open fun getPropSpec(): PropertySpec {
 
         val propSpecBuilder = if (!repeated) {

@@ -20,7 +20,6 @@ abstract class Field<T>(builder: FieldBuilder<T>) {
 
     protected val protoConstructorParameter = "protoModel"
 
-    protected abstract fun getFieldType(): String
     protected abstract fun isPrimitive(): Boolean
 
     lateinit var toProtoInitializer: String

@@ -6,7 +6,8 @@ import java.io.InputStream
 import java.io.PrintStream
 
 class KotlinReactGenerator(input: InputStream,
-                           output: PrintStream): Generator(input, output) {
+                           output: PrintStream,
+                           private val reactPath: String): Generator(input, output) {
 
     override fun generate() {
 
