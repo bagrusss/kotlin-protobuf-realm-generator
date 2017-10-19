@@ -1,11 +1,10 @@
-package ru.bagrusss.generator.kotlin.model
+package ru.bagrusss.generator.realm.kotlin.model
 
 import ru.bagrusss.generator.model.Model
-import ru.bagrusss.generator.model.RealmModelBuilder
 import com.squareup.kotlinpoet.ClassName
+import ru.bagrusss.generator.realm.kotlin.RealmModelBuilder
 
 abstract class KotlinModel : Model {
-
 
     protected constructor(builder: RealmModelBuilder) : super(builder)
 

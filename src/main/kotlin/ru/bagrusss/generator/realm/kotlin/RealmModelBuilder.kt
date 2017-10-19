@@ -1,6 +1,7 @@
-package ru.bagrusss.generator.model
+package ru.bagrusss.generator.realm.kotlin
 
 import ru.bagrusss.generator.fields.Field
+import ru.bagrusss.generator.model.Model
 
 abstract class RealmModelBuilder {
 

@@ -1,13 +1,11 @@
-package ru.bagrusss.generator.kotlin.fields
+package ru.bagrusss.generator.realm.kotlin.fields
 
-import ru.bagrusss.generator.fields.Field
-import ru.bagrusss.generator.fields.FieldBuilder
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.PropertySpec
 
-abstract class KotlinField<T>(builder: FieldBuilder<T>): Field<T>(builder) {
+abstract class KotlinRealmField<T>(builder: RealmFieldBuilder<T>): RealmField<T>(builder) {
 
     protected val propertySpec by lazy { getPropSpec() }
     protected val kotlinFieldType by lazy { getFieldType() }

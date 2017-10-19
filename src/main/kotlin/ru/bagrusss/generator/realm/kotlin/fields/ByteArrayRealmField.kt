@@ -1,6 +1,5 @@
-package ru.bagrusss.generator.kotlin.fields
+package ru.bagrusss.generator.realm.kotlin.fields
 
-import ru.bagrusss.generator.fields.FieldBuilder
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
@@ -8,13 +7,13 @@ import com.squareup.kotlinpoet.PropertySpec
 /**
  * Created by bagrusss on 12.07.17
  */
-class ByteArrayField private constructor(builder: Builder): KotlinField<ByteArrayField>(builder) {
+class ByteArrayRealmField private constructor(builder: Builder): KotlinRealmField<ByteArrayRealmField>(builder) {
 
     override fun isPrimitive() = false
 
-    class Builder internal constructor(): FieldBuilder<ByteArrayField>() {
+    class Builder internal constructor(): RealmFieldBuilder<ByteArrayRealmField>() {
 
-        override fun build() = ByteArrayField(this)
+        override fun build() = ByteArrayRealmField(this)
 
     }
 

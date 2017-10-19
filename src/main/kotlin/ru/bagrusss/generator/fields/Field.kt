@@ -15,9 +15,7 @@ abstract class Field<T>(builder: FieldBuilder<T>) {
     protected val initializerArgs      = builder.initializerArgs
     protected val generateToProto      = builder.generateToProto
     protected val generateFromProto    = builder.generateFromProto
-    protected val primaryKey           = builder.primaryKey
     protected val parentName           = builder.parentName
-    protected val realmPackage         = builder.realmPackage
     protected val protoPackage         = builder.protoPackage
 
     protected val protoConstructorParameter = "protoModel"

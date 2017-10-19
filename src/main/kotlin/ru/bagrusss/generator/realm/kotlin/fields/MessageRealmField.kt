@@ -1,19 +1,18 @@
-package ru.bagrusss.generator.kotlin.fields
+package ru.bagrusss.generator.realm.kotlin.fields
 
 import ru.bagrusss.generator.fields.Field
-import ru.bagrusss.generator.fields.FieldBuilder
 
 /**
  * Created by bagrusss on 12.07.17
  */
-class MessageField private constructor(builder: Builder): KotlinField<MessageField>(builder) {
+class MessageRealmField private constructor(builder: Builder): KotlinRealmField<MessageRealmField>(builder) {
 
     override fun isPrimitive() = false
 
-    class Builder internal constructor(): FieldBuilder<MessageField>() {
-        override fun build(): Field<MessageField> {
+    class Builder internal constructor(): RealmFieldBuilder<MessageRealmField>() {
+        override fun build(): Field<MessageRealmField> {
             initializer("$realmPackage.$protoPackage$typePrefix$fullProtoTypeName()")
-            return MessageField(this)
+            return MessageRealmField(this)
         }
 
     }

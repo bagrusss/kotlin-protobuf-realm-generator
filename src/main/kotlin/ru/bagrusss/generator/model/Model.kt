@@ -1,6 +1,7 @@
 package ru.bagrusss.generator.model
 
 import com.squareup.kotlinpoet.ClassName
+import ru.bagrusss.generator.realm.kotlin.RealmModelBuilder
 
 abstract class Model {
 

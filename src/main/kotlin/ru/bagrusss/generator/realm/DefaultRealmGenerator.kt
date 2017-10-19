@@ -1,11 +1,10 @@
-package ru.bagrusss.generator.generator
+package ru.bagrusss.generator.realm
 
 import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.compiler.PluginProtos
 import ru.bagrusss.generator.Logger
 import ru.bagrusss.generator.fields.Field
-import ru.bagrusss.generator.fields.EntityFactory
-import ru.bagrusss.generator.fields.TYPE
+import ru.bagrusss.generator.realm.kotlin.fields.RealmFieldBuilder
 import ru.bagrusss.generator.model.Model
 import java.io.File
 import java.io.InputStream
@@ -20,7 +19,7 @@ abstract class DefaultRealmGenerator(private val input: InputStream,
                                      protected val realmPath: String,
                                      protected val realmPackage: String,
                                      protected val prefix: String,
-                                     private val entitiesFactory: EntityFactory) {
+                                     private val entitiesFactory: RealmEntityFactory) {
 
     protected var protoFilePackage = ""
     protected var protoFileJavaPackage = ""
@@ -119,7 +118,6 @@ abstract class DefaultRealmGenerator(private val input: InputStream,
 
     private fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*> {
         Logger.log("Field_ name=${field.name}, type=${field.typeName}, field=$field")
-
         val fieldBuilder = when (field.type) {
             ProtobufType.TYPE_INT32     -> entitiesFactory.createBuilder(TYPE.INT)
             ProtobufType.TYPE_INT64     -> entitiesFactory.createBuilder(TYPE.LONG)
@@ -136,7 +134,7 @@ abstract class DefaultRealmGenerator(private val input: InputStream,
 
                 val javaPackage = protoToJavaPackagesMap[protoPackage]
                 entitiesFactory.createBuilder(TYPE.ENUM)
-                                    .fullProtoTypeName("$javaPackage$clearTypeName")
+                                    .fullProtoTypeName("$javaPackage$clearTypeName") as RealmFieldBuilder<*>
             }
             ProtobufType.TYPE_MESSAGE   -> {
                 val fullProtoName = field.typeName.substring(1)
@@ -153,20 +151,19 @@ abstract class DefaultRealmGenerator(private val input: InputStream,
                                             .replace(".", "")
 
                 builder.fullProtoTypeName(clearedFullName)
-                       .protoPackage("$protoPackage.")
+                       .protoPackage("$protoPackage.") as RealmFieldBuilder<*>
             }
 
             else                        -> throw UnsupportedOperationException("name=${field.name}, type=${field.typeName}")
         }
 
 
-        fieldBuilder.optional(field.label == OPTIONAL)
+        fieldBuilder.realmPackage(realmPackage)                                         //Just for maps
+                    .primaryKey(field.hasOptions() /*|| field.name == "id"*/ || (field.name == "key" && field.type == ProtobufType.TYPE_STRING))
+                    .optional(field.label == OPTIONAL)
                     .repeated(field.label == REPEATED)
                     .fieldName(field.name)
-                    .realmPackage(realmPackage)                                         //Just for maps
-                    .primaryKey(field.hasOptions() /*|| field.name == "id"*/ || (field.name == "key" && field.type == ProtobufType.TYPE_STRING))
                     .prefix(prefix)
-
 
         return fieldBuilder.build()
     }

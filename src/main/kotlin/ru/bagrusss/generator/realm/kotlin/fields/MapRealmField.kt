@@ -1,19 +1,19 @@
-package ru.bagrusss.generator.kotlin.fields
+package ru.bagrusss.generator.realm.kotlin.fields
 
 import ru.bagrusss.generator.fields.Field
 import ru.bagrusss.generator.fields.FieldBuilder
 
-class MapField private constructor(builder: Builder) : KotlinField<MapField>(builder) {
+class MapRealmField private constructor(builder: Builder) : KotlinRealmField<MapRealmField>(builder) {
 
-    class Builder : FieldBuilder<MapField>() {
+    class Builder : RealmFieldBuilder<MapRealmField>() {
 
-        override fun repeated(isRepeated: Boolean): FieldBuilder<MapField> {
+        override fun repeated(isRepeated: Boolean): FieldBuilder<MapRealmField> {
             return super.repeated(true)
         }
 
-        override fun build(): Field<MapField> {
+        override fun build(): Field<MapRealmField> {
             initializer("$realmPackage.$protoPackage$typePrefix$fullProtoTypeName()")
-            return MapField(this)
+            return MapRealmField(this)
         }
 
     }

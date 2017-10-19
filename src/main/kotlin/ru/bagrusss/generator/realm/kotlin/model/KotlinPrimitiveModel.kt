@@ -1,4 +1,4 @@
-package ru.bagrusss.generator.kotlin.model
+package ru.bagrusss.generator.realm.kotlin.model
 
 import com.squareup.kotlinpoet.*
 

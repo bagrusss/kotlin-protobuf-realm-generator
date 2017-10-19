@@ -1,6 +1,6 @@
-package ru.bagrusss.generator.kotlin.model
+package ru.bagrusss.generator.realm.kotlin.model
 
-import ru.bagrusss.generator.kotlin.fields.KotlinField
+import ru.bagrusss.generator.realm.kotlin.fields.KotlinRealmField
 import ru.bagrusss.generator.model.Model
 import com.squareup.kotlinpoet.*
 
@@ -41,7 +41,7 @@ class KotlinClassModel private constructor(builder: BuilderRealm): KotlinModel(b
         toProtoMethodBuilder.addStatement("val p = ${builder.protoClassFullName}.newBuilder()")
 
         builder.fieldsList
-               .map { it as KotlinField }
+               .map { it as KotlinRealmField }
                .forEach {
                    classNameBuilder.addProperty(it.getPropSpec())
                    toProtoMethodBuilder.addStatement(it.toProtoInitializer)

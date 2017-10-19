@@ -1,6 +1,5 @@
-package ru.bagrusss.generator.kotlin.fields
+package ru.bagrusss.generator.realm.kotlin.fields
 
-import ru.bagrusss.generator.fields.FieldBuilder
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
@@ -9,11 +8,11 @@ import com.squareup.kotlinpoet.PropertySpec
 /**
  * Created by bagrusss on 12.07.17
  */
-class EnumField private constructor(builder: Builder): KotlinPrimitiveField<EnumField>(builder) {
+class EnumRealmField private constructor(builder: Builder): KotlinPrimitiveRealmField<EnumRealmField>(builder) {
 
-    class Builder internal constructor(): FieldBuilder<EnumField>() {
+    class Builder internal constructor(): RealmFieldBuilder<EnumRealmField>() {
 
-        override fun build() = EnumField(this)
+        override fun build() = EnumRealmField(this)
 
     }
 
