@@ -8,7 +8,7 @@ abstract class KotlinRealmModelBuilder: RealmModelBuilder() {
 
     val fieldsList: LinkedList<Field<*>> = LinkedList()
 
-    override fun <T> addField(field: Field<T>) {
+    override fun <T> addField(field: Field<T>) = apply {
         fieldsList.add(field)
     }
 }

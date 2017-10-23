@@ -7,7 +7,7 @@ import com.squareup.kotlinpoet.*
 /**
  * Created by bagrusss on 10.08.17
  */
-class KotlinClassModel private constructor(builder: BuilderRealm): KotlinModel(builder) {
+class KotlinClassModel private constructor(builder: BuilderRealm): KotlinRealmModel(builder) {
 
     private val classNameBuilder = TypeSpec.classBuilder(builder.realmClassName)
                                            .addModifiers(KModifier.OPEN)

@@ -27,7 +27,7 @@ object Main {
         GeneratorFactory(config, System.`in`, System.out).generator.generate()
 
 
-        val reactPath = System.getProperty("react_path")
+        val reactPath = System.getenv("react_path")
         KotlinReactGenerator(System.`in`, System.out, reactPath).generate()
     }
 

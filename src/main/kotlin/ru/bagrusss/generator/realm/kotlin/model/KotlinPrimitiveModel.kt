@@ -5,7 +5,7 @@ import com.squareup.kotlinpoet.*
 class KotlinPrimitiveModel(realmPackage: String,
                            prefix: String,
                            primitiveClassName: ClassName,
-                           defValue: Any): KotlinModel(realmPackage, prefix + primitiveClassName.simpleName()) {
+                           defValue: Any): KotlinRealmModel(realmPackage, prefix + primitiveClassName.simpleName()) {
 
     private val body: String
 

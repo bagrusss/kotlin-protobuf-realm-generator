@@ -8,6 +8,7 @@ import ru.bagrusss.generator.fields.TYPE
 import ru.bagrusss.generator.generator.Generator
 import ru.bagrusss.generator.realm.kotlin.fields.RealmFieldBuilder
 import ru.bagrusss.generator.model.Model
+import ru.bagrusss.generator.realm.kotlin.RealmModelBuilder
 import java.io.File
 import java.io.InputStream
 import java.io.PrintStream
@@ -85,7 +86,7 @@ abstract class DefaultRealmGenerator(input: InputStream,
                                                        .realmPackageName(realmPackage)
                                                        .realmClassName(realmClassName)
                                                        .protoClassFullName(protoFullName)
-                                                       .isMap(isMap)
+                                                       .isMap(isMap) as RealmModelBuilder
                 if (isMap)
                     mapsSet.add("$protoFilePackage.$fullName")
 
@@ -96,7 +97,7 @@ abstract class DefaultRealmGenerator(input: InputStream,
                     classModelBuilder.addField(property)
                 }
 
-                val model: Model = classModelBuilder.build()
+                val model = classModelBuilder.build() as RealmModel
 
                 writeClass("$realmPath${File.separator}$protoFilePackage", model.getFileName(), model.getModelBody())
 

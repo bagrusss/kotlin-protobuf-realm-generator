@@ -30,7 +30,7 @@ class KotlinRealmGenerator(input: InputStream,
                 Pair(DOUBLE, 0.0),
                 Pair(BOOLEAN, false),
                 Pair(ClassName("kotlin", "String"), "\"\"")).forEach {
-            val primitiveModel: Model = KotlinPrimitiveModel(realmPackage, prefix, it.first, it.second)
+            val primitiveModel = KotlinPrimitiveModel(realmPackage, prefix, it.first, it.second)
             val realmTypeFile = PluginProtos.CodeGeneratorResponse
                                             .File
                                             .newBuilder()
