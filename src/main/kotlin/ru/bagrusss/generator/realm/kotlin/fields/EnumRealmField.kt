@@ -8,7 +8,7 @@ import com.squareup.kotlinpoet.PropertySpec
 /**
  * Created by bagrusss on 12.07.17
  */
-class EnumRealmField private constructor(builder: Builder): KotlinPrimitiveRealmField<EnumRealmField>(builder) {
+class EnumRealmField private constructor(builder: Builder): PrimitiveRealmField<EnumRealmField>(builder) {
 
     class Builder internal constructor(): RealmFieldBuilder<EnumRealmField>() {
 

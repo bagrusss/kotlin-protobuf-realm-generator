@@ -11,12 +11,6 @@ abstract class RealmModelBuilder<I>: ModelBuilder<I>() {
 
     internal var isMap = false
 
-    val fieldsList: LinkedList<Field<*>> = LinkedList()
-
-    override fun <T> addField(field: Field<T>) = apply {
-        fieldsList.add(field)
-    }
-
     fun realmPackageName(realmPackageName: String) = apply {
         this.realmPackageName = realmPackageName
     }

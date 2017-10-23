@@ -3,7 +3,7 @@ package ru.bagrusss.generator.realm.kotlin.fields
 /**
  * Created by bagrusss on 12.07.17
  */
-class LongRealmField(builder: Builder): KotlinPrimitiveRealmField<LongRealmField>(builder) {
+class LongRealmField(builder: Builder): PrimitiveRealmField<LongRealmField>(builder) {
 
     override fun getFieldType() = "kotlin.Long"
 

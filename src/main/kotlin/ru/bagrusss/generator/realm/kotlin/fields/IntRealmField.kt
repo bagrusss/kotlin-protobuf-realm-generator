@@ -3,7 +3,7 @@ package ru.bagrusss.generator.realm.kotlin.fields
 /**
  * Created by bagrusss on 12.07.17
  */
-class IntRealmField private constructor(builder: Builder) : KotlinPrimitiveRealmField<IntRealmField>(builder) {
+class IntRealmField private constructor(builder: Builder) : PrimitiveRealmField<IntRealmField>(builder) {
 
     override fun getFieldType() = "kotlin.Int"
 

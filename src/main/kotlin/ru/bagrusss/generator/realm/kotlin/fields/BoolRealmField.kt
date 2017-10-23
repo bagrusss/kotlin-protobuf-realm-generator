@@ -3,7 +3,7 @@ package ru.bagrusss.generator.realm.kotlin.fields
 /**
  * Created by bagrusss on 12.07.17
  */
-class BoolRealmField private constructor(builder: Builder): KotlinPrimitiveRealmField<BoolRealmField>(builder) {
+class BoolRealmField private constructor(builder: Builder): PrimitiveRealmField<BoolRealmField>(builder) {
 
     override fun getFieldType() = "kotlin.Boolean"
 

@@ -4,7 +4,7 @@ package ru.bagrusss.generator.realm.kotlin.fields
  * Created by bagrusss on 12.07.17
  * used for primitive types and strings
  */
- abstract class KotlinPrimitiveRealmField<T>(builder: RealmFieldBuilder<T>): KotlinRealmField<T>(builder) {
+ abstract class PrimitiveRealmField<T>(builder: RealmFieldBuilder<T>): KotlinRealmField<T>(builder) {
 
     override fun isPrimitive() = true
 

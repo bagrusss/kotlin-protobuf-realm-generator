@@ -3,7 +3,7 @@ package ru.bagrusss.generator.realm.kotlin.fields
 /**
  * Created by bagrusss on 12.07.17
  */
-class DoubleRealmField private constructor(builder: Builder): KotlinPrimitiveRealmField<DoubleRealmField>(builder) {
+class DoubleRealmField private constructor(builder: Builder): PrimitiveRealmField<DoubleRealmField>(builder) {
 
     override fun getFieldType() = "kotlin.Double"
 
