@@ -1,15 +1,18 @@
 package ru.bagrusss.generator.react.kotlin.model
 
-abstract class ReactModelBuilder {
+abstract class ReactModelBuilder<I> {
 
     internal var protoClassFullName = ""
-
-    private val readableMapClass = "com.facebook.react.bridge.ReadableMap"
+    internal var fileName = ""
 
     fun protoClassFullName(protoClassFullName: String) = apply {
         this.protoClassFullName = protoClassFullName
     }
 
-    abstract fun build(): ReactModel
+    fun fileName(fileName: String) = apply {
+        this.fileName = fileName
+    }
+
+    abstract fun build(): ReactModel<I>
 
 }

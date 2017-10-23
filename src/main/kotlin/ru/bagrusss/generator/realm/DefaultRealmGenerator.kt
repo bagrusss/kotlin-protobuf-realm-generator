@@ -16,12 +16,12 @@ import java.io.PrintWriter
 
 internal typealias ProtobufType = DescriptorProtos.FieldDescriptorProto.Type
 
-abstract class DefaultRealmGenerator(input: InputStream,
+abstract class DefaultRealmGenerator<I>(input: InputStream,
                                      output: PrintStream,
                                      private val realmPath: String,
                                      protected val realmPackage: String,
                                      protected val prefix: String,
-                                     private val entitiesFactory: RealmEntityFactory): Generator(input, output) {
+                                     private val entitiesFactory: RealmEntityFactory<I>): Generator(input, output) {
 
 
     abstract fun generatePrimitives(responseBuilder: PluginProtos.CodeGeneratorResponse.Builder)

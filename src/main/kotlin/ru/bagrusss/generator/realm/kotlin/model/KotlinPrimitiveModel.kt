@@ -5,7 +5,9 @@ import com.squareup.kotlinpoet.*
 class KotlinPrimitiveModel(realmPackage: String,
                            prefix: String,
                            primitiveClassName: ClassName,
-                           defValue: Any): KotlinRealmModel(realmPackage, prefix + primitiveClassName.simpleName()) {
+                           defValue: Any): KotlinRealmModel<KotlinPrimitiveModel>(realmPackage, prefix + primitiveClassName.simpleName()) {
+
+    override fun getImpl() = this
 
     private val body: String
 

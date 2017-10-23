@@ -7,6 +7,7 @@ import com.google.protobuf.compiler.PluginProtos
 import com.squareup.kotlinpoet.*
 import ru.bagrusss.generator.realm.RealmEntityFactory
 import ru.bagrusss.generator.realm.DefaultRealmGenerator
+import ru.bagrusss.generator.realm.kotlin.model.KotlinClassModel
 import java.io.InputStream
 import java.io.PrintStream
 
@@ -16,7 +17,7 @@ class KotlinRealmGenerator(input: InputStream,
                            realmPath: String,
                            realmPackage: String,
                            prefix: String,
-                           factory: RealmEntityFactory): DefaultRealmGenerator(input, output, realmPath, realmPackage, prefix, factory) {
+                           factory: RealmEntityFactory<KotlinClassModel>): DefaultRealmGenerator<KotlinClassModel>(input, output, realmPath, realmPackage, prefix, factory) {
 
     override fun filter(node: DescriptorProtos.DescriptorProto): Boolean {
         return !protoFileJavaPackage.contains("google", true)

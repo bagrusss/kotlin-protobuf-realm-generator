@@ -3,7 +3,7 @@ package ru.bagrusss.generator.model
 import ru.bagrusss.generator.fields.Field
 
 
-abstract class ModelBuilder {
+abstract class ModelBuilder<I> {
 
     internal var protoClassFullName = ""
 
@@ -11,10 +11,10 @@ abstract class ModelBuilder {
         this.protoClassFullName = protoClassFullName
     }
 
-    abstract fun isMap(isMap: Boolean): ModelBuilder
+    abstract fun isMap(isMap: Boolean): ModelBuilder<I>
 
-    abstract fun <T> addField(field: Field<T>): ModelBuilder
+    abstract fun <T> addField(field: Field<T>): ModelBuilder<I>
 
-    abstract fun build(): Model
+    abstract fun build(): Model<I>
 
 }

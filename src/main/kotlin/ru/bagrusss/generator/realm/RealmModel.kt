@@ -4,11 +4,11 @@ import com.squareup.kotlinpoet.ClassName
 import ru.bagrusss.generator.model.Model
 import ru.bagrusss.generator.realm.kotlin.RealmModelBuilder
 
-abstract class RealmModel: Model {
+abstract class RealmModel<I> : Model<I> {
 
     protected val className: ClassName
 
-    constructor(builder: RealmModelBuilder) {
+    constructor(builder: RealmModelBuilder<I>) {
         className = ClassName(builder.realmPackageName, builder.realmClassName)
     }
 

@@ -5,9 +5,9 @@ import ru.bagrusss.generator.realm.kotlin.fields.RealmFieldBuilder
 import ru.bagrusss.generator.generator.Serializer
 import ru.bagrusss.generator.realm.kotlin.RealmModelBuilder
 
-abstract class RealmEntityFactory(serializer: Serializer) {
+abstract class RealmEntityFactory<I>(serializer: Serializer) {
 
     abstract fun createBuilder(type: TYPE): RealmFieldBuilder<*>
 
-    abstract fun createModelBuilder(): RealmModelBuilder
+    abstract fun createModelBuilder(): RealmModelBuilder<I>
 }
