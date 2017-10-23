@@ -56,7 +56,7 @@ class KotlinReactModel private constructor(builder: Builder): ReactModel<FunSpec
                           }
 
         toWritableBodyBuilder.append("}\n")
-        fromReadableBodyBuilder.append("\nbuild()\n}\n")
+        fromReadableBodyBuilder.append("\n\tbuild()\n}\n")
 
         toWritableMapFun = toWritableBuilder.body(toWritableBodyBuilder.toString())
                                             .build()
