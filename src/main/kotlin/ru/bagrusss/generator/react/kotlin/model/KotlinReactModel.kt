@@ -28,7 +28,7 @@ class KotlinReactModel private constructor(builder: Builder): ReactModel<FunSpec
 
         toWritableBodyBuilder.append("return ")
                              .append(argumentsClass)
-                             .append("createMap().apply {\n")
+                             .append(".createMap().apply {\n")
 
         fromReadableBodyBuilder.append("return ")
                                .append(builder.protoClassFullName)
@@ -36,21 +36,23 @@ class KotlinReactModel private constructor(builder: Builder): ReactModel<FunSpec
 
         builder.fieldsList.map { it as ReactField<*> }
                           .forEach {
-                              toWritableBodyBuilder.append(it.putMethodName())
+                              toWritableBodyBuilder.append('\t')
+                                                   .append(it.putMethodName())
                                                    .append("(\"")
                                                    .append(it.fieldName)
                                                    .append("\", ")
                                                    .append(it.fieldName)
                                                    .append(")\n")
 
-                              fromReadableBodyBuilder.append(it.fieldName)
-                                      .append(" = ")
-                                      .append(parameter)
-                                      .append('.')
-                                      .append(it.getMethodName())
-                                      .append("(\"")
-                                      .append(it.fieldName)
-                                      .append("\")\n")
+                              fromReadableBodyBuilder.append('\t')
+                                                     .append(it.fieldName)
+                                                     .append(" = ")
+                                                     .append(parameter)
+                                                     .append('.')
+                                                     .append(it.getMethodName())
+                                                     .append("(\"")
+                                                     .append(it.fieldName)
+                                                     .append("\")\n")
                           }
 
         toWritableBodyBuilder.append("}\n")

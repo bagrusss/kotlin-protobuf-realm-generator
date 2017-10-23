@@ -19,6 +19,7 @@ class KotlinFunModel private constructor(builder: Builder): FunModel<FunSpec>(bu
                                                   .build())
         }
         specBuilder.addStatement(builder.body)
+
         spec = specBuilder.build()
     }
 

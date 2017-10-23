@@ -21,7 +21,6 @@ class KotlinReactGenerator(input: InputStream,
     private lateinit var utilsBuilder: UtilsModelBuilder<FunSpec>
 
     override fun generate() {
-        Logger.prepare()
         Logger.log("start")
 
         response = PluginProtos.CodeGeneratorResponse.newBuilder()

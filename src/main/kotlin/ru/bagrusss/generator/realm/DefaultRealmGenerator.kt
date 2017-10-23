@@ -25,8 +25,6 @@ abstract class DefaultRealmGenerator(input: InputStream,
     abstract fun generatePrimitives(responseBuilder: PluginProtos.CodeGeneratorResponse.Builder)
 
     override fun generate() {
-        Logger.prepare()
-
         response = PluginProtos.CodeGeneratorResponse.newBuilder()
         request = PluginProtos.CodeGeneratorRequest.parseFrom(input)
 

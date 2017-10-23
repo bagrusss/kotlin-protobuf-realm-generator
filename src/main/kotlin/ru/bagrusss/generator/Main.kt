@@ -19,6 +19,8 @@ object Main {
 
         val generateRealm = System.getenv("isRealm").toBoolean()
 
+        Logger.prepare()
+
         if (generateRealm) {
             val config = RealmConfig.newBuilder()
                                     .realmPath(realmPath)
