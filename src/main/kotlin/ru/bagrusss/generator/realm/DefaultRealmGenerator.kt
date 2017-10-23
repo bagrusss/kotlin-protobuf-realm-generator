@@ -29,43 +29,20 @@ abstract class DefaultRealmGenerator(input: InputStream,
     override fun generate() {
         Logger.prepare()
 
-        val response = PluginProtos.CodeGeneratorResponse.newBuilder()
-        val request = PluginProtos.CodeGeneratorRequest.parseFrom(input)
+        response = PluginProtos.CodeGeneratorResponse.newBuilder()
+        request = PluginProtos.CodeGeneratorRequest.parseFrom(input)
 
         generatePrimitives(response)
 
-        request.protoFileList.forEach { protoFile ->
-            protoFilePackage = protoFile.`package`
-            protoFileJavaPackage = protoFile.options.javaPackage
-            packagesSet.add(protoFilePackage)
-            protoToJavaPackagesMap.put(protoFilePackage, protoFileJavaPackage)
-
-
-            Logger.log("proto package java ${protoFile.options.javaPackage}")
-            protoFile.messageTypeList.forEach {
-
-                if (it.hasOptions() /*&& it.options.hasExtension(SwiftDescriptor.swiftMessageOptions)*/) {
-                    //if (it.hasOptions() && it.options.hasField(SwiftDescriptor.SwiftFileOptions.getDescriptor().fields.first { it.jsonName.contains("generate_realm_object", true) })) {
-                    parseCurrent(it)
-                }
-            }
-        }
-
-        response.build()
-                .writeTo(output)
-
+        super.generate()
 
     }
 
-    private fun writeClass(path: String, fileName: String, classBody: String) {
-        val protoPackageDir = File(path)
-        if (!protoPackageDir.exists()) {
-            protoPackageDir.mkdir()
-        }
-        val file = File(path, fileName)
-        file.createNewFile()
-        PrintWriter(file).use {
-            it.write(classBody)
+    override fun handleProtoFile(file: DescriptorProtos.DescriptorProto) {
+
+        if (file.hasOptions() /*&& it.options.hasExtension(SwiftDescriptor.swiftMessageOptions)*/) {
+            //if (it.hasOptions() && it.options.hasField(SwiftDescriptor.SwiftFileOptions.getDescriptor().fields.first { it.jsonName.contains("generate_realm_object", true) })) {
+            parseCurrent(file)
         }
     }
 
