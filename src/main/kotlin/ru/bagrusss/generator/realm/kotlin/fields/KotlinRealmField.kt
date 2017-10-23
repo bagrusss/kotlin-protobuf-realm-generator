@@ -7,6 +7,9 @@ import com.squareup.kotlinpoet.PropertySpec
 
 abstract class KotlinRealmField<T>(builder: RealmFieldBuilder<T>): RealmField<T>(builder) {
 
+    protected val generateToProto      = builder.generateToProto
+    protected val generateFromProto    = builder.generateFromProto
+
     protected val propertySpec by lazy { getPropSpec() }
     protected val kotlinFieldType by lazy { getFieldType() }
 

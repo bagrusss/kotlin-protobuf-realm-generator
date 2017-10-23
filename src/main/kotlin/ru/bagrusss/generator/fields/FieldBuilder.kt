@@ -16,8 +16,7 @@ abstract class FieldBuilder<T> {
     internal var protoTypeName = ""
     internal var fieldName = ""
     internal var parentName = ""
-    internal var generateToProto = true
-    internal var generateFromProto = true
+
     internal var protoPackage = ""
 
     abstract fun build(): Field<T>
@@ -62,14 +61,6 @@ abstract class FieldBuilder<T> {
 
     fun fieldName(name: String) = apply {
         this.fieldName = name
-    }
-
-    fun generateToProto(generate: Boolean) = apply {
-        this.generateToProto = generate
-    }
-
-    fun generateFromProto(generate: Boolean) = apply {
-        this.generateFromProto = generate
     }
 
     fun parentName(name: String) = apply {

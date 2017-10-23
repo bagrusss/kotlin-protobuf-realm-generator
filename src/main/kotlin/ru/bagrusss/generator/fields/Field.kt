@@ -13,8 +13,6 @@ abstract class Field<T>(builder: FieldBuilder<T>) {
     protected val fieldName            = builder.fieldName
     protected val initializerFormat    = builder.initializerFormat
     protected val initializerArgs      = builder.initializerArgs
-    protected val generateToProto      = builder.generateToProto
-    protected val generateFromProto    = builder.generateFromProto
     protected val parentName           = builder.parentName
     protected val protoPackage         = builder.protoPackage
 
