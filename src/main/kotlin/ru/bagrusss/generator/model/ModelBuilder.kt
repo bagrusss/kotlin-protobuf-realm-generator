@@ -4,13 +4,19 @@ import ru.bagrusss.generator.fields.Field
 import java.util.*
 
 
-abstract class ModelBuilder<I> {
+abstract class ModelBuilder {
 
     internal var protoClassFullName = ""
 
     val fieldsList: LinkedList<Field<*>> = LinkedList()
 
-    fun <T> addField(field: Field<T>) = apply {
+    internal var isMap = false
+
+    fun isMap(isMap: Boolean) = apply {
+        this.isMap = isMap
+    }
+
+    fun addField(field: Field<*>) = apply {
         fieldsList.add(field)
     }
 
@@ -18,8 +24,6 @@ abstract class ModelBuilder<I> {
         this.protoClassFullName = protoClassFullName
     }
 
-    abstract fun isMap(isMap: Boolean): ModelBuilder<I>
-
-    abstract fun build(): Model<I>
+    abstract fun build(): Model
 
 }

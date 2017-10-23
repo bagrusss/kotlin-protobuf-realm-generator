@@ -1,25 +1,60 @@
 package ru.bagrusss.generator.react.kotlin.model
 
-import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FunSpec
+import ru.bagrusss.generator.react.FunModel
+import ru.bagrusss.generator.react.FunParameter
+import ru.bagrusss.generator.react.ReactModel
+import ru.bagrusss.generator.react.ReactModelBuilder
+import ru.bagrusss.generator.react.kotlin.KotlinFunModel
 
-class KotlinReactModel(builder: ReactModelBuilder<KotlinReactModel>): ReactModel<KotlinReactModel>(builder) {
+class KotlinReactModel(builder: Builder): ReactModel(builder) {
 
-    override fun getImpl() = this
-
-    private val toWritableMapBuilder = FunSpec.builder("${builder.protoClassFullName}.toWritableMap")
-                                              .returns(ClassName("", writableMapClass))
-
-    private val toProtoBuildert = FunSpec.builder("${builder.protoClassFullName}.fromReadableMap")
-                                         .addParameter("map", ClassName("", readableMapClass))
-                                         .returns(ClassName("", builder.protoClassFullName))
+    private val toWritableMapFun: FunModel<FunSpec>
+    private val fromReadableMapFun: FunModel<FunSpec>
 
     init {
+        val toWritableBuilder = KotlinFunModel.Builder()
+                                              .name("${builder.protoClassFullName}.toWritableMap")
+                                              .returns(writableMapClass)
+
+
+
+        val fromReadableBuilder = KotlinFunModel.Builder()
+                                                .name("${builder.protoClassFullName}.fromReadableMap")
+                                                .addParameter(FunParameter("map", "readableMapClass"))
+                                                .returns(builder.protoClassFullName)
+
+        val toWritableBodyBuilder = StringBuilder()
+        val fromReadableBodyBuilder = StringBuilder()
+
+        toWritableBodyBuilder.append("return ")
+                             .append(argumentsClass)
+                             .append("createMap().apply {\n")
+
+        fromReadableBodyBuilder.append("return ")
+                               .append(builder.protoClassFullName)
+                               .append(".newBuilder().run {\n")
+
+        builder.fieldsList.forEach {
+
+        }
+
+        toWritableBodyBuilder.append("}\n")
+        fromReadableBodyBuilder.append("\nbuild()\n}\n")
+
+        toWritableMapFun = toWritableBuilder.body(toWritableBodyBuilder.toString())
+                                            .build()
+        fromReadableMapFun = fromReadableBuilder.body(fromReadableBodyBuilder.toString())
+                                                .build()
 
     }
 
-    override fun getToWritableMapBody() = ""
+    override fun getMapFunctions() = Pair(toWritableMapFun, fromReadableMapFun)
 
-    override fun getFromReadableMapBody() = ""
+    class Builder: ReactModelBuilder() {
+
+        override fun build() = KotlinReactModel(this)
+
+    }
 
 }

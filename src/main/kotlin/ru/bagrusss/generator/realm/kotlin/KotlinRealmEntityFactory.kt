@@ -7,7 +7,7 @@ import ru.bagrusss.generator.generator.Serializer
 import ru.bagrusss.generator.realm.kotlin.fields.*
 import ru.bagrusss.generator.realm.kotlin.model.KotlinClassModel
 
-class KotlinRealmEntityFactory(serializer: Serializer) : RealmEntityFactory<KotlinClassModel>(serializer) {
+class KotlinRealmEntityFactory(serializer: Serializer) : RealmEntityFactory(serializer) {
 
     override fun  createBuilder(type: TYPE): RealmFieldBuilder<*> {
         return when(type) {
@@ -24,7 +24,7 @@ class KotlinRealmEntityFactory(serializer: Serializer) : RealmEntityFactory<Kotl
         }
     }
 
-    override fun createModelBuilder(): RealmModelBuilder<KotlinClassModel> {
+    override fun createModelBuilder(): RealmModelBuilder {
         return KotlinClassModel.BuilderRealm()
     }
 

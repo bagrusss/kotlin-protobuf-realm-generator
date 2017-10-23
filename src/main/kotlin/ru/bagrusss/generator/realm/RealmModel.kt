@@ -4,20 +4,16 @@ import com.squareup.kotlinpoet.ClassName
 import ru.bagrusss.generator.model.Model
 import ru.bagrusss.generator.realm.kotlin.RealmModelBuilder
 
-abstract class RealmModel<I> : Model<I> {
+abstract class RealmModel : Model {
 
     protected val className: ClassName
 
-    constructor(builder: RealmModelBuilder<I>) {
+    constructor(builder: RealmModelBuilder) {
         className = ClassName(builder.realmPackageName, builder.realmClassName)
     }
 
     constructor(packageName: String, className: String) {
         this.className = ClassName(packageName, className)
-    }
-
-    constructor(clazz: ClassName) {
-        className = clazz
     }
 
     abstract fun getFileExtension(): String

@@ -5,9 +5,7 @@ import com.squareup.kotlinpoet.*
 class KotlinPrimitiveModel(realmPackage: String,
                            prefix: String,
                            primitiveClassName: ClassName,
-                           defValue: Any): KotlinRealmModel<KotlinPrimitiveModel>(realmPackage, prefix + primitiveClassName.simpleName()) {
-
-    override fun getImpl() = this
+                           defValue: Any): KotlinRealmModel(realmPackage, prefix + primitiveClassName.simpleName()) {
 
     private val body: String
 
@@ -20,7 +18,8 @@ class KotlinPrimitiveModel(realmPackage: String,
         classBuilder.addProperty(fieldBuilder.build())
                     .addModifiers(KModifier.OPEN)
                     .superclass(ClassName.bestGuess("io.realm.RealmObject"))
-                    .addFun(FunSpec.constructorBuilder().build())
+                    .addFun(FunSpec.constructorBuilder()
+                                   .build())
                     .addFun(FunSpec.constructorBuilder()
                                    .addParameter(ParameterSpec.builder("value", primitiveClassName).build())
                                    .addStatement("this.value = value")

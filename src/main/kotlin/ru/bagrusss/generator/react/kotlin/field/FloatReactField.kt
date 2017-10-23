@@ -1,4 +1,4 @@
 package ru.bagrusss.generator.react.kotlin.field
 
-class FloatField {
+class FloatReactField {
 }

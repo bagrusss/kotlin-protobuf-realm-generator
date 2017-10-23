@@ -20,11 +20,11 @@ class KotlinUtilsModel private constructor(builder: Builder): UtilsModel<FunSpec
         body = fileBuilder.toString()
     }
 
+    override fun getBody() = body
+
     class Builder: UtilsModelBuilder<FunSpec>() {
 
         override fun build() = KotlinUtilsModel(this)
     }
-
-    override fun getBody() = body
 
 }

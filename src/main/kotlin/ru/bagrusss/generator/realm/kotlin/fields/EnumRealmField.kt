@@ -18,7 +18,6 @@ class EnumRealmField private constructor(builder: Builder): PrimitiveRealmField<
 
     override fun getFieldType() = "kotlin.Int"
 
-
     override fun getPropSpec(): PropertySpec {
         return if (!repeated) {
             PropertySpec.builder(fieldName, ClassName.bestGuess(kotlinFieldType), KModifier.OPEN)
@@ -48,7 +47,6 @@ class EnumRealmField private constructor(builder: Builder): PrimitiveRealmField<
                                                    .append(fieldName)
                                                    .append(" = ")
                                                    .append(protoFullTypeName)
-                                                   //.append(".valueOf(")
                                                    .append(".forNumber(")
                                                    .append(fieldName)
                                                    .append(")\n")
@@ -57,7 +55,6 @@ class EnumRealmField private constructor(builder: Builder): PrimitiveRealmField<
         } else super.getPropSpec()
     }
 
-    //override fun repeatedToProtoInitializer() = "$protoFullTypeName.valueOf(it.value)"
     override fun repeatedToProtoInitializer() = "$protoFullTypeName.forNumber(it.value)"
 
     override fun repeatedFromProtoInitializer() = "it.number"

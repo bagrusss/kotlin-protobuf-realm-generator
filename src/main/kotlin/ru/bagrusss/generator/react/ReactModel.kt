@@ -1,15 +1,17 @@
-package ru.bagrusss.generator.react.kotlin.model
+package ru.bagrusss.generator.react
 
 import ru.bagrusss.generator.model.Model
 
-abstract class ReactModel<I>(builder: ReactModelBuilder<I>): Model<I>() {
+abstract class ReactModel(builder: ReactModelBuilder) : Model() {
 
     protected val writableMapClass = "com.facebook.react.bridge.WritableMap"
     protected val readableMapClass = "com.facebook.react.bridge.ReadableMap"
 
     protected val argumentsClass = "com.facebook.react.bridge.Arguments"
 
-    abstract fun getToWritableMapBody(): String
-    abstract fun getFromReadableMapBody(): String
+    /**
+     * @return first - toWritableMapFun, second - fromReadableMapFun
+     */
+    abstract fun getMapFunctions(): Pair<FunModel<*>, FunModel<*>>
 
 }

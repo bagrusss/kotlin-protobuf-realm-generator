@@ -17,7 +17,7 @@ class KotlinRealmGenerator(input: InputStream,
                            realmPath: String,
                            realmPackage: String,
                            prefix: String,
-                           factory: RealmEntityFactory<KotlinClassModel>): DefaultRealmGenerator<KotlinClassModel>(input, output, realmPath, realmPackage, prefix, factory) {
+                           factory: RealmEntityFactory): DefaultRealmGenerator(input, output, realmPath, realmPackage, prefix, factory) {
 
     override fun filter(node: DescriptorProtos.DescriptorProto): Boolean {
         return !protoFileJavaPackage.contains("google", true)

@@ -1,16 +1,13 @@
 package ru.bagrusss.generator.realm.kotlin.model
 
 import ru.bagrusss.generator.realm.kotlin.fields.KotlinRealmField
-import ru.bagrusss.generator.model.Model
 import com.squareup.kotlinpoet.*
 import ru.bagrusss.generator.realm.kotlin.RealmModelBuilder
 
 /**
  * Created by bagrusss on 10.08.17
  */
-class KotlinClassModel private constructor(builder: BuilderRealm): KotlinRealmModel<KotlinClassModel>(builder) {
-
-    override fun getImpl() = this
+class KotlinClassModel private constructor(builder: BuilderRealm): KotlinRealmModel(builder) {
 
     private val classNameBuilder = TypeSpec.classBuilder(builder.realmClassName)
                                            .addModifiers(KModifier.OPEN)
@@ -27,11 +24,9 @@ class KotlinClassModel private constructor(builder: BuilderRealm): KotlinRealmMo
     private val isMap = builder.isMap
 
 
-    class BuilderRealm: RealmModelBuilder<KotlinClassModel>() {
+    class BuilderRealm: RealmModelBuilder() {
 
-        override fun build(): Model<KotlinClassModel> {
-            return KotlinClassModel(this)
-        }
+        override fun build() = KotlinClassModel(this)
     }
 
     init {

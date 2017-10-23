@@ -1,18 +1,13 @@
-package ru.bagrusss.generator.react.kotlin.model
+package ru.bagrusss.generator.react
 
-abstract class ReactModelBuilder<I> {
+import ru.bagrusss.generator.model.ModelBuilder
 
-    internal var protoClassFullName = ""
+abstract class ReactModelBuilder: ModelBuilder() {
+
     internal var fileName = ""
-
-    fun protoClassFullName(protoClassFullName: String) = apply {
-        this.protoClassFullName = protoClassFullName
-    }
 
     fun fileName(fileName: String) = apply {
         this.fileName = fileName
     }
-
-    abstract fun build(): ReactModel<I>
 
 }
