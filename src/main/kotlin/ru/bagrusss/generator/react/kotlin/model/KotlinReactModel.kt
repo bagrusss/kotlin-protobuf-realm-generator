@@ -21,7 +21,7 @@ class KotlinReactModel(builder: Builder): ReactModel(builder) {
 
         val fromReadableBuilder = KotlinFunModel.Builder()
                                                 .name("${builder.protoClassFullName}.fromReadableMap")
-                                                .addParameter(FunParameter("map", "readableMapClass"))
+                                                .addParameter(FunParameter("map", readableMapClass))
                                                 .returns(builder.protoClassFullName)
 
         val toWritableBodyBuilder = StringBuilder()
