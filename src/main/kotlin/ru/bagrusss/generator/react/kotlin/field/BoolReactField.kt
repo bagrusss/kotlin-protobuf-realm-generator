@@ -1,13 +1,13 @@
 package ru.bagrusss.generator.react.kotlin.field
 
-import ru.bagrusss.generator.fields.Field
-import ru.bagrusss.generator.fields.FieldBuilder
 
-class BoolReactField private constructor(builder: Builder): Field<BoolReactField>(builder) {
+class BoolReactField private constructor(builder: Builder): ReactField<BoolReactField>(builder) {
+
+    override fun getReactType() = "Boolean"
 
     override fun isPrimitive() = true
 
-    class Builder: FieldBuilder<BoolReactField>() {
+    class Builder: ReactFieldBuilder<BoolReactField>() {
 
         override fun build() = BoolReactField(this)
 
