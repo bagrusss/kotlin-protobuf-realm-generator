@@ -1,17 +1,13 @@
 package ru.bagrusss.generator.react.kotlin.model
 
 import com.squareup.kotlinpoet.FunSpec
-import ru.bagrusss.generator.react.FunModel
 import ru.bagrusss.generator.react.FunParameter
 import ru.bagrusss.generator.react.ReactModel
 import ru.bagrusss.generator.react.ReactModelBuilder
 import ru.bagrusss.generator.react.kotlin.KotlinFunModel
 import ru.bagrusss.generator.react.kotlin.field.ReactField
 
-class KotlinReactModel(builder: Builder): ReactModel(builder) {
-
-    private val toWritableMapFun: FunModel<FunSpec>
-    private val fromReadableMapFun: FunModel<FunSpec>
+class KotlinReactModel private constructor(builder: Builder): ReactModel<FunSpec>(builder) {
 
     private val parameter = "map"
 
@@ -21,9 +17,8 @@ class KotlinReactModel(builder: Builder): ReactModel(builder) {
                                               .returns(writableMapClass)
 
 
-
         val fromReadableBuilder = KotlinFunModel.Builder()
-                                                .name("${builder.protoClassFullName}.fromReadableMap")
+                                                .name("${builder.protoClassFullName}.Builder.fromReadableMap")
                                                 .addParameter(FunParameter(parameter, readableMapClass))
                                                 .returns(builder.protoClassFullName)
 
@@ -38,9 +33,7 @@ class KotlinReactModel(builder: Builder): ReactModel(builder) {
                                .append(builder.protoClassFullName)
                                .append(".newBuilder().run {\n")
 
-        builder.fieldsList.map {
-                              it as ReactField<*>
-                          }
+        builder.fieldsList.map { it as ReactField<*> }
                           .forEach {
                               toWritableBodyBuilder.append(it.putMethodName())
                                                    .append("(\"")
