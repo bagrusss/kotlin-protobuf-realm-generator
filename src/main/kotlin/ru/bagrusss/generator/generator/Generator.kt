@@ -25,7 +25,7 @@ abstract class Generator(protected val input: InputStream,
     protected lateinit var response: PluginProtos.CodeGeneratorResponse.Builder
     protected lateinit var request:  PluginProtos.CodeGeneratorRequest
 
-    protected fun writeClass(path: String, fileName: String, classBody: String) {
+    protected fun writeFile(path: String, fileName: String, classBody: String) {
         val protoPackageDir = File(path)
         if (!protoPackageDir.exists())
             protoPackageDir.mkdir()
@@ -47,7 +47,7 @@ abstract class Generator(protected val input: InputStream,
 
             Logger.log("proto package java ${protoFile.options.javaPackage}")
             protoFile.messageTypeList.forEach {
-                handleProtoFile(it)
+                handleProtoMessage(it)
             }
         }
 
@@ -57,8 +57,6 @@ abstract class Generator(protected val input: InputStream,
 
     abstract fun filter(node: DescriptorProtos.DescriptorProto): Boolean
 
-    open fun handleProtoFile(file:  DescriptorProtos.DescriptorProto) {
-
-    }
+    abstract fun handleProtoMessage(message:  DescriptorProtos.DescriptorProto)
 
 }

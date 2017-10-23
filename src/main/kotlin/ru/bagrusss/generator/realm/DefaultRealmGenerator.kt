@@ -7,12 +7,10 @@ import ru.bagrusss.generator.fields.Field
 import ru.bagrusss.generator.fields.TYPE
 import ru.bagrusss.generator.generator.Generator
 import ru.bagrusss.generator.realm.kotlin.fields.RealmFieldBuilder
-import ru.bagrusss.generator.model.Model
 import ru.bagrusss.generator.realm.kotlin.RealmModelBuilder
 import java.io.File
 import java.io.InputStream
 import java.io.PrintStream
-import java.io.PrintWriter
 
 internal typealias ProtobufType = DescriptorProtos.FieldDescriptorProto.Type
 
@@ -38,11 +36,10 @@ abstract class DefaultRealmGenerator(input: InputStream,
 
     }
 
-    override fun handleProtoFile(file: DescriptorProtos.DescriptorProto) {
-
-        if (file.hasOptions() /*&& it.options.hasExtension(SwiftDescriptor.swiftMessageOptions)*/) {
+    override fun handleProtoMessage(message: DescriptorProtos.DescriptorProto) {
+        if (message.hasOptions() /*&& it.options.hasExtension(SwiftDescriptor.swiftMessageOptions)*/) {
             //if (it.hasOptions() && it.options.hasField(SwiftDescriptor.SwiftFileOptions.getDescriptor().fields.first { it.jsonName.contains("generate_realm_object", true) })) {
-            parseCurrent(file)
+            parseCurrent(message)
         }
     }
 
@@ -76,7 +73,7 @@ abstract class DefaultRealmGenerator(input: InputStream,
 
                 val model = classModelBuilder.build() as RealmModel
 
-                writeClass("$realmPath${File.separator}$protoFilePackage", model.getFileName(), model.getModelBody())
+                writeFile("$realmPath${File.separator}$protoFilePackage", model.getFileName(), model.getModelBody())
 
             }
 

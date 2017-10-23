@@ -17,10 +17,14 @@ class KotlinUtilsModel private constructor(builder: Builder): UtilsModel<FunSpec
         builder.toWritableMapFunctions.forEach {
             fileBuilder.addFun(it.getSpec())
         }
-        body = fileBuilder.toString()
+        val file = fileBuilder.build()
+        body = file.toJavaFileObject()
+                   .getCharContent(true)
+                   .toString()
     }
 
     override fun getBody() = body
+
 
     class Builder: UtilsModelBuilder<FunSpec>() {
 

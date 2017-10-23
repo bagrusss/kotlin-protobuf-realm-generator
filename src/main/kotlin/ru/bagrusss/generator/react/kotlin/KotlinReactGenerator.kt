@@ -14,24 +14,33 @@ class KotlinReactGenerator(input: InputStream,
     override fun generate() {
         Logger.prepare()
 
-        val response = PluginProtos.CodeGeneratorResponse.newBuilder()
-        val request = PluginProtos.CodeGeneratorRequest.parseFrom(input)
+        response = PluginProtos.CodeGeneratorResponse.newBuilder()
+        request = PluginProtos.CodeGeneratorRequest.parseFrom(input)
+
 
         val utilsBuilder = KotlinUtilsModel.Builder()
                                            .fileName("ConvertUtils")
                                            .packageName("ru.rocketbank.serenity.react.utils")
 
-        request.protoFileList.forEach { protoFile ->
+        super.generate()
 
-        }
 
-        utilsBuilder.build().getBody()
+        val body = utilsBuilder.build().getBody()
+
+        writeFile(reactPath, "ConvertUtils.kt", body)
 
     }
 
     override fun filter(node: DescriptorProtos.DescriptorProto): Boolean {
         return !protoFileJavaPackage.contains("google", true)
                 && !node.name.contains("Swift", true)
+    }
+
+
+    override fun handleProtoMessage(message: DescriptorProtos.DescriptorProto) {
+        if (message.hasOptions()) {
+            
+        }
     }
 
 }
