@@ -1,6 +1,9 @@
 package ru.bagrusss.generator.react.kotlin.field
 
-abstract class ReactField<T>(builder: ReactFieldBuilder<T>) {
+import ru.bagrusss.generator.fields.Field
+
+
+abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Field<T> (builder){
     abstract fun putMethodName(): String
     abstract fun getMethodName(): String
 }

@@ -6,11 +6,14 @@ import ru.bagrusss.generator.react.FunParameter
 import ru.bagrusss.generator.react.ReactModel
 import ru.bagrusss.generator.react.ReactModelBuilder
 import ru.bagrusss.generator.react.kotlin.KotlinFunModel
+import ru.bagrusss.generator.react.kotlin.field.ReactField
 
 class KotlinReactModel(builder: Builder): ReactModel(builder) {
 
     private val toWritableMapFun: FunModel<FunSpec>
     private val fromReadableMapFun: FunModel<FunSpec>
+
+    private val parameter = "map"
 
     init {
         val toWritableBuilder = KotlinFunModel.Builder()
@@ -21,7 +24,7 @@ class KotlinReactModel(builder: Builder): ReactModel(builder) {
 
         val fromReadableBuilder = KotlinFunModel.Builder()
                                                 .name("${builder.protoClassFullName}.fromReadableMap")
-                                                .addParameter(FunParameter("map", readableMapClass))
+                                                .addParameter(FunParameter(parameter, readableMapClass))
                                                 .returns(builder.protoClassFullName)
 
         val toWritableBodyBuilder = StringBuilder()
@@ -35,9 +38,26 @@ class KotlinReactModel(builder: Builder): ReactModel(builder) {
                                .append(builder.protoClassFullName)
                                .append(".newBuilder().run {\n")
 
-        builder.fieldsList.forEach {
+        builder.fieldsList.map {
+                              it as ReactField<*>
+                          }
+                          .forEach {
+                              toWritableBodyBuilder.append(it.putMethodName())
+                                                   .append("(\"")
+                                                   .append(it.fieldName)
+                                                   .append("\", ")
+                                                   .append(it.fieldName)
+                                                   .append(")\n")
 
-        }
+                              fromReadableBodyBuilder.append(it.fieldName)
+                                      .append(" = ")
+                                      .append(parameter)
+                                      .append('.')
+                                      .append(it.getMethodName())
+                                      .append("(\"")
+                                      .append(it.fieldName)
+                                      .append("\")\n")
+                          }
 
         toWritableBodyBuilder.append("}\n")
         fromReadableBodyBuilder.append("\nbuild()\n}\n")
