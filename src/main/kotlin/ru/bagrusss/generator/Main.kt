@@ -17,18 +17,21 @@ object Main {
         val realmPath = currentDir + "/${System.getenv("realm_path")}"
         val realmPackage = System.getenv("realm_package")
 
-        val config = RealmConfig.newBuilder()
-                           .realmPath(realmPath)
-                           .realmPackage(realmPackage)
-                           .lang(Lang.KOTLIN)
-                           .serializer(Serializer.PROTOSTUFF)
-                           .build()
+        val generateRealm = System.getenv("isRealm").toBoolean()
 
-        GeneratorFactory(config, System.`in`, System.out).generator.generate()
+        if (generateRealm) {
+            val config = RealmConfig.newBuilder()
+                                    .realmPath(realmPath)
+                                    .realmPackage(realmPackage)
+                                    .lang(Lang.KOTLIN)
+                                    .serializer(Serializer.PROTOSTUFF)
+                                    .build()
 
-
-        val reactPath = System.getenv("react_path")
-        KotlinReactGenerator(System.`in`, System.out, reactPath).generate()
+            GeneratorFactory(config, System.`in`, System.out).generator.generate()
+        } else {
+            val reactPath = System.getenv("react_path")
+            KotlinReactGenerator(System.`in`, System.out, reactPath).generate()
+        }
     }
 
 }

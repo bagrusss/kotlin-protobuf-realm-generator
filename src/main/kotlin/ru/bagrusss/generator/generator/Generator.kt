@@ -3,6 +3,7 @@ package ru.bagrusss.generator.generator
 import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.compiler.PluginProtos
 import ru.bagrusss.generator.Logger
+import ru.bagrusss.generator.fields.Field
 import java.io.File
 import java.io.InputStream
 import java.io.PrintStream
@@ -38,6 +39,7 @@ abstract class Generator(protected val input: InputStream,
     }
 
     open fun generate() {
+        Logger.log("generate start size = ${request.protoFileList.size}")
         request.protoFileList.forEach { protoFile ->
             protoFilePackage = protoFile.`package`
             protoFileJavaPackage = protoFile.options.javaPackage
@@ -51,6 +53,8 @@ abstract class Generator(protected val input: InputStream,
             }
         }
 
+        Logger.log("end")
+
         response.build()
                 .writeTo(output)
     }
@@ -58,5 +62,7 @@ abstract class Generator(protected val input: InputStream,
     abstract fun filter(node: DescriptorProtos.DescriptorProto): Boolean
 
     abstract fun handleProtoMessage(message:  DescriptorProtos.DescriptorProto)
+
+    abstract fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*>
 
 }

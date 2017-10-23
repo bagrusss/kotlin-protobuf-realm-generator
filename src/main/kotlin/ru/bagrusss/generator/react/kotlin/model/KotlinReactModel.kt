@@ -1,6 +1,7 @@
 package ru.bagrusss.generator.react.kotlin.model
 
 import com.squareup.kotlinpoet.FunSpec
+import ru.bagrusss.generator.Logger
 import ru.bagrusss.generator.react.FunParameter
 import ru.bagrusss.generator.react.ReactModel
 import ru.bagrusss.generator.react.ReactModelBuilder
@@ -59,6 +60,8 @@ class KotlinReactModel private constructor(builder: Builder): ReactModel<FunSpec
                                             .build()
         fromReadableMapFun = fromReadableBuilder.body(fromReadableBodyBuilder.toString())
                                                 .build()
+
+        Logger.log("toMap $toWritableMapFun\n fromMap $fromReadableMapFun")
 
     }
 
