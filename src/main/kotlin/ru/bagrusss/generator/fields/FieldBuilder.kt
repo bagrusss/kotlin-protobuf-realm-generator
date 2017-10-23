@@ -13,9 +13,7 @@ abstract class FieldBuilder<T> {
     internal var typePrefix = ""
     internal var typeSuffix = ""
     internal var fullProtoTypeName = ""
-    internal var protoTypeName = ""
     internal var fieldName = ""
-    internal var parentName = ""
 
     internal var protoPackage = ""
 
@@ -30,9 +28,8 @@ abstract class FieldBuilder<T> {
     }
 
     open fun repeated(isRepeated: Boolean) = apply {
-        if (isRepeated) {
+        if (isRepeated)
             optional(true)
-        }
         repeated = isRepeated
     }
 
@@ -61,10 +58,6 @@ abstract class FieldBuilder<T> {
 
     fun fieldName(name: String) = apply {
         this.fieldName = name
-    }
-
-    fun parentName(name: String) = apply {
-        this.parentName = name
     }
 
     fun protoPackage(pkg: String) = apply {
