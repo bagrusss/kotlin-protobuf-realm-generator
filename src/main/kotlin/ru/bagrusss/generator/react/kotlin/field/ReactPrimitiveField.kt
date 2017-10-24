@@ -5,7 +5,7 @@ import ru.bagrusss.generator.Utils
 
 abstract class ReactPrimitiveField<T: ReactPrimitiveField<T>>(builder: ReactFieldBuilder<T>): ReactField<T>(builder) {
 
-    private val checkOptional = "if (${Utils.getHas(fieldName)}) "
+    private val checkOptional = "if (${Utils.getHas(fieldName)}()) "
 
     protected fun putToArrayMethodName() = "push" + getReactType()
     protected fun getFromArrayMethodName() = "get" + getReactType()
