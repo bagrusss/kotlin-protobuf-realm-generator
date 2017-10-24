@@ -19,9 +19,9 @@ object Main {
 
         val generateRealm = System.getenv("isRealm").toBoolean()
 
-        Logger.prepare()
 
         if (generateRealm) {
+            Logger.prepare("realm.txt")
             val config = RealmConfig.newBuilder()
                                     .realmPath(realmPath)
                                     .realmPackage(realmPackage)
@@ -31,6 +31,7 @@ object Main {
 
             GeneratorFactory(config, System.`in`, System.out).generator.generate()
         } else {
+            Logger.prepare("react.txt")
             val reactPath = System.getenv("react_path")
             KotlinReactGenerator(System.`in`, System.out, reactPath).generate()
         }

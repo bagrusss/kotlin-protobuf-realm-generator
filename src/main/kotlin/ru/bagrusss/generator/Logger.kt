@@ -8,11 +8,15 @@ import java.nio.file.StandardOpenOption
 
 object Logger {
 
-    @JvmField val logPath = System.getProperty("user.dir") + "/log.txt"
-    @JvmField val path: Path = Paths.get(logPath)
+    @JvmField val logPath = System.getProperty("user.dir") + File.separator
+    private lateinit var path: Path
 
-    fun prepare() {
-        val log = File(logPath)
+    private lateinit var currentFile: String
+
+    fun prepare(fileName: String) {
+        currentFile = "$logPath$fileName"
+        path = Paths.get(currentFile)
+        val log = File(currentFile)
         log.delete()
         log.createNewFile()
     }
