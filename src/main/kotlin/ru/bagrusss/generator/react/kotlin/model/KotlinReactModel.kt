@@ -44,8 +44,6 @@ class KotlinReactModel private constructor(builder: Builder): ReactModel<FunSpec
                               fromReadableBodyBuilder.append('\t')
                                                      .append(it.fieldName)
                                                      .append(" = ")
-                                                     .append(parameter)
-                                                     .append('.')
                                                      .append(it.getInitializer())
                                                      .append('\n')
 

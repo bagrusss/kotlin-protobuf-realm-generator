@@ -3,7 +3,7 @@ package ru.bagrusss.generator.react.kotlin.field
 import ru.bagrusss.generator.Utils
 
 
-abstract class ReactPrimitiveField<T: ReactPrimitiveField<T>>(builder: ReactFieldBuilder<T>): ReactField<T>(builder) {
+abstract class PrimitiveReactField<T: PrimitiveReactField<T>>(builder: ReactFieldBuilder<T>): ReactField<T>(builder) {
 
     private val checkOptional = "if (${Utils.getHas(fieldName)}()) "
 
@@ -17,6 +17,6 @@ abstract class ReactPrimitiveField<T: ReactPrimitiveField<T>>(builder: ReactFiel
         return if (optional) checkOptional + putPrimitiveInitializer() else putPrimitiveInitializer()
     }
 
-    override fun getInitializer() = "get" + getReactType() + "(\"" + fieldName + "\")"
+    override fun getInitializer() = "map.get" + getReactType() + "(\"" + fieldName + "\")"
 
 }

@@ -1,6 +1,6 @@
 package ru.bagrusss.generator.react.kotlin.field
 
-open class DoubleReactField protected constructor(builder: Builder): ReactPrimitiveField<DoubleReactField>(builder) {
+open class DoubleReactField protected constructor(builder: Builder): PrimitiveReactField<DoubleReactField>(builder) {
 
     override fun getReactType() = "Double"
 
