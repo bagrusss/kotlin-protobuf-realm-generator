@@ -7,9 +7,6 @@ abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Fiel
 
     abstract fun getReactType(): String
 
-    fun putMethodName() = "put" + getReactType()
-    fun getMethodName() = "get" + getReactType()
-
-    fun putToArrayMethodName() = "push" + getReactType()
-    fun getFromArrayMethodName() = getMethodName()
+    abstract fun putInitializer(): String
+    abstract fun getInitializer(): String
 }

@@ -1,6 +1,6 @@
 package ru.bagrusss.generator.react.kotlin.field
 
-class StringReactField(builder: Builder): ReactField<StringReactField>(builder) {
+class StringReactField(builder: Builder): ReactPrimitiveField<StringReactField>(builder) {
 
     override fun getReactType() = "String"
 

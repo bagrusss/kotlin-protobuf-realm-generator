@@ -7,10 +7,7 @@ import ru.bagrusss.generator.Logger
 import ru.bagrusss.generator.fields.Field
 import ru.bagrusss.generator.generator.Generator
 import ru.bagrusss.generator.react.UtilsModelBuilder
-import ru.bagrusss.generator.react.kotlin.field.BoolReactField
-import ru.bagrusss.generator.react.kotlin.field.DoubleReactField
-import ru.bagrusss.generator.react.kotlin.field.IntReactField
-import ru.bagrusss.generator.react.kotlin.field.StringReactField
+import ru.bagrusss.generator.react.kotlin.field.*
 import ru.bagrusss.generator.react.kotlin.model.KotlinReactModel
 import ru.bagrusss.generator.realm.ProtobufType
 import java.io.InputStream
@@ -91,8 +88,10 @@ class KotlinReactGenerator(input: InputStream,
     override fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*> {
         val fieldBuilder = when (field.type) {
             ProtobufType.TYPE_INT32     -> IntReactField.Builder()
+            ProtobufType.TYPE_INT64     -> LongReactField.Builder()
             ProtobufType.TYPE_BOOL      -> BoolReactField.Builder()
             ProtobufType.TYPE_STRING    -> StringReactField.Builder()
+            ProtobufType.TYPE_FLOAT     -> FloatReactField.Builder()
             ProtobufType.TYPE_DOUBLE    -> DoubleReactField.Builder()
             else                        -> StringReactField.Builder()
         }

@@ -37,22 +37,18 @@ class KotlinReactModel private constructor(builder: Builder): ReactModel<FunSpec
         builder.fieldsList.map { it as ReactField<*> }
                           .forEach {
                               toWritableBodyBuilder.append('\t')
-                                                   .append(it.putMethodName())
-                                                   .append("(\"")
-                                                   .append(it.fieldName)
-                                                   .append("\", ")
-                                                   .append(it.fieldName)
-                                                   .append(")\n")
+                                                   .append(it.putInitializer())
+                                                   .append('\n')
+
 
                               fromReadableBodyBuilder.append('\t')
                                                      .append(it.fieldName)
                                                      .append(" = ")
                                                      .append(parameter)
                                                      .append('.')
-                                                     .append(it.getMethodName())
-                                                     .append("(\"")
-                                                     .append(it.fieldName)
-                                                     .append("\")\n")
+                                                     .append(it.getInitializer())
+                                                     .append('\n')
+
                           }
 
         toWritableBodyBuilder.append("}\n")
