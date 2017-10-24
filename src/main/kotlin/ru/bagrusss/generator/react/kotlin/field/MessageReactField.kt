@@ -1,7 +1,7 @@
 package ru.bagrusss.generator.react.kotlin.field
 
 
-class MessageReactField private constructor(builder: Builder): PrimitiveReactField<MessageReactField>(builder) {
+class MessageReactField private constructor(builder: Builder): ReactField<MessageReactField>(builder) {
 
     override fun isPrimitive() = true // tempory
 

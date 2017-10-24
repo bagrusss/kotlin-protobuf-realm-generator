@@ -1,7 +1,7 @@
 package ru.bagrusss.generator.react.kotlin.field
 
 
-class IntReactField private constructor(builder: Builder): PrimitiveReactField<IntReactField>(builder) {
+class IntReactField private constructor(builder: Builder): ReactField<IntReactField>(builder) {
 
     override fun getReactType() = "Int"
 
