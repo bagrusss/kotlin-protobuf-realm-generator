@@ -9,7 +9,7 @@ class MessageReactField private constructor(builder: Builder): PrimitiveReactFie
 
     override fun putInitializer() = "put" + getReactType() + "(\"" + fieldName + "\", " + fieldName + ".toWritableMap())"
 
-    override fun getInitializer() = "$protoFullTypeName.Builder.fromReadableMap(map.getMap(\"$fieldName\"))"
+    override fun getInitializer() = "$protoFullTypeName.newBuilder().fromReadableMap(map.getMap(\"$fieldName\"))"
 
     class Builder: ReactFieldBuilder<MessageReactField>() {
         override fun build() = MessageReactField(this)
