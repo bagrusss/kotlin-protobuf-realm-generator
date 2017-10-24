@@ -30,7 +30,7 @@ class EnumRealmField private constructor(builder: Builder): PrimitiveRealmField<
                                                        .append(protoConstructorParameter)
                                                        .append(".has")
                                                        .append(fieldName[0].toUpperCase())
-                                                       .append(fieldName.subSequence(1, fieldName.length))
+                                                       .append(fieldName.substring(1))
                                                        .append("()) ")
                                                        .append(fieldName)
                                                        .append(" = ")

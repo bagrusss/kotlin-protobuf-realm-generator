@@ -1,6 +1,6 @@
 package ru.bagrusss.generator.react.kotlin.field
 
-class LongReactField(builder: DoubleReactField.Builder): DoubleReactField(builder) {
+class LongReactField private constructor(builder: DoubleReactField.Builder): DoubleReactField(builder) {
 
     override fun getInitializer() = super.getInitializer() + ".toLong()"
 

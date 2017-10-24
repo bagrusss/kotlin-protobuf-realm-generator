@@ -97,6 +97,7 @@ class KotlinReactGenerator(input: InputStream,
             ProtobufType.TYPE_STRING    -> StringReactField.Builder()
             ProtobufType.TYPE_FLOAT     -> FloatReactField.Builder()
             ProtobufType.TYPE_DOUBLE    -> DoubleReactField.Builder()
+            ProtobufType.TYPE_BYTES     -> BytesReactField.Builder()
             ProtobufType.TYPE_ENUM      -> {
                 val protoPackage = packagesSet.first { field.typeName.indexOf(it) == 1 }
                 val clearTypeName =  field.typeName
