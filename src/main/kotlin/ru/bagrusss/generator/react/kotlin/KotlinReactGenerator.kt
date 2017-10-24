@@ -98,15 +98,14 @@ class KotlinReactGenerator(input: InputStream,
             ProtobufType.TYPE_FLOAT     -> FloatReactField.Builder()
             ProtobufType.TYPE_DOUBLE    -> DoubleReactField.Builder()
             ProtobufType.TYPE_BYTES     -> BytesReactField.Builder()
-            ProtobufType.TYPE_ENUM      -> {
-                val protoPackage = packagesSet.first { field.typeName.indexOf(it) == 1 }
-                val clearTypeName =  field.typeName
-                                          .substring(1)
-                                          .replace(protoPackage, "")
+            ProtobufType.TYPE_MESSAGE   -> {
+                MessageReactField.Builder()
+                                 .fullProtoTypeName(gerFullName(field))
 
-                val javaPackage = protoToJavaPackagesMap[protoPackage]
+            }
+            ProtobufType.TYPE_ENUM      -> {
                 EnumReactField.Builder()
-                              .fullProtoTypeName("$javaPackage$clearTypeName")
+                              .fullProtoTypeName(gerFullName(field))
             }
             else                        -> StringReactField.Builder()
         }
@@ -116,6 +115,17 @@ class KotlinReactGenerator(input: InputStream,
                     .fieldName(field.name)
 
         return fieldBuilder.build()
+    }
+
+    private fun gerFullName(field: DescriptorProtos.FieldDescriptorProto): String {
+        val protoPackage = packagesSet.first { field.typeName.indexOf(it) == 1 }
+        val clearTypeName =  field.typeName
+                .substring(1)
+                .replace(protoPackage, "")
+
+        val javaPackage = protoToJavaPackagesMap[protoPackage]
+
+        return "$javaPackage$clearTypeName"
     }
 
 }
