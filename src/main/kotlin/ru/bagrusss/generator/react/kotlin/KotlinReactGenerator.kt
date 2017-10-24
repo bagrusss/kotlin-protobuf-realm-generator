@@ -7,8 +7,10 @@ import ru.bagrusss.generator.Logger
 import ru.bagrusss.generator.fields.Field
 import ru.bagrusss.generator.generator.Generator
 import ru.bagrusss.generator.react.UtilsModelBuilder
+import ru.bagrusss.generator.react.kotlin.field.BoolReactField
 import ru.bagrusss.generator.react.kotlin.field.DoubleReactField
 import ru.bagrusss.generator.react.kotlin.field.IntReactField
+import ru.bagrusss.generator.react.kotlin.field.StringReactField
 import ru.bagrusss.generator.react.kotlin.model.KotlinReactModel
 import ru.bagrusss.generator.realm.ProtobufType
 import java.io.InputStream
@@ -21,7 +23,7 @@ class KotlinReactGenerator(input: InputStream,
     private lateinit var utilsBuilder: UtilsModelBuilder<FunSpec>
 
     override fun generate() {
-        Logger.log("start")
+        Logger.log("react start")
 
         response = PluginProtos.CodeGeneratorResponse.newBuilder()
         request = PluginProtos.CodeGeneratorRequest.parseFrom(input)
@@ -33,10 +35,13 @@ class KotlinReactGenerator(input: InputStream,
 
         super.generate()
 
+        Logger.log("react generated $count")
+
+
         val body = utilsBuilder.build().getBody()
 
         writeFile(reactPath, "ConvertUtils.kt", body)
-
+        Logger.log("react end")
     }
 
     override fun filter(node: DescriptorProtos.DescriptorProto): Boolean {
@@ -44,10 +49,10 @@ class KotlinReactGenerator(input: InputStream,
                 && !node.name.contains("Swift", true)
     }
 
+    private var count = 0
 
     override fun handleProtoMessage(message: DescriptorProtos.DescriptorProto) {
-        if (message.hasOptions() && filter(message)) {
-            Logger.log("parseCurrent()")
+        if (message.hasOptions()) {
             parseCurrent(message)
         }
     }
@@ -58,33 +63,38 @@ class KotlinReactGenerator(input: InputStream,
 
         node.nestedTypeList.forEach {
             parseCurrent(it, "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else "" }${node.name}")
+        }
 
-            if (node.fieldList.isNotEmpty()) {
-                val isMap = node.options.mapEntry
-                val modelBuilder = KotlinReactModel.Builder()
-                                                   .isMap(isMap)
-                                                   .protoClassFullName(protoFullName)
-                node.fieldList.forEach {
-                    val field = generateProperty(it)
-                    modelBuilder.addField(field)
-                }
-
-                if (isMap)
-                    mapsSet.add("$protoFilePackage.$fullName")
-
-                val model = modelBuilder.build() as KotlinReactModel
-                val functions = model.getMapFunctions()
-
-                utilsBuilder.addToWritableMapFun(functions.first)
-                utilsBuilder.addFromReadableMapFun(functions.second)
+        if (node.fieldList.isNotEmpty()) {
+            val isMap = node.options.mapEntry
+            val modelBuilder = KotlinReactModel.Builder()
+                    .isMap(isMap)
+                    .protoClassFullName(protoFullName)
+            node.fieldList.forEach {
+                val field = generateProperty(it)
+                modelBuilder.addField(field)
             }
+
+            if (isMap)
+                mapsSet.add("$protoFilePackage.$fullName")
+
+            val model = modelBuilder.build() as KotlinReactModel
+            val functions = model.getMapFunctions()
+
+            utilsBuilder.addToWritableMapFun(functions.first)
+            utilsBuilder.addFromReadableMapFun(functions.second)
+
+            ++count
         }
     }
 
     override fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*> {
         val fieldBuilder = when (field.type) {
-            ProtobufType.TYPE_INT32 -> IntReactField.Builder()
-            else -> DoubleReactField.Builder()
+            ProtobufType.TYPE_INT32     -> IntReactField.Builder()
+            ProtobufType.TYPE_BOOL      -> BoolReactField.Builder()
+            ProtobufType.TYPE_STRING    -> StringReactField.Builder()
+            ProtobufType.TYPE_DOUBLE    -> DoubleReactField.Builder()
+            else                        -> StringReactField.Builder()
         }
 
         fieldBuilder.optional(field.label == OPTIONAL)

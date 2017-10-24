@@ -32,12 +32,14 @@ abstract class DefaultRealmGenerator(input: InputStream,
 
         super.generate()
 
+        Logger.log("realm generated $count")
     }
 
     override fun handleProtoMessage(message: DescriptorProtos.DescriptorProto) {
         if (message.hasOptions() /*&& it.options.hasExtension(SwiftDescriptor.swiftMessageOptions)*/) {
             //if (it.hasOptions() && it.options.hasField(SwiftDescriptor.SwiftFileOptions.getDescriptor().fields.first { it.jsonName.contains("generate_realm_object", true) })) {
             parseCurrent(message)
+            ++count
         }
     }
 
@@ -78,6 +80,9 @@ abstract class DefaultRealmGenerator(input: InputStream,
         }
 
     }
+
+    private var count = 0
+
 
     override fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*> {
         Logger.log("Field_ name=${field.name}, type=${field.typeName}, field=$field")

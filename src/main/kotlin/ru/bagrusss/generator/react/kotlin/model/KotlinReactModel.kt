@@ -63,7 +63,7 @@ class KotlinReactModel private constructor(builder: Builder): ReactModel<FunSpec
         fromReadableMapFun = fromReadableBuilder.body(fromReadableBodyBuilder.toString())
                                                 .build()
 
-        Logger.log("toMap $toWritableMapFun\n fromMap $fromReadableMapFun")
+        Logger.log("${builder.protoClassFullName} toMap $toWritableMapFun\n fromMap $fromReadableMapFun")
 
     }
 
