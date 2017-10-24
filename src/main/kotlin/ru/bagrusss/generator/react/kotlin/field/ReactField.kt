@@ -6,7 +6,7 @@ import ru.bagrusss.generator.fields.Field
 
 abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Field<T>(builder) {
 
-    private val checkOptional = "if (${Utils.getHas(fieldName)}()) "
+    private val checkOptional = "if (${Utils.getHas(fieldName)}())\n\t\t"
 
     abstract fun getReactType(): String
     open fun needSkip() = false
@@ -14,13 +14,13 @@ abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Fiel
     protected fun putToArrayMethodName() = "push" + getReactType()
     protected fun getFromArrayMethodName() = "get" + getReactType()
 
-    protected open fun getPrimitiveInitializer() = ""
-    protected open fun putPrimitiveInitializer() = "put" + getReactType() + "(\"" + fieldName + "\", " + fieldName + ")"
+    protected open fun fromMapInit() = "map.get" + getReactType() + "(\"" + fieldName + "\")"
+    protected open fun toMapInit() = "put" + getReactType() + "(\"" + fieldName + "\", " + fieldName + ")"
 
-    open fun putInitializer(): String {
-        return if (optional) checkOptional + putPrimitiveInitializer() else putPrimitiveInitializer()
+    fun putInitializer(): String {
+        return if (optional) checkOptional + toMapInit() else toMapInit()
     }
 
-    open fun getInitializer() = "map.get" + getReactType() + "(\"" + fieldName + "\")"
+    fun getInitializer() = fromMapInit()
 
 }
