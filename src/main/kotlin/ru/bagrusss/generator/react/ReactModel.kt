@@ -12,6 +12,6 @@ abstract class ReactModel<T>(builder: ReactModelBuilder) : Model() {
     /**
      * @return first - toWritableMapFun, second - fromReadableMapFun
      */
-    abstract fun getMapFunctions(): Pair<FunModel<T>, FunModel<T>>
+    abstract fun getMapFunctions(): Pair<FunModel<T>, FunModel<T>>?
 
 }

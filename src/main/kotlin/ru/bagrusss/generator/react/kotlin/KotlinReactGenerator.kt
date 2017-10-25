@@ -69,8 +69,8 @@ class KotlinReactGenerator(input: InputStream,
         if (node.fieldList.isNotEmpty()) {
             val isMap = node.options.mapEntry
             val modelBuilder = KotlinReactModel.Builder()
-                    .isMap(isMap)
-                    .protoClassFullName(protoFullName)
+                                               .isMap(isMap)
+                                               .protoClassFullName(protoFullName)
             node.fieldList.forEach {
                 val field = generateProperty(it)
                 modelBuilder.addField(field)
@@ -81,9 +81,11 @@ class KotlinReactGenerator(input: InputStream,
 
             val model = modelBuilder.build() as KotlinReactModel
             val functions = model.getMapFunctions()
+            functions?.let {
+                utilsBuilder.addToWritableMapFun(it.first)
+                utilsBuilder.addFromReadableMapFun(it.second)
+            }
 
-            utilsBuilder.addToWritableMapFun(functions.first)
-            utilsBuilder.addFromReadableMapFun(functions.second)
 
             ++count
         }
@@ -99,8 +101,15 @@ class KotlinReactGenerator(input: InputStream,
             ProtobufType.TYPE_DOUBLE    -> DoubleReactField.Builder()
             ProtobufType.TYPE_BYTES     -> BytesReactField.Builder()
             ProtobufType.TYPE_MESSAGE   -> {
-                MessageReactField.Builder()
-                                 .fullProtoTypeName(gerFullName(field))
+                val fullName = gerFullName(field)
+                val protoTypeName = field.typeName.substring(1)
+                val isMap = mapsSet.contains(protoTypeName)
+
+                val builder = if (isMap)
+                    MessageReactField.Builder()
+                else MapReactField.Builder()
+
+                builder.fullProtoTypeName(fullName)
 
             }
             ProtobufType.TYPE_ENUM      -> {

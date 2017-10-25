@@ -13,6 +13,8 @@ class KotlinReactModel private constructor(builder: Builder): ReactModel<FunSpec
 
     private val parameter = "map"
 
+    private val isMap = builder.isMap
+
     init {
         val toWritableBuilder = KotlinFunModel.Builder()
                                               .name("${builder.protoClassFullName}.toWritableMap")
@@ -47,6 +49,8 @@ class KotlinReactModel private constructor(builder: Builder): ReactModel<FunSpec
                                                          .append(" = ")
                                                          .append(it.fromMapInitializer())
                                                          .append('\n')
+                              } else {
+                                  Logger.log("skip ${builder.protoClassFullName}")
                               }
                           }
 
@@ -62,7 +66,7 @@ class KotlinReactModel private constructor(builder: Builder): ReactModel<FunSpec
 
     }
 
-    override fun getMapFunctions() = Pair(toWritableMapFun, fromReadableMapFun)
+    override fun getMapFunctions() = if (!isMap) Pair(toWritableMapFun, fromReadableMapFun) else null
 
     class Builder: ReactModelBuilder() {
 

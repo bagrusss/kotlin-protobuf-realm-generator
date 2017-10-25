@@ -6,8 +6,8 @@ package ru.bagrusss.generator.fields
  */
 abstract class FieldBuilder<T> {
 
-    internal var optional: Boolean = false
-    internal var repeated: Boolean = false
+    internal var optional = false
+    internal var repeated = false
     internal var initializerArgs: Any? = null
     internal var initializerFormat = "%L"
     internal var typePrefix = ""
