@@ -34,28 +34,30 @@ abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Fiel
         addColors(element)
     }*/
 
+    protected open fun toMapRepeated(): String {
+        val array = Utils.fieldArray(fieldName)
+        return StringBuilder().append("\n\t")
+                              .append(Utils.checkListSize(fieldName))
+                              .append("{\n\t\t")
+                              .append("val ")
+                              .append(array)
+                              .append(" = ")
+                              .append(Utils.createArray)
+                              .append("\n\t\t")
+                              .append(Utils.getList(fieldName))
+                              .append(".forEach { ")
+                              .append(array)
+                              .append('.')
+                              .append(putToArrayMethodName())
+                              .append('(')
+                              .append(toMapConverter())
+                              .append(") }\n}")
+                              .toString()
+    }
+
     fun toMapInitializer(): String {
         return when {
-            repeated -> {
-                val array = Utils.fieldArray(fieldName)
-                StringBuilder().append("\n\t")
-                               .append(Utils.checkListSize(fieldName))
-                               .append("{\n\t\t")
-                               .append("val ")
-                               .append(array)
-                               .append(" = ")
-                               .append(Utils.createArray)
-                               .append("\n\t\t")
-                               .append(Utils.getList(fieldName))
-                               .append(".forEach { ")
-                               .append(array)
-                               .append('.')
-                               .append(putToArrayMethodName())
-                               .append('(')
-                               .append(toMapConverter())
-                               .append(") }\n}")
-                               .toString()
-            }
+            repeated -> { toMapRepeated() }
             optional -> checkOptionalToMap + toMapInit()
             else -> toMapInit()
         }

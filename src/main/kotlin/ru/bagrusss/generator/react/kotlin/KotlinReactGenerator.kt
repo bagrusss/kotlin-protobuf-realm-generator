@@ -3,16 +3,13 @@ package ru.bagrusss.generator.react.kotlin
 import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.compiler.PluginProtos
 import com.squareup.kotlinpoet.FunSpec
-import google.protobuf.SwiftDescriptor
 import ru.bagrusss.generator.Logger
 import ru.bagrusss.generator.fields.Field
-import ru.bagrusss.generator.fields.TYPE
 import ru.bagrusss.generator.generator.Generator
 import ru.bagrusss.generator.react.UtilsModelBuilder
 import ru.bagrusss.generator.react.kotlin.field.*
 import ru.bagrusss.generator.react.kotlin.model.KotlinReactModel
 import ru.bagrusss.generator.realm.ProtobufType
-import ru.bagrusss.generator.realm.kotlin.fields.RealmFieldBuilder
 import java.io.InputStream
 import java.io.PrintStream
 
@@ -82,8 +79,8 @@ class KotlinReactGenerator(input: InputStream,
             val model = modelBuilder.build() as KotlinReactModel
             val functions = model.getMapFunctions()
             functions?.let {
-                utilsBuilder.addToWritableMapFun(it.first)
-                utilsBuilder.addFromReadableMapFun(it.second)
+                utilsBuilder.addFun(it.first)
+                utilsBuilder.addFun(it.second)
             }
 
 

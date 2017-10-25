@@ -7,8 +7,7 @@ abstract class UtilsModelBuilder<T> {
     internal var packageName = ""
     internal var fileName = ""
 
-    internal val toWritableMapFunctions = LinkedList<FunModel<T>>()
-    internal val fromReadableMapFunctions = LinkedList<FunModel<T>>()
+    internal val functions = LinkedList<FunModel<T>>()
 
     fun packageName (packageName: String) = apply {
         this.packageName = packageName
@@ -18,12 +17,8 @@ abstract class UtilsModelBuilder<T> {
         this.fileName = fileName
     }
 
-    fun addFromReadableMapFun(func: FunModel<T>) = apply {
-        fromReadableMapFunctions.add(func)
-    }
-
-    fun addToWritableMapFun(func: FunModel<T>) = apply {
-        toWritableMapFunctions.add(func)
+    fun addFun(func: FunModel<T>) = apply {
+        functions.add(func)
     }
 
     abstract fun build(): UtilsModel<T>

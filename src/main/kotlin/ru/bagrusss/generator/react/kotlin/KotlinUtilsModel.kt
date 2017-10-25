@@ -11,10 +11,8 @@ class KotlinUtilsModel private constructor(builder: Builder): UtilsModel<FunSpec
 
     init {
         val fileBuilder = KotlinFile.builder(builder.packageName, builder.fileName)
-        builder.fromReadableMapFunctions.forEach {
-            fileBuilder.addFun(it.getSpec())
-        }
-        builder.toWritableMapFunctions.forEach {
+
+        builder.functions.forEach {
             fileBuilder.addFun(it.getSpec())
         }
         val file = fileBuilder.build()
