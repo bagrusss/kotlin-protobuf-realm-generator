@@ -11,7 +11,7 @@ open class MessageReactField protected constructor(builder: Builder): ReactField
 
     override fun toMapInit() = "put" + getReactType() + "(\"" + fieldName + "\", " + fieldName + ".toWritableMap())"
 
-    override fun fromMapInit() = "$protoFullTypeName.newBuilder().fromReadableMap(map.getMap(\"$fieldName\"))"
+    override fun fromMapInit() = "$fieldName = $protoFullTypeName.newBuilder().fromReadableMap(map.getMap(\"$fieldName\"))"
 
     override fun toMapConverter() = "it.${Utils.toMapMethod}()"
 

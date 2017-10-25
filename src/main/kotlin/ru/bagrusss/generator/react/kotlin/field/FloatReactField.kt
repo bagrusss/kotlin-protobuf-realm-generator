@@ -4,7 +4,7 @@ class FloatReactField private constructor(builder: Builder): DoubleReactField(bu
 
     override fun toMapInit() = "put${getReactType()}(\"$fieldName\", $fieldName.toDouble())"
 
-    override fun fromMapInit() = "get${getReactType()}(\"$fieldName\", $fieldName.toFloat()"
+    override fun fromMapInit() = "$fieldName = map.get${getReactType()}(\"$fieldName\").toFloat()"
 
     class Builder: DoubleReactField.Builder() {
         override fun build() = FloatReactField(this)

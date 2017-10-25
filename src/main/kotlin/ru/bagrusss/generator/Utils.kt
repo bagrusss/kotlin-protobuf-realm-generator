@@ -30,4 +30,6 @@ object Utils {
     }
 
     fun fieldArray(fieldName: String) = "${fieldName}Array"
+
+    fun addToArray(fieldName: String) = "add${fieldName[0].toUpperCase()}${fieldName.substring(1)}"
 }

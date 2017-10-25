@@ -129,8 +129,8 @@ class KotlinReactGenerator(input: InputStream,
     private fun gerFullName(field: DescriptorProtos.FieldDescriptorProto): String {
         val protoPackage = packagesSet.first { field.typeName.indexOf(it) == 1 }
         val clearTypeName =  field.typeName
-                .substring(1)
-                .replace(protoPackage, "")
+                                  .substring(1)
+                                  .replace(protoPackage, "")
 
         val javaPackage = protoToJavaPackagesMap[protoPackage]
 
