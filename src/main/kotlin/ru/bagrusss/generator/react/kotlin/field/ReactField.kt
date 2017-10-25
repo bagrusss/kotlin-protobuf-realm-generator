@@ -38,8 +38,9 @@ abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Fiel
         return when {
             repeated -> {
                 val array = Utils.fieldArray(fieldName)
-                StringBuilder().append(Utils.checkListSize(fieldName))
-                               .append(" {\n\t\t")
+                StringBuilder().append("\n\t")
+                               .append(Utils.checkListSize(fieldName))
+                               .append("{\n\t\t")
                                .append("val ")
                                .append(array)
                                .append(" = ")
@@ -52,7 +53,7 @@ abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Fiel
                                .append(putToArrayMethodName())
                                .append('(')
                                .append(toMapConverter())
-                               .append(") }\n\t}")
+                               .append(") }\n}")
                                .toString()
             }
             optional -> checkOptionalToMap + toMapInit()
