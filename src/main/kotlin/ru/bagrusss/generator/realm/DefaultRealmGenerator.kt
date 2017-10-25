@@ -105,8 +105,8 @@ abstract class DefaultRealmGenerator(input: InputStream,
                                     .fullProtoTypeName("$javaPackage$clearTypeName") as RealmFieldBuilder<*>
             }
             ProtobufType.TYPE_MESSAGE   -> {
-                val fullProtoName = field.typeName.substring(1)
-                val builder = if (!mapsSet.contains(fullProtoName))
+                val protoTypeName = field.typeName.substring(1)
+                val builder = if (!mapsSet.contains(protoTypeName))
                                   entitiesFactory.createBuilder(TYPE.MESSAGE)
                               else entitiesFactory.createBuilder(TYPE.MAP)
 

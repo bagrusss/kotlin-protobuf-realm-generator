@@ -17,10 +17,48 @@ abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Fiel
     protected open fun fromMapInit() = "map.get" + getReactType() + "(\"" + fieldName + "\")"
     protected open fun toMapInit() = "put" + getReactType() + "(\"" + fieldName + "\", " + fieldName + ")"
 
-    fun putInitializer(): String {
-        return if (optional) checkOptional + toMapInit() else toMapInit()
+    protected open fun toMapConverter() = "it"
+
+    /*в карту
+    if (colorsList.isNotEmpty()) {
+        val colorsArray = Arguments.createArray()
+        colorsList.forEach { colorsArray.pushMap(it.toWritableMap()) }
+    }*/
+
+    /*из карты
+    val colorsElements = map.getArray("colors")
+    for (i in 0 until colorsElements.size()) {
+        val element = ru.rocketbank.protomodel.ProtoApi.Color.newBuilder()
+        addColors(element.fromReadableMap(colorsElements.getMap(i)))
+    }*/
+
+    fun toMapInitializer(): String {
+        return when {
+            repeated -> {
+                val array = Utils.fieldArray(fieldName)
+                StringBuilder().append(Utils.checkListSize(fieldName))
+                               .append(" {\n\t\t")
+                               .append("val ")
+                               .append(array)
+                               .append(" = ")
+                               .append(Utils.createArray)
+                               .append("\n\t\t")
+                               .append(Utils.getList(fieldName))
+                               .append(".forEach { ")
+                               .append(array)
+                               .append('.')
+                               .append(putToArrayMethodName())
+                               .append('(')
+                               //.append(if (isPrimitive()) "" else ".${Utils.toMapMethod}()")
+                               .append(toMapConverter())
+                               .append(") }\n\t}")
+                               .toString()
+            }
+            optional -> checkOptional + toMapInit()
+            else -> toMapInit()
+        }
     }
 
-    fun getInitializer() = fromMapInit()
+    fun fromMapInitializer() = fromMapInit()
 
 }

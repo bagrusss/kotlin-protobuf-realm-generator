@@ -2,6 +2,7 @@ package ru.bagrusss.generator.react.kotlin.model
 
 import com.squareup.kotlinpoet.FunSpec
 import ru.bagrusss.generator.Logger
+import ru.bagrusss.generator.Utils
 import ru.bagrusss.generator.react.FunParameter
 import ru.bagrusss.generator.react.ReactModel
 import ru.bagrusss.generator.react.ReactModelBuilder
@@ -15,12 +16,12 @@ class KotlinReactModel private constructor(builder: Builder): ReactModel<FunSpec
     init {
         val toWritableBuilder = KotlinFunModel.Builder()
                                               .name("${builder.protoClassFullName}.toWritableMap")
-                                              .returns(writableMapClass)
+                                              .returns(Utils.writableMapClass)
 
 
         val fromReadableBuilder = KotlinFunModel.Builder()
                                                 .name("${builder.protoClassFullName}.Builder.fromReadableMap")
-                                                .addParameter(FunParameter(parameter, readableMapClass))
+                                                .addParameter(FunParameter(parameter, Utils.readableMapClass))
                                                 .returns(builder.protoClassFullName)
 
         val toWritableBodyBuilder = StringBuilder()
@@ -38,13 +39,13 @@ class KotlinReactModel private constructor(builder: Builder): ReactModel<FunSpec
                           .forEach {
                               if (!it.needSkip()) {
                                   toWritableBodyBuilder.append('\t')
-                                                       .append(it.putInitializer())
+                                                       .append(it.toMapInitializer())
                                                        .append('\n')
 
                                   fromReadableBodyBuilder.append('\t')
                                                          .append(it.fieldName)
                                                          .append(" = ")
-                                                         .append(it.getInitializer())
+                                                         .append(it.fromMapInitializer())
                                                          .append('\n')
                               }
                           }
