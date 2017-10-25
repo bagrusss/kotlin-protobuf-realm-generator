@@ -9,6 +9,8 @@ abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Fiel
     private val checkOptionalToMap = "if (${Utils.getHas(fieldName)}())\n\t\t"
 
     abstract fun getReactType(): String
+    abstract fun getReactTypeForMap(): String
+
     open fun needSkip() = false
 
     protected fun putToArrayMethodName() = "push" + getReactType()

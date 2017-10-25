@@ -12,6 +12,7 @@ import ru.bagrusss.generator.react.kotlin.model.KotlinReactModel
 import ru.bagrusss.generator.realm.ProtobufType
 import java.io.InputStream
 import java.io.PrintStream
+import java.util.*
 
 class KotlinReactGenerator(input: InputStream,
                            output: PrintStream,
@@ -38,6 +39,7 @@ class KotlinReactGenerator(input: InputStream,
         val body = utilsBuilder.build().getBody()
 
         writeFile(reactPath, "ConvertUtils.kt", body)
+        Logger.log("maps and fields: $mapsToKeyAndValuesMap")
         Logger.log("react end")
     }
 
@@ -54,6 +56,8 @@ class KotlinReactGenerator(input: InputStream,
             parseCurrent(message)
         }
     }
+
+    private val mapsToKeyAndValuesMap = TreeMap<String, Pair<String, String>>()
 
     private fun parseCurrent(node: DescriptorProtos.DescriptorProto, parentNameOriginal: String = "") {
         val fullName = "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
@@ -73,8 +77,13 @@ class KotlinReactGenerator(input: InputStream,
                 modelBuilder.addField(field)
             }
 
-            if (isMap)
-                mapsSet.add("$protoFilePackage.$fullName")
+            if (isMap) {
+                val fullMapName = "$protoFilePackage.$fullName"
+                mapsSet.add(fullMapName)
+                val valueType = getTypeName(node.fieldList.find { it.name == "value" }!!)
+                mapsToKeyAndValuesMap.put(fullMapName, Pair("String", valueType))
+                Logger.log("map's fields ${node.fieldList.map { it.name +":" + it.typeName }}")
+            }
 
             val model = modelBuilder.build() as KotlinReactModel
             val functions = model.getMapFunctions()
@@ -132,6 +141,18 @@ class KotlinReactGenerator(input: InputStream,
         val javaPackage = protoToJavaPackagesMap[protoPackage]
 
         return "$javaPackage$clearTypeName"
+    }
+
+    private fun getTypeName(field: DescriptorProtos.FieldDescriptorProto): String {
+        return when(field.type) {
+            ProtobufType.TYPE_INT32     -> "Int"
+            ProtobufType.TYPE_INT64     -> "Long"
+            ProtobufType.TYPE_BOOL      -> "Boolean"
+            ProtobufType.TYPE_FLOAT     -> "Float"
+            ProtobufType.TYPE_DOUBLE    -> "Double"
+            ProtobufType.TYPE_MESSAGE   -> "Map"
+            else                        -> "String"
+        }
     }
 
 }

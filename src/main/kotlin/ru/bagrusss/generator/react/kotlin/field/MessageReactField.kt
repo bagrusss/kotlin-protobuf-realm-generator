@@ -5,9 +5,11 @@ import ru.bagrusss.generator.Utils
 
 open class MessageReactField protected constructor(builder: Builder): ReactField<MessageReactField>(builder) {
 
+    override fun getReactTypeForMap() = "Map"
+
     override fun isPrimitive() = false
 
-    override fun getReactType() = "Map"
+    override fun getReactType() = getReactTypeForMap()
 
     override fun toMapInit() = "put" + getReactType() + "(\"" + fieldName + "\", " + fieldName + ".toWritableMap())"
 
