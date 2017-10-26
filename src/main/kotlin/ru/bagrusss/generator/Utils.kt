@@ -12,6 +12,7 @@ object Utils {
     const val readableArrayClass = "com.facebook.react.bridge.ReadableArray"
 
     const val createArray = "com.facebook.react.bridge.Arguments.createArray()"
+    const val createMap = "com.facebook.react.bridge.Arguments.createMap()"
 
     fun getList(fieldName: String): String {
         return "${fieldName}List"

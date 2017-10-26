@@ -5,6 +5,7 @@ import com.google.protobuf.compiler.PluginProtos
 import com.squareup.kotlinpoet.FunSpec
 import ru.bagrusss.generator.Logger
 import ru.bagrusss.generator.fields.Field
+import ru.bagrusss.generator.fields.Type
 import ru.bagrusss.generator.generator.Generator
 import ru.bagrusss.generator.react.UtilsModelBuilder
 import ru.bagrusss.generator.react.kotlin.field.*
@@ -39,7 +40,7 @@ class KotlinReactGenerator(input: InputStream,
         val body = utilsBuilder.build().getBody()
 
         writeFile(reactPath, "ConvertUtils.kt", body)
-        Logger.log("maps and fields: $mapsToKeyAndValuesMap")
+        Logger.log("maps and fields: $mapsValuesTypes")
         Logger.log("react end")
     }
 
@@ -57,7 +58,7 @@ class KotlinReactGenerator(input: InputStream,
         }
     }
 
-    private val mapsToKeyAndValuesMap = TreeMap<String, Pair<String, String>>()
+    private val mapsValuesTypes = TreeMap<String, Type>()
 
     private fun parseCurrent(node: DescriptorProtos.DescriptorProto, parentNameOriginal: String = "") {
         val fullName = "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
@@ -67,23 +68,24 @@ class KotlinReactGenerator(input: InputStream,
             parseCurrent(it, "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else "" }${node.name}")
         }
 
+        val isMap = node.options.mapEntry
+
         if (node.fieldList.isNotEmpty()) {
-            val isMap = node.options.mapEntry
             val modelBuilder = KotlinReactModel.Builder()
                                                .isMap(isMap)
                                                .protoClassFullName(protoFullName)
+
+            if (isMap) {
+                mapsSet.add(protoFullName)
+                val valueType = getTypeName(node.fieldList.find { it.name == "value" }!!)
+                mapsValuesTypes.put(protoFullName, valueType)
+            }
+
             node.fieldList.forEach {
                 val field = generateProperty(it)
                 modelBuilder.addField(field)
             }
 
-            if (isMap) {
-                val fullMapName = "$protoFilePackage.$fullName"
-                mapsSet.add(fullMapName)
-                val valueType = getTypeName(node.fieldList.find { it.name == "value" }!!)
-                mapsToKeyAndValuesMap.put(fullMapName, Pair("String", valueType))
-                Logger.log("map's fields ${node.fieldList.map { it.name +":" + it.typeName }}")
-            }
 
             val model = modelBuilder.build() as KotlinReactModel
             val functions = model.getMapFunctions()
@@ -91,7 +93,6 @@ class KotlinReactGenerator(input: InputStream,
                 utilsBuilder.addFun(it.first)
                 utilsBuilder.addFun(it.second)
             }
-
 
             ++count
         }
@@ -108,20 +109,19 @@ class KotlinReactGenerator(input: InputStream,
             ProtobufType.TYPE_BYTES     -> BytesReactField.Builder()
             ProtobufType.TYPE_MESSAGE   -> {
                 val fullName = gerFullName(field)
-                val protoTypeName = field.typeName.substring(1)
-                val isMap = mapsSet.contains(protoTypeName)
+                val isMap = mapsSet.contains(fullName)
 
-                val builder = if (isMap)
-                    MessageReactField.Builder()
-                else MapReactField.Builder()
+                val builder = if (!isMap)
+                                  MessageReactField.Builder()
+                              else MapReactField.Builder()
+                                                .valueType(mapsValuesTypes[fullName]!!)
 
                 builder.fullProtoTypeName(fullName)
 
             }
-            ProtobufType.TYPE_ENUM      -> {
-                EnumReactField.Builder()
-                              .fullProtoTypeName(gerFullName(field))
-            }
+            ProtobufType.TYPE_ENUM      -> EnumReactField.Builder()
+                                                         .fullProtoTypeName(gerFullName(field))
+
             else                        -> StringReactField.Builder()
         }
 
@@ -143,15 +143,16 @@ class KotlinReactGenerator(input: InputStream,
         return "$javaPackage$clearTypeName"
     }
 
-    private fun getTypeName(field: DescriptorProtos.FieldDescriptorProto): String {
+    private fun getTypeName(field: DescriptorProtos.FieldDescriptorProto): Type {
         return when(field.type) {
-            ProtobufType.TYPE_INT32     -> "Int"
-            ProtobufType.TYPE_INT64     -> "Long"
-            ProtobufType.TYPE_BOOL      -> "Boolean"
-            ProtobufType.TYPE_FLOAT     -> "Float"
-            ProtobufType.TYPE_DOUBLE    -> "Double"
-            ProtobufType.TYPE_MESSAGE   -> "Map"
-            else                        -> "String"
+            ProtobufType.TYPE_INT32     -> Type.INT
+            ProtobufType.TYPE_INT64     -> Type.LONG
+            ProtobufType.TYPE_BOOL      -> Type.BOOL
+            ProtobufType.TYPE_FLOAT     -> Type.FLOAT
+            ProtobufType.TYPE_DOUBLE    -> Type.DOUBLE
+            ProtobufType.TYPE_MESSAGE   -> Type.MESSAGE
+            ProtobufType.TYPE_ENUM      -> Type.ENUM
+            else                        -> Type.STRING
         }
     }
 

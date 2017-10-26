@@ -58,7 +58,7 @@ abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Fiel
                               .toString()
     }
 
-    fun toMapInitializer(): String {
+    open fun toMapInitializer(): String {
         return when {
             repeated -> { toMapRepeated() }
             optional -> checkOptionalToMap + toMapInit()
@@ -66,7 +66,7 @@ abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Fiel
         }
     }
 
-    fun fromMapInitializer(): String {
+    open fun fromMapInitializer(): String {
         return when {
             repeated -> {
                 val array = Utils.fieldArray(fieldName)

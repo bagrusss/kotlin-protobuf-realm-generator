@@ -4,7 +4,7 @@ import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.compiler.PluginProtos
 import ru.bagrusss.generator.Logger
 import ru.bagrusss.generator.fields.Field
-import ru.bagrusss.generator.fields.TYPE
+import ru.bagrusss.generator.fields.Type
 import ru.bagrusss.generator.generator.Generator
 import ru.bagrusss.generator.realm.kotlin.fields.RealmFieldBuilder
 import ru.bagrusss.generator.realm.kotlin.RealmModelBuilder
@@ -87,13 +87,13 @@ abstract class DefaultRealmGenerator(input: InputStream,
     override fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*> {
         Logger.log("Field_ name=${field.name}, type=${field.typeName}, field=$field")
         val fieldBuilder = when (field.type) {
-            ProtobufType.TYPE_INT32     -> entitiesFactory.createBuilder(TYPE.INT)
-            ProtobufType.TYPE_INT64     -> entitiesFactory.createBuilder(TYPE.LONG)
-            ProtobufType.TYPE_FLOAT     -> entitiesFactory.createBuilder(TYPE.FLOAT)
-            ProtobufType.TYPE_DOUBLE    -> entitiesFactory.createBuilder(TYPE.DOUBLE)
-            ProtobufType.TYPE_STRING    -> entitiesFactory.createBuilder(TYPE.STRING)
-            ProtobufType.TYPE_BOOL      -> entitiesFactory.createBuilder(TYPE.BOOL)
-            ProtobufType.TYPE_BYTES     -> entitiesFactory.createBuilder(TYPE.BYTES)
+            ProtobufType.TYPE_INT32     -> entitiesFactory.createBuilder(Type.INT)
+            ProtobufType.TYPE_INT64     -> entitiesFactory.createBuilder(Type.LONG)
+            ProtobufType.TYPE_FLOAT     -> entitiesFactory.createBuilder(Type.FLOAT)
+            ProtobufType.TYPE_DOUBLE    -> entitiesFactory.createBuilder(Type.DOUBLE)
+            ProtobufType.TYPE_STRING    -> entitiesFactory.createBuilder(Type.STRING)
+            ProtobufType.TYPE_BOOL      -> entitiesFactory.createBuilder(Type.BOOL)
+            ProtobufType.TYPE_BYTES     -> entitiesFactory.createBuilder(Type.BYTES)
             ProtobufType.TYPE_ENUM      -> {
                 val protoPackage = packagesSet.first { field.typeName.indexOf(it) == 1 }
                 val clearTypeName =  field.typeName
@@ -101,14 +101,14 @@ abstract class DefaultRealmGenerator(input: InputStream,
                                           .replace(protoPackage, "")
 
                 val javaPackage = protoToJavaPackagesMap[protoPackage]
-                entitiesFactory.createBuilder(TYPE.ENUM)
+                entitiesFactory.createBuilder(Type.ENUM)
                                     .fullProtoTypeName("$javaPackage$clearTypeName") as RealmFieldBuilder<*>
             }
             ProtobufType.TYPE_MESSAGE   -> {
                 val protoTypeName = field.typeName.substring(1)
                 val builder = if (!mapsSet.contains(protoTypeName))
-                                  entitiesFactory.createBuilder(TYPE.MESSAGE)
-                              else entitiesFactory.createBuilder(TYPE.MAP)
+                                  entitiesFactory.createBuilder(Type.MESSAGE)
+                              else entitiesFactory.createBuilder(Type.MAP)
 
                 val protoPackage = if (field.typeName.indexOf(protoFilePackage) == 1)
                                        protoFilePackage

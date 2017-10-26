@@ -17,7 +17,7 @@ abstract class Field<T>(builder: FieldBuilder<T>) {
     protected abstract fun isPrimitive(): Boolean
 }
 
-enum class TYPE {
+enum class Type {
     BOOL,
     INT,
     LONG,
