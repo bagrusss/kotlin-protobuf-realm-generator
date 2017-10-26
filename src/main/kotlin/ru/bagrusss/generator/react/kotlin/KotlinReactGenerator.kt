@@ -21,6 +21,8 @@ class KotlinReactGenerator(input: InputStream,
 
     private lateinit var utilsBuilder: UtilsModelBuilder<FunSpec>
 
+    private val valuesTypesMap = HashMap<String, String>()
+
     override fun generate() {
         Logger.log("react start")
 
@@ -77,7 +79,12 @@ class KotlinReactGenerator(input: InputStream,
 
             if (isMap) {
                 mapsSet.add(protoFullName)
-                val valueType = getTypeName(node.fieldList.find { it.name == "value" }!!)
+                val valueField = node.fieldList.find { it.name == "value" }!!
+                val valueType = getTypeName(valueField)
+                if (valueType == Type.ENUM || valueType == Type.MESSAGE) {
+                    val typeName = gerFullName(valueField)
+                    valuesTypesMap.put(protoFullName, typeName)
+                }
                 mapsValuesTypes.put(protoFullName, valueType)
             }
 
@@ -110,13 +117,16 @@ class KotlinReactGenerator(input: InputStream,
             ProtobufType.TYPE_MESSAGE   -> {
                 val fullName = gerFullName(field)
                 val isMap = mapsSet.contains(fullName)
-
-                val builder = if (!isMap)
+                val prototypeName: String?
+                val builder = if (!isMap) {
+                                  prototypeName = fullName
                                   MessageReactField.Builder()
-                              else MapReactField.Builder()
-                                                .valueType(mapsValuesTypes[fullName]!!)
-
-                builder.fullProtoTypeName(fullName)
+                              } else {
+                                  prototypeName = valuesTypesMap[fullName]
+                                  MapReactField.Builder()
+                                               .valueType(mapsValuesTypes[fullName]!!)
+                              }
+                builder.fullProtoTypeName(prototypeName?: "")
 
             }
             ProtobufType.TYPE_ENUM      -> EnumReactField.Builder()
