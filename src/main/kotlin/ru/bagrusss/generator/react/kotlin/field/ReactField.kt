@@ -6,7 +6,8 @@ import ru.bagrusss.generator.fields.Field
 
 abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Field<T>(builder) {
 
-    private val checkOptionalToMap = "if (${Utils.getHas(fieldName)}())\n\t\t"
+    private val checkOptionalToMap = "\n\tif (${Utils.getHas(fieldName)}())\n\t\t"
+    private val checkOptionalFromMap = "\n\tif (map.hasKey(\"$fieldName\")) \n\t\t"
 
     abstract fun getReactType(): String
     abstract fun getReactTypeForMap(): String
@@ -53,7 +54,7 @@ abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Fiel
                               .append(putToArrayMethodName())
                               .append('(')
                               .append(toMapConverter())
-                              .append(") }\n}")
+                              .append(") }\n\t}")
                               .toString()
     }
 
@@ -66,41 +67,45 @@ abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Fiel
     }
 
     fun fromMapInitializer(): String {
-        return if (repeated) {
-            val array = Utils.fieldArray(fieldName)
-            val item = "element"
-            val builder = StringBuilder().append("\n\tval ")
-                           .append(array)
-                           .append(" = map.getArray(\"")
-                           .append(fieldName)
-                           .append("\")\n")
-                           .append("\tfor (i in 0 until ")
-                           .append(array)
-                           .append(".size()) {\n")
-                           .append("\t\tval ")
-                           .append(item)
-                           .append(" = ")
+        return when {
+            repeated -> {
+                val array = Utils.fieldArray(fieldName)
+                val item = "element"
+                val builder = StringBuilder().append("\n\tval ")
+                                             .append(array)
+                                             .append(" = map.getArray(\"")
+                                             .append(fieldName)
+                                             .append("\")\n")
+                                             .append("\tfor (i in 0 until ")
+                                             .append(array)
+                                             .append(".size()) {\n")
+                                             .append("\t\tval ")
+                                             .append(item)
+                                             .append(" = ")
 
-            if (!isPrimitive()) {
-                builder.append(getFromMapInit())
+                if (!isPrimitive()) {
+                    builder.append(getFromMapInit())
+                }
+
+                builder.append(array)
+                       .append('.')
+                       .append(getFromArrayMethodName())
+                       .append("(i)")
+
+                if (!isPrimitive())
+                    builder.append(")")
+
+                builder.append("\n\t\t")
+                       .append(Utils.addToArray(fieldName))
+                       .append('(')
+                       .append(item)
+                       .append(")\n\t}")
+
+                builder.toString()
             }
-
-            builder.append(array)
-                   .append('.')
-                   .append(getFromArrayMethodName())
-                   .append("(i)")
-
-            if (!isPrimitive())
-                builder.append(")")
-
-            builder.append("\n\t\t")
-                   .append(Utils.addToArray(fieldName))
-                   .append('(')
-                   .append(item)
-                   .append(")\n\t}\n")
-
-            builder.toString()
-        } else fromMapInit()
+            optional -> checkOptionalFromMap + fromMapInit()
+            else -> fromMapInit()
+        }
     }
 
 }
