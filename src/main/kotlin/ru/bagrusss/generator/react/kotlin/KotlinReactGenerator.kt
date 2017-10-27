@@ -49,13 +49,15 @@ class KotlinReactGenerator(input: InputStream,
     override fun filter(node: DescriptorProtos.DescriptorProto): Boolean {
         return !protoFileJavaPackage.contains("google", true)
                 && !node.name.contains("Swift", true)
+                && !node.name.contains("Kotlin", true)
+                && !protoFileJavaPackage.contains("JWT", true)
     }
 
     private var count = 0
 
     override fun handleProtoMessage(message: DescriptorProtos.DescriptorProto) {
-        if (message.hasOptions()) {
-            //Logger.log("${message.name} generate_react_object = ${message.options.descriptorForType.fields }")
+        if (filter(message)) {
+            Logger.log("${message.name} generate_react_object = ${message.options.descriptorForType.fields }")
             parseCurrent(message)
         }
     }
@@ -63,6 +65,8 @@ class KotlinReactGenerator(input: InputStream,
     private val mapsValuesTypes = TreeMap<String, Type>()
 
     private fun parseCurrent(node: DescriptorProtos.DescriptorProto, parentNameOriginal: String = "") {
+        if (node.name == "Request") return // filter node name
+
         val fullName = "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
         val protoFullName = "$protoFileJavaPackage.$fullName"
 
@@ -72,7 +76,6 @@ class KotlinReactGenerator(input: InputStream,
 
         val isMap = node.options.mapEntry
 
-        if (node.fieldList.isNotEmpty()) {
             val modelBuilder = KotlinReactModel.Builder()
                                                .isMap(isMap)
                                                .protoClassFullName(protoFullName)
@@ -102,7 +105,6 @@ class KotlinReactGenerator(input: InputStream,
             }
 
             ++count
-        }
     }
 
     override fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*> {
@@ -137,7 +139,7 @@ class KotlinReactGenerator(input: InputStream,
 
         fieldBuilder.optional(field.label == OPTIONAL)
                     .repeated(field.label == REPEATED)
-                    .fieldName(field.name)
+                    .fieldName(field.jsonName)
 
         return fieldBuilder.build()
     }
