@@ -65,7 +65,7 @@ class KotlinReactGenerator(input: InputStream,
     private val mapsValuesTypes = TreeMap<String, Type>()
 
     private fun parseCurrent(node: DescriptorProtos.DescriptorProto, parentNameOriginal: String = "") {
-        if (node.name == "Request") return // filter node name
+        //if (node.name == "Request") return // filter node name
 
         val fullName = "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
         val protoFullName = "$protoFileJavaPackage.$fullName"

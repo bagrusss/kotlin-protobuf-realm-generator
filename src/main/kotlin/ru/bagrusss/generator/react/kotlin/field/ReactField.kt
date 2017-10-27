@@ -54,7 +54,12 @@ abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Fiel
                               .append(putToArrayMethodName())
                               .append('(')
                               .append(toMapConverter())
-                              .append(") }\n\t}")
+                              .append(") }\n\t\t")
+                              .append("putArray(\"")
+                              .append(fieldName)
+                              .append("\", ")
+                              .append(array)
+                              .append(")\n\t}")
                               .toString()
     }
 
