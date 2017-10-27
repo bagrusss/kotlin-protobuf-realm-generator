@@ -3,6 +3,7 @@ package ru.bagrusss.generator.react.kotlin
 import com.google.protobuf.DescriptorProtos
 import com.google.protobuf.compiler.PluginProtos
 import com.squareup.kotlinpoet.FunSpec
+import google.protobuf.SwiftDescriptor
 import ru.bagrusss.generator.Logger
 import ru.bagrusss.generator.fields.Field
 import ru.bagrusss.generator.fields.Type
@@ -48,6 +49,7 @@ class KotlinReactGenerator(input: InputStream,
 
     override fun filter(node: DescriptorProtos.DescriptorProto): Boolean {
         return !protoFileJavaPackage.contains("google", true)
+                && !protoFilePackage.contains("google", true)
                 && !node.name.contains("Swift", true)
                 && !node.name.contains("Kotlin", true)
                 && !protoFileJavaPackage.contains("JWT", true)
@@ -57,7 +59,8 @@ class KotlinReactGenerator(input: InputStream,
 
     override fun handleProtoMessage(message: DescriptorProtos.DescriptorProto) {
         if (filter(message)) {
-            Logger.log("${message.name} generate_react_object = ${message.options.descriptorForType.fields }")
+            message.options.getExtension(SwiftDescriptor.swiftMessageOptions)
+            Logger.log("${message.name} generate_react_object = ${message.options.allFields.values }")
             parseCurrent(message)
         }
     }
