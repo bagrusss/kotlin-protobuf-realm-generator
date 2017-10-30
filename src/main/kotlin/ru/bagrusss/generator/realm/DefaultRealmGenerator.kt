@@ -1,6 +1,9 @@
 package ru.bagrusss.generator.realm
 
+import com.google.protobuf.ExtensionRegistryLite
 import google.protobuf.DescriptorProtos
+import google.protobuf.KotlinDescriptor
+import google.protobuf.SwiftDescriptor
 import google.protobuf.compiler.PluginProtos
 import ru.bagrusss.generator.Logger
 import ru.bagrusss.generator.fields.Field
@@ -25,8 +28,13 @@ abstract class DefaultRealmGenerator(input: InputStream,
     abstract fun generatePrimitives(responseBuilder: PluginProtos.CodeGeneratorResponse.Builder)
 
     override fun generate() {
+
+        val extensionRegistry = ExtensionRegistryLite.newInstance()
+        SwiftDescriptor.registerAllExtensions(extensionRegistry)
+        KotlinDescriptor.registerAllExtensions(extensionRegistry)
+
         response = PluginProtos.CodeGeneratorResponse.newBuilder()
-        request = PluginProtos.CodeGeneratorRequest.parseFrom(input)
+        request = PluginProtos.CodeGeneratorRequest.parseFrom(input, extensionRegistry)
 
         generatePrimitives(response)
 
@@ -36,10 +44,12 @@ abstract class DefaultRealmGenerator(input: InputStream,
     }
 
     override fun handleProtoMessage(message: DescriptorProtos.DescriptorProto) {
-        if (message.hasOptions() /*&& it.options.hasExtension(SwiftDescriptor.swiftMessageOptions)*/) {
-            //if (it.hasOptions() && it.options.hasField(SwiftDescriptor.SwiftFileOptions.getDescriptor().fields.first { it.jsonName.contains("generate_realm_object", true) })) {
-            parseCurrent(message)
-            ++count
+        if (message.hasOptions() && message.options.hasExtension(SwiftDescriptor.swiftMessageOptions)) {
+            val extension = message.options.getExtension(SwiftDescriptor.swiftMessageOptions)
+            if (extension.generateRealmObject) {
+                parseCurrent(message)
+                ++count
+            }
         }
     }
 
@@ -55,7 +65,7 @@ abstract class DefaultRealmGenerator(input: InputStream,
             }
 
             if (node.fieldList.isNotEmpty()) {
-                val isMap = false
+                val isMap = node.options.mapEntry
                 val classModelBuilder = entitiesFactory.createModelBuilder()
                                                        .realmPackageName(realmPackage)
                                                        .realmClassName(realmClassName)
