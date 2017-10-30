@@ -1,7 +1,7 @@
 package ru.bagrusss.generator.realm
 
-import com.google.protobuf.DescriptorProtos
-import com.google.protobuf.compiler.PluginProtos
+import google.protobuf.DescriptorProtos
+import google.protobuf.compiler.PluginProtos
 import ru.bagrusss.generator.Logger
 import ru.bagrusss.generator.fields.Field
 import ru.bagrusss.generator.fields.Type
@@ -55,7 +55,7 @@ abstract class DefaultRealmGenerator(input: InputStream,
             }
 
             if (node.fieldList.isNotEmpty()) {
-                val isMap = node.options.mapEntry
+                val isMap = false
                 val classModelBuilder = entitiesFactory.createModelBuilder()
                                                        .realmPackageName(realmPackage)
                                                        .realmClassName(realmClassName)

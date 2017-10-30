@@ -1,13 +1,11 @@
 package ru.bagrusss.generator.realm.kotlin
 
 import ru.bagrusss.generator.realm.kotlin.model.KotlinPrimitiveModel
-import ru.bagrusss.generator.model.Model
-import com.google.protobuf.DescriptorProtos
-import com.google.protobuf.compiler.PluginProtos
 import com.squareup.kotlinpoet.*
+import google.protobuf.DescriptorProtos
+import google.protobuf.compiler.PluginProtos
 import ru.bagrusss.generator.realm.RealmEntityFactory
 import ru.bagrusss.generator.realm.DefaultRealmGenerator
-import ru.bagrusss.generator.realm.kotlin.model.KotlinClassModel
 import java.io.InputStream
 import java.io.PrintStream
 

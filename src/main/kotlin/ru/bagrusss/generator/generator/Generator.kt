@@ -1,7 +1,7 @@
 package ru.bagrusss.generator.generator
 
-import com.google.protobuf.DescriptorProtos
-import com.google.protobuf.compiler.PluginProtos
+import google.protobuf.DescriptorProtos
+import google.protobuf.compiler.PluginProtos
 import ru.bagrusss.generator.Logger
 import ru.bagrusss.generator.fields.Field
 import java.io.File

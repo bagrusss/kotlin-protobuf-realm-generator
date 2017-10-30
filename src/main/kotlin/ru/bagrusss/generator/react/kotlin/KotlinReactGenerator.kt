@@ -1,9 +1,11 @@
 package ru.bagrusss.generator.react.kotlin
 
-import com.google.protobuf.DescriptorProtos
-import com.google.protobuf.compiler.PluginProtos
+import com.google.protobuf.ExtensionRegistryLite
 import com.squareup.kotlinpoet.FunSpec
+import google.protobuf.DescriptorProtos
+import google.protobuf.KotlinDescriptor
 import google.protobuf.SwiftDescriptor
+import google.protobuf.compiler.PluginProtos
 import ru.bagrusss.generator.Logger
 import ru.bagrusss.generator.fields.Field
 import ru.bagrusss.generator.fields.Type
@@ -27,8 +29,13 @@ class KotlinReactGenerator(input: InputStream,
     override fun generate() {
         Logger.log("react start")
 
+        //вот оно, блять, решение проблем!
+        val extensionRegistry = ExtensionRegistryLite.newInstance()
+        SwiftDescriptor.registerAllExtensions(extensionRegistry)
+        KotlinDescriptor.registerAllExtensions(extensionRegistry)
+
         response = PluginProtos.CodeGeneratorResponse.newBuilder()
-        request = PluginProtos.CodeGeneratorRequest.parseFrom(input)
+        request = PluginProtos.CodeGeneratorRequest.parseFrom(input, extensionRegistry)
 
 
         utilsBuilder = KotlinUtilsModel.Builder()
@@ -59,8 +66,8 @@ class KotlinReactGenerator(input: InputStream,
 
     override fun handleProtoMessage(message: DescriptorProtos.DescriptorProto) {
         if (filter(message)) {
-            message.options.getExtension(SwiftDescriptor.swiftMessageOptions)
-            Logger.log("${message.name} generate_react_object = ${message.options.allFields.values }")
+            if (message.options.hasExtension(SwiftDescriptor.swiftMessageOptions))
+                Logger.log("${message.name} generate_react_object = ${message.options.getExtension(SwiftDescriptor.swiftMessageOptions) }")
             parseCurrent(message)
         }
     }
