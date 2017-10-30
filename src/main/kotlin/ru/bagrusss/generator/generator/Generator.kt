@@ -10,6 +10,8 @@ import java.io.PrintStream
 import java.io.PrintWriter
 import java.util.TreeSet
 
+internal typealias ProtobufType = DescriptorProtos.FieldDescriptorProto.Type
+
 abstract class Generator(protected val input: InputStream,
                          protected val output: PrintStream) {
 

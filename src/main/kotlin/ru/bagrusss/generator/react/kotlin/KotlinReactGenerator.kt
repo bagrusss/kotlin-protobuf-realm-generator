@@ -10,10 +10,10 @@ import ru.bagrusss.generator.Logger
 import ru.bagrusss.generator.fields.Field
 import ru.bagrusss.generator.fields.Type
 import ru.bagrusss.generator.generator.Generator
+import ru.bagrusss.generator.generator.ProtobufType
 import ru.bagrusss.generator.react.UtilsModelBuilder
 import ru.bagrusss.generator.react.kotlin.field.*
 import ru.bagrusss.generator.react.kotlin.model.KotlinReactModel
-import ru.bagrusss.generator.realm.ProtobufType
 import java.io.InputStream
 import java.io.PrintStream
 import java.util.*
