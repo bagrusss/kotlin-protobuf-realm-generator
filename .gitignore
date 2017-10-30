@@ -5,5 +5,4 @@ run.sh
 build
 out
 .gradle
-src/main/kotlin/google/
 protoGenerator-1.0.jar
