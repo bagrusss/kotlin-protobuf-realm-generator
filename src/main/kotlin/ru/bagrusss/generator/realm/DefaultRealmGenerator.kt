@@ -44,9 +44,12 @@ abstract class DefaultRealmGenerator(input: InputStream,
     }
 
     override fun handleProtoMessage(message: DescriptorProtos.DescriptorProto) {
-        if (message.hasOptions() && message.options.hasExtension(SwiftDescriptor.swiftMessageOptions)) {
+        if (message.hasOptions()
+                && (message.options.hasExtension(SwiftDescriptor.swiftMessageOptions)
+                    || message.options.hasExtension(KotlinDescriptor.kotlinMessageOptions))) {
             val extension = message.options.getExtension(SwiftDescriptor.swiftMessageOptions)
-            if (extension.generateRealmObject) {
+            val kotlinExtension = message.options.getExtension(KotlinDescriptor.kotlinMessageOptions)
+            if (extension.generateRealmObject || kotlinExtension?.generateRealmObject == true) {
                 parseCurrent(message)
                 ++count
             }
