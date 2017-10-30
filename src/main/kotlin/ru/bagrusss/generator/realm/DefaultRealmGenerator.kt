@@ -95,7 +95,6 @@ abstract class DefaultRealmGenerator(input: InputStream,
 
 
     override fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*> {
-        Logger.log("Field_ name=${field.name}, type=${field.typeName}, field=$field")
         val fieldBuilder = when (field.type) {
             ProtobufType.TYPE_INT32     -> entitiesFactory.createBuilder(Type.INT)
             ProtobufType.TYPE_INT64     -> entitiesFactory.createBuilder(Type.LONG)
