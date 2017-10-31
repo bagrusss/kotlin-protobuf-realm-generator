@@ -55,6 +55,14 @@ class KotlinRealmGenerator(input: InputStream,
         super.generate()
     }
 
+    override fun additionalClass(node: DescriptorProtos.DescriptorProto): String {
+        return if (node.hasOptions()
+                    && node.options.hasExtension(SwiftDescriptor.swiftMessageOptions)
+                    && node.options.getExtension(SwiftDescriptor.swiftMessageOptions).hasAdditionalClassName()) {
+                    node.options.getExtension(SwiftDescriptor.swiftMessageOptions).additionalClassName
+               } else ""
+    }
+
     override fun isPrimaryKey(field: DescriptorProtos.FieldDescriptorProto): Boolean {
         return field.hasOptions()
                 && field.options.hasExtension(SwiftDescriptor.swiftFieldOptions)

@@ -7,6 +7,7 @@ import ru.bagrusss.generator.fields.Field
 import ru.bagrusss.generator.fields.Type
 import ru.bagrusss.generator.generator.Generator
 import ru.bagrusss.generator.generator.ProtobufType
+import ru.bagrusss.generator.realm.kotlin.RealmModelBuilder
 import ru.bagrusss.generator.realm.kotlin.fields.RealmFieldBuilder
 import java.io.File
 import java.io.InputStream
@@ -69,6 +70,15 @@ abstract class DefaultRealmGenerator(input: InputStream,
             val model = classModelBuilder.build() as RealmModel
 
             writeFile("$realmPath${File.separator}$protoFilePackage", model.getFileName(), model.getModelBody())
+
+            if (additionalClass(node).isNotEmpty()) {
+                classModelBuilder as RealmModelBuilder
+                classModelBuilder.realmClassName("Additional" + realmClassName)
+
+                val additionalModel = classModelBuilder.build() as RealmModel
+
+                writeFile("$realmPath${File.separator}$protoFilePackage", additionalModel.getFileName(), additionalModel.getModelBody())
+            }
         }
     }
 
@@ -131,5 +141,7 @@ abstract class DefaultRealmGenerator(input: InputStream,
     protected abstract fun isPrimaryKey(field: DescriptorProtos.FieldDescriptorProto): Boolean
 
     protected abstract fun isIndex(field: DescriptorProtos.FieldDescriptorProto): Boolean
+
+    protected abstract fun additionalClass(node: DescriptorProtos.DescriptorProto): String
 
 }
