@@ -243,6 +243,20 @@ public final class SwiftDescriptor {
      */
     com.google.protobuf.ByteString
         getPropertyNameBytes();
+
+    /**
+     * <code>required string packageName = 4;</code>
+     */
+    boolean hasPackageName();
+    /**
+     * <code>required string packageName = 4;</code>
+     */
+    java.lang.String getPackageName();
+    /**
+     * <code>required string packageName = 4;</code>
+     */
+    com.google.protobuf.ByteString
+        getPackageNameBytes();
   }
   /**
    * Protobuf type {@code google.protobuf.LinkedObject}
@@ -260,6 +274,7 @@ public final class SwiftDescriptor {
       fieldName_ = "";
       fromType_ = "";
       propertyName_ = "";
+      packageName_ = "";
     }
 
     @java.lang.Override
@@ -306,6 +321,12 @@ public final class SwiftDescriptor {
               com.google.protobuf.ByteString bs = input.readBytes();
               bitField0_ |= 0x00000004;
               propertyName_ = bs;
+              break;
+            }
+            case 34: {
+              com.google.protobuf.ByteString bs = input.readBytes();
+              bitField0_ |= 0x00000008;
+              packageName_ = bs;
               break;
             }
           }
@@ -459,6 +480,48 @@ public final class SwiftDescriptor {
       }
     }
 
+    public static final int PACKAGENAME_FIELD_NUMBER = 4;
+    private volatile java.lang.Object packageName_;
+    /**
+     * <code>required string packageName = 4;</code>
+     */
+    public boolean hasPackageName() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>required string packageName = 4;</code>
+     */
+    public java.lang.String getPackageName() {
+      java.lang.Object ref = packageName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          packageName_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>required string packageName = 4;</code>
+     */
+    public com.google.protobuf.ByteString
+        getPackageNameBytes() {
+      java.lang.Object ref = packageName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        packageName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -477,6 +540,10 @@ public final class SwiftDescriptor {
         memoizedIsInitialized = 0;
         return false;
       }
+      if (!hasPackageName()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -491,6 +558,9 @@ public final class SwiftDescriptor {
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, propertyName_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, packageName_);
       }
       unknownFields.writeTo(output);
     }
@@ -508,6 +578,9 @@ public final class SwiftDescriptor {
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, propertyName_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, packageName_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -540,6 +613,11 @@ public final class SwiftDescriptor {
         result = result && getPropertyName()
             .equals(other.getPropertyName());
       }
+      result = result && (hasPackageName() == other.hasPackageName());
+      if (hasPackageName()) {
+        result = result && getPackageName()
+            .equals(other.getPackageName());
+      }
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -562,6 +640,10 @@ public final class SwiftDescriptor {
       if (hasPropertyName()) {
         hash = (37 * hash) + PROPERTYNAME_FIELD_NUMBER;
         hash = (53 * hash) + getPropertyName().hashCode();
+      }
+      if (hasPackageName()) {
+        hash = (37 * hash) + PACKAGENAME_FIELD_NUMBER;
+        hash = (53 * hash) + getPackageName().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -698,6 +780,8 @@ public final class SwiftDescriptor {
         bitField0_ = (bitField0_ & ~0x00000002);
         propertyName_ = "";
         bitField0_ = (bitField0_ & ~0x00000004);
+        packageName_ = "";
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
 
@@ -734,6 +818,10 @@ public final class SwiftDescriptor {
           to_bitField0_ |= 0x00000004;
         }
         result.propertyName_ = propertyName_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        result.packageName_ = packageName_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -791,6 +879,11 @@ public final class SwiftDescriptor {
           propertyName_ = other.propertyName_;
           onChanged();
         }
+        if (other.hasPackageName()) {
+          bitField0_ |= 0x00000008;
+          packageName_ = other.packageName_;
+          onChanged();
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -804,6 +897,9 @@ public final class SwiftDescriptor {
           return false;
         }
         if (!hasPropertyName()) {
+          return false;
+        }
+        if (!hasPackageName()) {
           return false;
         }
         return true;
@@ -1052,6 +1148,82 @@ public final class SwiftDescriptor {
   }
   bitField0_ |= 0x00000004;
         propertyName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object packageName_ = "";
+      /**
+       * <code>required string packageName = 4;</code>
+       */
+      public boolean hasPackageName() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>required string packageName = 4;</code>
+       */
+      public java.lang.String getPackageName() {
+        java.lang.Object ref = packageName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (bs.isValidUtf8()) {
+            packageName_ = s;
+          }
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>required string packageName = 4;</code>
+       */
+      public com.google.protobuf.ByteString
+          getPackageNameBytes() {
+        java.lang.Object ref = packageName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          packageName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string packageName = 4;</code>
+       */
+      public Builder setPackageName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000008;
+        packageName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string packageName = 4;</code>
+       */
+      public Builder clearPackageName() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        packageName_ = getDefaultInstance().getPackageName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string packageName = 4;</code>
+       */
+      public Builder setPackageNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000008;
+        packageName_ = value;
         onChanged();
         return this;
       }
@@ -4702,41 +4874,42 @@ public final class SwiftDescriptor {
     java.lang.String[] descriptorData = {
       "\n&google/protobuf/swift-descriptor.proto" +
       "\022\017google.protobuf\032 google/protobuf/descr" +
-      "iptor.proto\"I\n\014LinkedObject\022\021\n\tfieldName" +
+      "iptor.proto\"^\n\014LinkedObject\022\021\n\tfieldName" +
       "\030\001 \002(\t\022\020\n\010fromType\030\002 \002(\t\022\024\n\014propertyName" +
-      "\030\003 \002(\t\"\204\002\n\020SwiftFileOptions\022\024\n\014class_pre" +
-      "fix\030\001 \001(\t\022O\n\027entities_access_control\030\002 \001" +
-      "(\0162\036.google.protobuf.AccessControl:\016Publ" +
-      "icEntities\022#\n\025compile_for_framework\030\003 \001(" +
-      "\010:\004true\022\036\n\017generate_struct\030\004 \001(\010:\005false\022" +
-      "%\n\026generate_realm_objects\030\005 \001(\010:\005false\022\035",
-      "\n\016generate_react\030\006 \001(\010:\005false\"\323\001\n\023SwiftM" +
-      "essageOptions\022\"\n\023generate_error_type\030\001 \001" +
-      "(\010:\005false\022$\n\025generate_realm_object\030\002 \001(\010" +
-      ":\005false\022\035\n\016generate_react\030\003 \001(\010:\005false\022\035" +
-      "\n\025additional_class_name\030\004 \001(\t\0224\n\rlinkedO" +
-      "bjects\030\005 \003(\0132\035.google.protobuf.LinkedObj" +
-      "ect\"\261\001\n\021SwiftFieldOptions\022&\n\027realm_index" +
-      "ed_propertie\030\001 \001(\010:\005false\022 \n\021realm_prima" +
-      "ry_key\030\002 \001(\010:\005false\022R\n\030realm_override_pr" +
-      "opertie\030\003 \001(\0162&.google.protobuf.RealmOve",
-      "rrideRepeated:\010OVERRIDE\"{\n\020SwiftEnumOpti" +
-      "ons\022\"\n\023generate_error_type\030\001 \001(\010:\005false\022" +
-      "\035\n\016generate_react\030\002 \001(\010:\005false\022$\n\025genera" +
-      "te_realm_object\030\003 \001(\010:\005false*9\n\rAccessCo" +
-      "ntrol\022\024\n\020InternalEntities\020\000\022\022\n\016PublicEnt" +
-      "ities\020\001*1\n\025RealmOverrideRepeated\022\014\n\010OVER" +
-      "RIDE\020\000\022\n\n\006APPEND\020\001:^\n\022swift_file_options" +
-      "\022\034.google.protobuf.FileOptions\030\273\253\267\002 \001(\0132" +
-      "!.google.protobuf.SwiftFileOptions:a\n\023sw" +
-      "ift_field_options\022\035.google.protobuf.Fiel",
-      "dOptions\030\272\253\267\002 \001(\0132\".google.protobuf.Swif" +
-      "tFieldOptions:g\n\025swift_message_options\022\037" +
-      ".google.protobuf.MessageOptions\030\271\253\267\002 \001(\013" +
-      "2$.google.protobuf.SwiftMessageOptions:^" +
-      "\n\022swift_enum_options\022\034.google.protobuf.E" +
-      "numOptions\030\270\253\267\002 \001(\0132!.google.protobuf.Sw" +
-      "iftEnumOptionsB\016\332\333\272\023\002\030\000\332\333\272\023\002\020\001"
+      "\030\003 \002(\t\022\023\n\013packageName\030\004 \002(\t\"\204\002\n\020SwiftFil" +
+      "eOptions\022\024\n\014class_prefix\030\001 \001(\t\022O\n\027entiti" +
+      "es_access_control\030\002 \001(\0162\036.google.protobu" +
+      "f.AccessControl:\016PublicEntities\022#\n\025compi" +
+      "le_for_framework\030\003 \001(\010:\004true\022\036\n\017generate" +
+      "_struct\030\004 \001(\010:\005false\022%\n\026generate_realm_o",
+      "bjects\030\005 \001(\010:\005false\022\035\n\016generate_react\030\006 " +
+      "\001(\010:\005false\"\323\001\n\023SwiftMessageOptions\022\"\n\023ge" +
+      "nerate_error_type\030\001 \001(\010:\005false\022$\n\025genera" +
+      "te_realm_object\030\002 \001(\010:\005false\022\035\n\016generate" +
+      "_react\030\003 \001(\010:\005false\022\035\n\025additional_class_" +
+      "name\030\004 \001(\t\0224\n\rlinkedObjects\030\005 \003(\0132\035.goog" +
+      "le.protobuf.LinkedObject\"\261\001\n\021SwiftFieldO" +
+      "ptions\022&\n\027realm_indexed_propertie\030\001 \001(\010:" +
+      "\005false\022 \n\021realm_primary_key\030\002 \001(\010:\005false" +
+      "\022R\n\030realm_override_propertie\030\003 \001(\0162&.goo",
+      "gle.protobuf.RealmOverrideRepeated:\010OVER" +
+      "RIDE\"{\n\020SwiftEnumOptions\022\"\n\023generate_err" +
+      "or_type\030\001 \001(\010:\005false\022\035\n\016generate_react\030\002" +
+      " \001(\010:\005false\022$\n\025generate_realm_object\030\003 \001" +
+      "(\010:\005false*9\n\rAccessControl\022\024\n\020InternalEn" +
+      "tities\020\000\022\022\n\016PublicEntities\020\001*1\n\025RealmOve" +
+      "rrideRepeated\022\014\n\010OVERRIDE\020\000\022\n\n\006APPEND\020\001:" +
+      "^\n\022swift_file_options\022\034.google.protobuf." +
+      "FileOptions\030\273\253\267\002 \001(\0132!.google.protobuf.S" +
+      "wiftFileOptions:a\n\023swift_field_options\022\035",
+      ".google.protobuf.FieldOptions\030\272\253\267\002 \001(\0132\"" +
+      ".google.protobuf.SwiftFieldOptions:g\n\025sw" +
+      "ift_message_options\022\037.google.protobuf.Me" +
+      "ssageOptions\030\271\253\267\002 \001(\0132$.google.protobuf." +
+      "SwiftMessageOptions:^\n\022swift_enum_option" +
+      "s\022\034.google.protobuf.EnumOptions\030\270\253\267\002 \001(\013" +
+      "2!.google.protobuf.SwiftEnumOptionsB\016\332\333\272" +
+      "\023\002\030\000\332\333\272\023\002\020\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -4756,7 +4929,7 @@ public final class SwiftDescriptor {
     internal_static_google_protobuf_LinkedObject_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_google_protobuf_LinkedObject_descriptor,
-        new java.lang.String[] { "FieldName", "FromType", "PropertyName", });
+        new java.lang.String[] { "FieldName", "FromType", "PropertyName", "PackageName", });
     internal_static_google_protobuf_SwiftFileOptions_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_google_protobuf_SwiftFileOptions_fieldAccessorTable = new

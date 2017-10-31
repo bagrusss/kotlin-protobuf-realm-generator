@@ -20,7 +20,7 @@ abstract class DefaultRealmGenerator(input: InputStream,
                                      protected val realmPackage: String,
                                      protected val prefix: String,
                                      private val entitiesFactory: RealmEntityFactory): Generator(input, output) {
-
+    private var count = 0
 
     abstract fun generatePrimitives(responseBuilder: PluginProtos.CodeGeneratorResponse.Builder)
 
@@ -81,9 +81,6 @@ abstract class DefaultRealmGenerator(input: InputStream,
             }
         }
     }
-
-    private var count = 0
-
 
     override fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*> {
         val fieldBuilder = when (field.type) {
