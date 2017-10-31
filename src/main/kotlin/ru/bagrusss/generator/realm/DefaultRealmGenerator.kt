@@ -1,9 +1,6 @@
 package ru.bagrusss.generator.realm
 
-import com.google.protobuf.ExtensionRegistryLite
 import google.protobuf.DescriptorProtos
-import google.protobuf.KotlinDescriptor
-import google.protobuf.SwiftDescriptor
 import google.protobuf.compiler.PluginProtos
 import ru.bagrusss.generator.Logger
 import ru.bagrusss.generator.fields.Field

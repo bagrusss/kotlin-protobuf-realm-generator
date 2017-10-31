@@ -12,7 +12,6 @@ import ru.bagrusss.generator.realm.DefaultRealmGenerator
 import java.io.InputStream
 import java.io.PrintStream
 
-
 class KotlinRealmGenerator(input: InputStream,
                            output: PrintStream,
                            realmPath: String,
@@ -52,7 +51,7 @@ class KotlinRealmGenerator(input: InputStream,
 
         response = PluginProtos.CodeGeneratorResponse.newBuilder()
         request = PluginProtos.CodeGeneratorRequest.parseFrom(input, extensionRegistry)
-        
+
         super.generate()
     }
 
