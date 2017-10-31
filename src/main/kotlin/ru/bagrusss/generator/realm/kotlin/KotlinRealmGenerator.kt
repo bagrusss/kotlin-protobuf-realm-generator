@@ -3,6 +3,8 @@ package ru.bagrusss.generator.realm.kotlin
 import ru.bagrusss.generator.realm.kotlin.model.KotlinPrimitiveModel
 import com.squareup.kotlinpoet.*
 import google.protobuf.DescriptorProtos
+import google.protobuf.KotlinDescriptor
+import google.protobuf.SwiftDescriptor
 import google.protobuf.compiler.PluginProtos
 import ru.bagrusss.generator.realm.RealmEntityFactory
 import ru.bagrusss.generator.realm.DefaultRealmGenerator
@@ -38,5 +40,19 @@ class KotlinRealmGenerator(input: InputStream,
                                             .build()
             responseBuilder.addFile(realmTypeFile)
         }
+    }
+
+    override fun isPrimaryKey(field: DescriptorProtos.FieldDescriptorProto): Boolean {
+        return field.hasOptions()
+                && field.options.hasExtension(SwiftDescriptor.swiftFieldOptions)
+                && field.options.getExtension(SwiftDescriptor.swiftFieldOptions).realmPrimaryKey
+                || field.options.hasExtension(KotlinDescriptor.kotlinFieldOptions)
+                && field.options.getExtension(KotlinDescriptor.kotlinFieldOptions).generateRealmPrimaryKey
+    }
+
+    override fun isIndex(field: DescriptorProtos.FieldDescriptorProto): Boolean {
+        return field.hasOptions()
+                && field.options.hasExtension(SwiftDescriptor.swiftFieldOptions)
+                && field.options.getExtension(SwiftDescriptor.swiftFieldOptions).realmIndexedPropertie
     }
 }

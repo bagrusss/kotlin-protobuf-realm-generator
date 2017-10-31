@@ -985,11 +985,11 @@ public final class KotlinDescriptor {
         google.protobuf.KotlinDescriptor.KotlinMessageOptions.getDefaultInstance());
   public static final int KOTLIN_FIELD_OPTIONS_FIELD_NUMBER = 50920139;
   /**
-   * <code>extend .google.protobuf.MessageOptions { ... }</code>
+   * <code>extend .google.protobuf.FieldOptions { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessage.GeneratedExtension<
-      google.protobuf.DescriptorProtos.MessageOptions,
+      google.protobuf.DescriptorProtos.FieldOptions,
       google.protobuf.KotlinDescriptor.KotlinFieldOptions> kotlinFieldOptions = com.google.protobuf.GeneratedMessage
           .newFileScopedGeneratedExtension(
         google.protobuf.KotlinDescriptor.KotlinFieldOptions.class,
@@ -1021,9 +1021,9 @@ public final class KotlinDescriptor {
       "ry_key\030\002 \001(\010:\005false:i\n\026kotlin_message_op" +
       "tions\022\037.google.protobuf.MessageOptions\030\312" +
       "\365\243\030 \001(\0132%.google.protobuf.KotlinMessageO" +
-      "ptions:e\n\024kotlin_field_options\022\037.google." +
-      "protobuf.MessageOptions\030\313\365\243\030 \001(\0132#.googl",
-      "e.protobuf.KotlinFieldOptions"
+      "ptions:c\n\024kotlin_field_options\022\035.google." +
+      "protobuf.FieldOptions\030\313\365\243\030 \001(\0132#.google.",
+      "protobuf.KotlinFieldOptions"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

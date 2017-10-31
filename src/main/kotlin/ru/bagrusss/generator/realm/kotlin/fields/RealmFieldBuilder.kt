@@ -8,6 +8,7 @@ abstract class RealmFieldBuilder<T>: FieldBuilder<T>() {
     internal var realmPackage   = ""
     internal var generateToProto = true
     internal var generateFromProto = true
+    internal var indexed = true
 
     fun generateToProto(generate: Boolean) = apply {
         this.generateToProto = generate
@@ -23,5 +24,9 @@ abstract class RealmFieldBuilder<T>: FieldBuilder<T>() {
 
     fun realmPackage(pkg: String) = apply {
         this.realmPackage = pkg
+    }
+
+    fun indexed(indexed: Boolean) = apply {
+        this.indexed = indexed
     }
 }

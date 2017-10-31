@@ -46,7 +46,10 @@ abstract class KotlinRealmField<T>(builder: RealmFieldBuilder<T>): RealmField<T>
 
 
         if (primaryKey)
-            propSpecBuilder.addAnnotation(ClassName.bestGuess("io.realm.annotations.PrimaryKey"))
+            propSpecBuilder.addAnnotation(ClassName.bestGuess(primaryKeyAnnotation))
+
+        if (indexed)
+            propSpecBuilder.addAnnotation(ClassName.bestGuess(indexAnnotation))
 
         if (optional) {
             propSpecBuilder.nullable(true)
@@ -85,8 +88,7 @@ abstract class KotlinRealmField<T>(builder: RealmFieldBuilder<T>): RealmField<T>
             propSpecBuilder.nullable(false)
                            .initializer("%L", initializerArgs)
             /*if (!isPrimitive()) {
-                propSpecBuilder.addAnnotation(AnnotationSpec.builder(ClassName("", "io.realm.annotations.Required"))
-                                                            .build())
+                propSpecBuilder.addAnnotation(ClassName("", "io.realm.annotations.Required"))
             }*/
 
 

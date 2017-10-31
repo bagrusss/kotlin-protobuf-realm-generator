@@ -136,10 +136,12 @@ abstract class DefaultRealmGenerator(input: InputStream,
 
             else                        -> throw UnsupportedOperationException("name=${field.name}, type=${field.typeName}")
         }
+        val primaryKey = isPrimaryKey(field)
+        val index = isIndex(field)
 
-
-        fieldBuilder.realmPackage(realmPackage)                                         //Just for maps
-                    .primaryKey(field.hasOptions() /*|| field.name == "id"*/ || (field.name == "key" && field.type == ProtobufType.TYPE_STRING))
+        fieldBuilder.realmPackage(realmPackage)        //Just for maps
+                    .primaryKey(primaryKey || (field.name == "key" && field.type == ProtobufType.TYPE_STRING))
+                    .indexed(index)
                     .optional(field.label == OPTIONAL /*|| field.label == ProtobufType.TYPE_MESSAGE*/)
                     .repeated(field.label == REPEATED)
                     .fieldName(field.name)
@@ -147,5 +149,9 @@ abstract class DefaultRealmGenerator(input: InputStream,
 
         return fieldBuilder.build()
     }
+
+    protected abstract fun isPrimaryKey(field: DescriptorProtos.FieldDescriptorProto): Boolean
+
+    protected abstract fun isIndex(field: DescriptorProtos.FieldDescriptorProto): Boolean
 
 }
