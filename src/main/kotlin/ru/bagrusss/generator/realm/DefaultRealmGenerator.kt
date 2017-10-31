@@ -44,54 +44,43 @@ abstract class DefaultRealmGenerator(input: InputStream,
     }
 
     override fun handleProtoMessage(message: DescriptorProtos.DescriptorProto) {
-        if (message.hasOptions()
-                && (message.options.hasExtension(SwiftDescriptor.swiftMessageOptions)
-                    || message.options.hasExtension(KotlinDescriptor.kotlinMessageOptions))) {
-            val extension = message.options.getExtension(SwiftDescriptor.swiftMessageOptions)
-            val kotlinExtension = message.options.getExtension(KotlinDescriptor.kotlinMessageOptions)
-            if (extension.generateRealmObject || kotlinExtension?.generateRealmObject == true) {
-                parseCurrent(message)
-                ++count
-            }
+        if (filter(message)) {
+            parseCurrent(message)
+            ++count
         }
     }
 
     private fun parseCurrent(node: DescriptorProtos.DescriptorProto, parentNameOriginal: String = "", parentNameRealm: String = "") {
-        if (filter(node)) {
-            val realmPackage = "$realmPackage.$protoFilePackage"
-            val realmClassName = "${if (parentNameRealm.isNotEmpty()) parentNameRealm.replace(".", "") else prefix}${node.name}"
-            val fullName = "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
-            val protoFullName = "$protoFileJavaPackage.$fullName"
+        val realmPackage = "$realmPackage.$protoFilePackage"
+        val realmClassName = "${if (parentNameRealm.isNotEmpty()) parentNameRealm.replace(".", "") else prefix}${node.name}"
+        val fullName = "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
+        val protoFullName = "$protoFileJavaPackage.$fullName"
 
-            node.nestedTypeList.forEach {
-                parseCurrent(it, "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else "" }${node.name}", realmClassName)
-            }
-
-            if (node.fieldList.isNotEmpty()) {
-                val isMap = node.options.mapEntry
-                val classModelBuilder = entitiesFactory.createModelBuilder()
-                                                       .realmPackageName(realmPackage)
-                                                       .realmClassName(realmClassName)
-                                                       .protoClassFullName(protoFullName)
-                                                       .isMap(isMap) as RealmModelBuilder
-                if (isMap)
-                    mapsSet.add("$protoFilePackage.$fullName")
-
-                Logger.log("generate $protoFullName, nodeName = ${node.name}")
-
-                node.fieldList.forEach { field ->
-                    val property = generateProperty(field)
-                    classModelBuilder.addField(property)
-                }
-
-                val model = classModelBuilder.build() as RealmModel
-
-                writeFile("$realmPath${File.separator}$protoFilePackage", model.getFileName(), model.getModelBody())
-
-            }
-
+        node.nestedTypeList.forEach {
+            parseCurrent(it, "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else "" }${node.name}", realmClassName)
         }
 
+        if (node.fieldList.isNotEmpty()) {
+            val isMap = node.options.mapEntry
+            val classModelBuilder = entitiesFactory.createModelBuilder()
+                                                   .realmPackageName(realmPackage)
+                                                   .realmClassName(realmClassName)
+                                                   .protoClassFullName(protoFullName)
+                                                   .isMap(isMap)
+            if (isMap)
+                mapsSet.add("$protoFilePackage.$fullName")
+
+            Logger.log("generate $protoFullName, nodeName = ${node.name}")
+
+            node.fieldList.forEach { field ->
+                val property = generateProperty(field)
+                classModelBuilder.addField(property)
+            }
+
+            val model = classModelBuilder.build() as RealmModel
+
+            writeFile("$realmPath${File.separator}$protoFilePackage", model.getFileName(), model.getModelBody())
+        }
     }
 
     private var count = 0

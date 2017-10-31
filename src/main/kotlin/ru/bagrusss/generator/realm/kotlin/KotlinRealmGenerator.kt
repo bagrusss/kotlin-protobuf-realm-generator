@@ -20,8 +20,10 @@ class KotlinRealmGenerator(input: InputStream,
                            factory: RealmEntityFactory): DefaultRealmGenerator(input, output, realmPath, realmPackage, prefix, factory) {
 
     override fun filter(node: DescriptorProtos.DescriptorProto): Boolean {
-        return !protoFileJavaPackage.contains("google", true)
-                && !node.name.contains("Swift", true)
+        return node.hasOptions()
+                && node.options.hasExtension(SwiftDescriptor.swiftMessageOptions) && node.options.getExtension(SwiftDescriptor.swiftMessageOptions).generateRealmObject
+                || node.options.hasExtension(KotlinDescriptor.kotlinMessageOptions) && node.options.getExtension(KotlinDescriptor.kotlinMessageOptions).generateRealmObject
+                || node.options.mapEntry
     }
 
     override fun generatePrimitives(responseBuilder: PluginProtos.CodeGeneratorResponse.Builder) {
