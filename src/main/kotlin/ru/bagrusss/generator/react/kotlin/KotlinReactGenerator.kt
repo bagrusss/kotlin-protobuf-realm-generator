@@ -86,35 +86,35 @@ class KotlinReactGenerator(input: InputStream,
 
         val isMap = node.options.mapEntry
 
-            val modelBuilder = KotlinReactModel.Builder()
-                                               .isMap(isMap)
-                                               .protoClassFullName(protoFullName)
+        val modelBuilder = KotlinReactModel.Builder()
+                                           .isMap(isMap)
+                                           .protoClassFullName(protoFullName)
 
-            if (isMap) {
-                mapsSet.add(protoFullName)
-                val valueField = node.fieldList.find { it.name == "value" }!!
-                val valueType = getTypeName(valueField)
-                if (valueType == Type.ENUM || valueType == Type.MESSAGE) {
-                    val typeName = gerFullName(valueField)
-                    valuesTypesMap.put(protoFullName, typeName)
-                }
-                mapsValuesTypes.put(protoFullName, valueType)
+        if (isMap) {
+            mapsSet.add(protoFullName)
+            val valueField = node.fieldList.find { it.name == "value" }!!
+            val valueType = getTypeName(valueField)
+            if (valueType == Type.ENUM || valueType == Type.MESSAGE) {
+                val typeName = gerFullName(valueField)
+                valuesTypesMap.put(protoFullName, typeName)
             }
+            mapsValuesTypes.put(protoFullName, valueType)
+        }
 
-            node.fieldList.forEach {
-                val field = generateProperty(it)
-                modelBuilder.addField(field)
-            }
+        node.fieldList.forEach {
+            val field = generateProperty(it)
+            modelBuilder.addField(field)
+        }
 
 
-            val model = modelBuilder.build() as KotlinReactModel
-            val functions = model.getMapFunctions()
-            functions?.let {
-                utilsBuilder.addFun(it.first)
-                utilsBuilder.addFun(it.second)
-            }
+        val model = modelBuilder.build() as KotlinReactModel
+        val functions = model.getMapFunctions()
+        functions?.let {
+            utilsBuilder.addFun(it.first)
+            utilsBuilder.addFun(it.second)
+        }
 
-            ++count
+        ++count
     }
 
     override fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*> {

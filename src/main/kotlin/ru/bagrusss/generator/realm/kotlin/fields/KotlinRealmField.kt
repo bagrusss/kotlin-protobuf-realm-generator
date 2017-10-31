@@ -87,10 +87,6 @@ abstract class KotlinRealmField<T>(builder: RealmFieldBuilder<T>): RealmField<T>
         } else {
             propSpecBuilder.nullable(false)
                            .initializer("%L", initializerArgs)
-            /*if (!isPrimitive()) {
-                propSpecBuilder.addAnnotation(ClassName("", "io.realm.annotations.Required"))
-            }*/
-
 
             toProtoBuilder.append("p.")
                           .append(fieldName)

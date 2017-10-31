@@ -4,7 +4,7 @@ package ru.bagrusss.generator.realm.kotlin.fields
 /**
  * Created by bagrusss on 12.07.17
  */
-class StringRealmField private constructor(builder: Builder): PrimitiveRealmField<StringRealmField>(builder) {
+class StringRealmField private constructor(builder: Builder) : PrimitiveRealmField<StringRealmField>(builder) {
 
     override fun getFieldType() = "kotlin.String"
 
