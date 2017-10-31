@@ -140,7 +140,7 @@ abstract class DefaultRealmGenerator(input: InputStream,
 
         fieldBuilder.realmPackage(realmPackage)                                         //Just for maps
                     .primaryKey(field.hasOptions() /*|| field.name == "id"*/ || (field.name == "key" && field.type == ProtobufType.TYPE_STRING))
-                    .optional(field.label == OPTIONAL)
+                    .optional(field.label == OPTIONAL /*|| field.label == ProtobufType.TYPE_MESSAGE*/)
                     .repeated(field.label == REPEATED)
                     .fieldName(field.name)
                     .prefix(prefix)

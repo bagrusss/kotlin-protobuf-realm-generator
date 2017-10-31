@@ -1,9 +1,6 @@
 package ru.bagrusss.generator.realm.kotlin.fields
 
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.ParameterizedTypeName
-import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.*
 
 abstract class KotlinRealmField<T>(builder: RealmFieldBuilder<T>): RealmField<T>(builder) {
 
@@ -87,6 +84,11 @@ abstract class KotlinRealmField<T>(builder: RealmFieldBuilder<T>): RealmField<T>
         } else {
             propSpecBuilder.nullable(false)
                            .initializer("%L", initializerArgs)
+            /*if (!isPrimitive()) {
+                propSpecBuilder.addAnnotation(AnnotationSpec.builder(ClassName("", "io.realm.annotations.Required"))
+                                                            .build())
+            }*/
+
 
             toProtoBuilder.append("p.")
                           .append(fieldName)

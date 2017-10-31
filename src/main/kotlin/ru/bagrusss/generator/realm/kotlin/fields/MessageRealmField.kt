@@ -11,7 +11,8 @@ class MessageRealmField private constructor(builder: Builder): KotlinRealmField<
 
     class Builder internal constructor(): RealmFieldBuilder<MessageRealmField>() {
         override fun build(): Field<MessageRealmField> {
-            initializer("$realmPackage.$protoPackage$typePrefix$fullProtoTypeName()")
+            optional(true)
+            //initializer("$realmPackage.$protoPackage$typePrefix$fullProtoTypeName()")
             return MessageRealmField(this)
         }
 
