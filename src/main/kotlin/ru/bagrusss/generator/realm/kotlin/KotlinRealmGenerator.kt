@@ -1,5 +1,6 @@
 package ru.bagrusss.generator.realm.kotlin
 
+import com.google.protobuf.ExtensionRegistryLite
 import ru.bagrusss.generator.realm.kotlin.model.KotlinPrimitiveModel
 import com.squareup.kotlinpoet.*
 import google.protobuf.DescriptorProtos
@@ -42,6 +43,17 @@ class KotlinRealmGenerator(input: InputStream,
                                             .build()
             responseBuilder.addFile(realmTypeFile)
         }
+    }
+
+    override fun generate() {
+        val extensionRegistry = ExtensionRegistryLite.newInstance()
+        SwiftDescriptor.registerAllExtensions(extensionRegistry)
+        KotlinDescriptor.registerAllExtensions(extensionRegistry)
+
+        response = PluginProtos.CodeGeneratorResponse.newBuilder()
+        request = PluginProtos.CodeGeneratorRequest.parseFrom(input, extensionRegistry)
+        
+        super.generate()
     }
 
     override fun isPrimaryKey(field: DescriptorProtos.FieldDescriptorProto): Boolean {

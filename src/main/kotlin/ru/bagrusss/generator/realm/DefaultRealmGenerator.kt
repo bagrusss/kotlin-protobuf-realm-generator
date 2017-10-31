@@ -11,7 +11,6 @@ import ru.bagrusss.generator.fields.Type
 import ru.bagrusss.generator.generator.Generator
 import ru.bagrusss.generator.generator.ProtobufType
 import ru.bagrusss.generator.realm.kotlin.fields.RealmFieldBuilder
-import ru.bagrusss.generator.realm.kotlin.RealmModelBuilder
 import java.io.File
 import java.io.InputStream
 import java.io.PrintStream
@@ -28,13 +27,6 @@ abstract class DefaultRealmGenerator(input: InputStream,
     abstract fun generatePrimitives(responseBuilder: PluginProtos.CodeGeneratorResponse.Builder)
 
     override fun generate() {
-
-        val extensionRegistry = ExtensionRegistryLite.newInstance()
-        SwiftDescriptor.registerAllExtensions(extensionRegistry)
-        KotlinDescriptor.registerAllExtensions(extensionRegistry)
-
-        response = PluginProtos.CodeGeneratorResponse.newBuilder()
-        request = PluginProtos.CodeGeneratorRequest.parseFrom(input, extensionRegistry)
 
         generatePrimitives(response)
 
