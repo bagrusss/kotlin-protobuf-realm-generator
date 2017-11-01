@@ -3,6 +3,7 @@ package ru.bagrusss.generator.realm.kotlin.model
 import ru.bagrusss.generator.realm.kotlin.fields.KotlinRealmField
 import com.squareup.kotlinpoet.*
 import ru.bagrusss.generator.realm.kotlin.RealmModelBuilder
+import ru.bagrusss.generator.realm.kotlin.fields.LinkedObjectsRealmField
 
 /**
  * Created by bagrusss on 10.08.17
@@ -23,7 +24,6 @@ class KotlinClassModel private constructor(builder: BuilderRealm): KotlinRealmMo
 
     private val isMap = builder.isMap
 
-
     class BuilderRealm internal constructor(): RealmModelBuilder() {
 
         override fun build() = KotlinClassModel(this)
@@ -40,9 +40,11 @@ class KotlinClassModel private constructor(builder: BuilderRealm): KotlinRealmMo
                    realmProtoConstructor.addStatement(it.fromProtoInitializer)
                }
 
-        builder.linkedObjects.forEach {
-
-        }
+        builder.linkedObjects
+               .map { it as LinkedObjectsRealmField }
+               .forEach {
+                   classNameBuilder.addProperty(it.getPropSpec())
+               }
 
         toProtoMethodBuilder.addStatement("return p.build()")
 

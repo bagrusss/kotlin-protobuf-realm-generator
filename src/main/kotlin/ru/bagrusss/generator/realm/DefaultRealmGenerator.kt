@@ -41,7 +41,7 @@ abstract class DefaultRealmGenerator(input: InputStream,
     }
 
     private fun parseCurrent(node: DescriptorProtos.DescriptorProto, parentNameOriginal: String = "", parentNameRealm: String = "") {
-        val realmPackage = "$realmPackage.$protoFilePackage"
+        val currentRealmPackage = "$realmPackage.$protoFilePackage"
         val realmClassName = "${if (parentNameRealm.isNotEmpty()) parentNameRealm.replace(".", "") else prefix}${node.name}"
         val fullName = "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
         val protoFullName = "$protoFileJavaPackage.$fullName"
@@ -53,7 +53,7 @@ abstract class DefaultRealmGenerator(input: InputStream,
         if (node.fieldList.isNotEmpty()) {
             val isMap = node.options.mapEntry
             val classModelBuilder = entitiesFactory.newModelBuilder()
-                                                   .realmPackageName(realmPackage)
+                                                   .realmPackageName(currentRealmPackage)
                                                    .realmClassName(realmClassName)
                                                    .protoClassFullName(protoFullName)
                                                    .isMap(isMap)
@@ -71,14 +71,18 @@ abstract class DefaultRealmGenerator(input: InputStream,
             linkedObjects.forEach {
                 val javaPackageName = protoToJavaPackagesMap[it.packageName]
                 val clearName = it.fromType.replace(it.packageName, "")
-                                           .substring(1)
+                                           .replace(".", "")
 
                 val linkedObject = entitiesFactory.newLinkedObjectsBuilder()
+                                                  .propertyName(it.propertyName)
+                                                  .fieldName(it.fieldName)
                                                   .repeated(true)
-                                                  .fullProtoTypeName("$javaPackageName.$prefix$clearName")
+                                                  .fullProtoTypeName("$realmPackage.${it.packageName}.$prefix$clearName")
                                                   .build()
+
                 classModelBuilder as RealmModelBuilder
                 classModelBuilder.addLinkedObject(linkedObject)
+                Logger.log("linkedObjects_gen: $currentRealmPackage.${it.packageName}.$prefix$clearName, $it")
             }
 
             val model = classModelBuilder.build() as RealmModel
