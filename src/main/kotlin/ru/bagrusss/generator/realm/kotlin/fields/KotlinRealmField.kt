@@ -25,7 +25,7 @@ abstract class KotlinRealmField<T>(builder: RealmFieldBuilder<T>): RealmField<T>
                                                                       }
                                                                   else ClassName("", "$realmPackage.$protoPackage$typePrefix$protoFullTypeName"))
                               } else {
-                                  val realmListType = ClassName.bestGuess("io.realm.RealmList")
+                                  val realmListType = ClassName.bestGuess(realmListClass)
                                   val className =  if (isPrimitive())
                                                          ClassName(realmPackage, typePrefix + kotlinFieldType.split(".")
                                                                                                                          .last()
@@ -120,7 +120,9 @@ abstract class KotlinRealmField<T>(builder: RealmFieldBuilder<T>): RealmField<T>
                               .append(fieldName)
                               .append("Count > 0) {\n")
                               .append(fieldName)
-                              .append(" = RealmList()\n")
+                              .append(" = ")
+                              .append(realmListClass)
+                              .append("()\n")
                               .append(fieldName)
                               .append("!!.addAll(")
                               .append(protoConstructorParameter)
