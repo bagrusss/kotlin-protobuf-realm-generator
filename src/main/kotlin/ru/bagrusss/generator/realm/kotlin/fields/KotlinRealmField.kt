@@ -67,7 +67,7 @@ abstract class KotlinRealmField<T>(builder: RealmFieldBuilder<T>): RealmField<T>
                               .append(toProtoInitializer())
 
                 realmProtoConstructorBuilder.append(".has")
-                                            .append(fieldName.substring(0, 1).toUpperCase())
+                                            .append(fieldName[0].toUpperCase())
                                             .append(fieldName.substring(1))
                                             .append("())\n")
                                             .append(fieldName)
@@ -109,7 +109,7 @@ abstract class KotlinRealmField<T>(builder: RealmFieldBuilder<T>): RealmField<T>
 
     open fun repeatedToProtoFill(): String {
         return StringBuilder().append("p.addAll")
-                              .append(fieldName.substring(0, 1).toUpperCase())
+                              .append(fieldName[0].toUpperCase())
                               .append(fieldName.substring(1))
                               .append("(it.map { ${repeatedToProtoInitializer()} })")
                               .toString()
