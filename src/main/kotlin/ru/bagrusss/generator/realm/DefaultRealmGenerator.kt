@@ -69,7 +69,6 @@ abstract class DefaultRealmGenerator(input: InputStream,
 
             val linkedObjects = getLinkedObjects(node)
             linkedObjects.forEach {
-                val javaPackageName = protoToJavaPackagesMap[it.packageName]
                 val clearName = it.fromType.replace(it.packageName, "")
                                            .replace(".", "")
 
