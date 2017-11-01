@@ -1,6 +1,7 @@
 package ru.bagrusss.generator.model
 
 import ru.bagrusss.generator.fields.Field
+import ru.bagrusss.generator.realm.kotlin.fields.LinkedObjectsRealmField
 import java.util.*
 
 
@@ -8,7 +9,7 @@ abstract class ModelBuilder {
 
     internal var protoClassFullName = ""
 
-    val fieldsList: LinkedList<Field<*>> = LinkedList()
+    val fields: LinkedList<Field<*>> = LinkedList()
 
     internal var isMap = false
 
@@ -17,7 +18,7 @@ abstract class ModelBuilder {
     }
 
     fun addField(field: Field<*>) = apply {
-        fieldsList.add(field)
+        fields.add(field)
     }
 
     fun protoClassFullName(protoClassFullName: String) = apply {

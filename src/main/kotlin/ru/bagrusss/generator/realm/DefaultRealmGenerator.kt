@@ -52,7 +52,7 @@ abstract class DefaultRealmGenerator(input: InputStream,
 
         if (node.fieldList.isNotEmpty()) {
             val isMap = node.options.mapEntry
-            val classModelBuilder = entitiesFactory.createModelBuilder()
+            val classModelBuilder = entitiesFactory.newModelBuilder()
                                                    .realmPackageName(realmPackage)
                                                    .realmClassName(realmClassName)
                                                    .protoClassFullName(protoFullName)
@@ -65,6 +65,20 @@ abstract class DefaultRealmGenerator(input: InputStream,
             node.fieldList.forEach { field ->
                 val property = generateProperty(field)
                 classModelBuilder.addField(property)
+            }
+
+            val linkedObjects = getLinkedObjects(node)
+            linkedObjects.forEach {
+                val javaPackageName = protoToJavaPackagesMap[it.packageName]
+                val clearName = it.fromType.replace(it.packageName, "")
+                                           .substring(1)
+
+                val linkedObject = entitiesFactory.newLinkedObjectsBuilder()
+                                                  .repeated(true)
+                                                  .fullProtoTypeName("$javaPackageName.$prefix$clearName")
+                                                  .build()
+                classModelBuilder as RealmModelBuilder
+                classModelBuilder.addLinkedObject(linkedObject)
             }
 
             val model = classModelBuilder.build() as RealmModel
@@ -84,13 +98,13 @@ abstract class DefaultRealmGenerator(input: InputStream,
 
     override fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*> {
         val fieldBuilder = when (field.type) {
-            ProtobufType.TYPE_INT32     -> entitiesFactory.createBuilder(Type.INT)
-            ProtobufType.TYPE_INT64     -> entitiesFactory.createBuilder(Type.LONG)
-            ProtobufType.TYPE_FLOAT     -> entitiesFactory.createBuilder(Type.FLOAT)
-            ProtobufType.TYPE_DOUBLE    -> entitiesFactory.createBuilder(Type.DOUBLE)
-            ProtobufType.TYPE_STRING    -> entitiesFactory.createBuilder(Type.STRING)
-            ProtobufType.TYPE_BOOL      -> entitiesFactory.createBuilder(Type.BOOL)
-            ProtobufType.TYPE_BYTES     -> entitiesFactory.createBuilder(Type.BYTES)
+            ProtobufType.TYPE_INT32     -> entitiesFactory.newBuilder(Type.INT)
+            ProtobufType.TYPE_INT64     -> entitiesFactory.newBuilder(Type.LONG)
+            ProtobufType.TYPE_FLOAT     -> entitiesFactory.newBuilder(Type.FLOAT)
+            ProtobufType.TYPE_DOUBLE    -> entitiesFactory.newBuilder(Type.DOUBLE)
+            ProtobufType.TYPE_STRING    -> entitiesFactory.newBuilder(Type.STRING)
+            ProtobufType.TYPE_BOOL      -> entitiesFactory.newBuilder(Type.BOOL)
+            ProtobufType.TYPE_BYTES     -> entitiesFactory.newBuilder(Type.BYTES)
             ProtobufType.TYPE_ENUM      -> {
                 val protoPackage = packagesSet.first { field.typeName.indexOf(it) == 1 }
                 val clearTypeName =  field.typeName
@@ -98,14 +112,14 @@ abstract class DefaultRealmGenerator(input: InputStream,
                                           .replace(protoPackage, "")
 
                 val javaPackage = protoToJavaPackagesMap[protoPackage]
-                entitiesFactory.createBuilder(Type.ENUM)
-                                    .fullProtoTypeName("$javaPackage$clearTypeName") as RealmFieldBuilder<*>
+                entitiesFactory.newBuilder(Type.ENUM)
+                               .fullProtoTypeName("$javaPackage$clearTypeName") as RealmFieldBuilder<*>
             }
             ProtobufType.TYPE_MESSAGE   -> {
                 val protoTypeName = field.typeName.substring(1)
                 val builder = if (!mapsSet.contains(protoTypeName))
-                                  entitiesFactory.createBuilder(Type.MESSAGE)
-                              else entitiesFactory.createBuilder(Type.MAP)
+                                  entitiesFactory.newBuilder(Type.MESSAGE)
+                              else entitiesFactory.newBuilder(Type.MAP)
 
                 val protoPackage = if (field.typeName.indexOf(protoFilePackage) == 1)
                                        protoFilePackage
@@ -140,5 +154,14 @@ abstract class DefaultRealmGenerator(input: InputStream,
     protected abstract fun isIndex(field: DescriptorProtos.FieldDescriptorProto): Boolean
 
     protected abstract fun additionalClass(node: DescriptorProtos.DescriptorProto): String
+
+    protected abstract fun getLinkedObjects(node: DescriptorProtos.DescriptorProto): List<LinkedObject>
+
+    data class LinkedObject(
+            val fieldName: String,
+            val fromType: String,
+            val propertyName: String,
+            val packageName: String
+    )
 
 }

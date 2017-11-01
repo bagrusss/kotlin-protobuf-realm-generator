@@ -4,11 +4,11 @@ import ru.bagrusss.generator.fields.FieldBuilder
 
 abstract class RealmFieldBuilder<T> : FieldBuilder<T>() {
 
-    internal var primaryKey     = false
-    internal var realmPackage   = ""
-    internal var generateToProto = true
-    internal var generateFromProto = true
-    internal var indexed = true
+    internal var primaryKey         = false
+    internal var realmPackage       = ""
+    internal var generateToProto    = true
+    internal var generateFromProto  = true
+    internal var indexed            = false
 
     fun generateToProto(generate: Boolean) = apply {
         this.generateToProto = generate

@@ -24,7 +24,7 @@ class KotlinClassModel private constructor(builder: BuilderRealm): KotlinRealmMo
     private val isMap = builder.isMap
 
 
-    class BuilderRealm: RealmModelBuilder() {
+    class BuilderRealm internal constructor(): RealmModelBuilder() {
 
         override fun build() = KotlinClassModel(this)
     }
@@ -32,13 +32,17 @@ class KotlinClassModel private constructor(builder: BuilderRealm): KotlinRealmMo
     init {
         toProtoMethodBuilder.addStatement("val p = ${builder.protoClassFullName}.newBuilder()")
 
-        builder.fieldsList
+        builder.fields
                .map { it as KotlinRealmField }
                .forEach {
                    classNameBuilder.addProperty(it.getPropSpec())
                    toProtoMethodBuilder.addStatement(it.toProtoInitializer)
                    realmProtoConstructor.addStatement(it.fromProtoInitializer)
                }
+
+        builder.linkedObjects.forEach {
+
+        }
 
         toProtoMethodBuilder.addStatement("return p.build()")
 

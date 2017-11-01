@@ -76,4 +76,18 @@ class KotlinRealmGenerator(input: InputStream,
                 && field.options.hasExtension(SwiftDescriptor.swiftFieldOptions)
                 && field.options.getExtension(SwiftDescriptor.swiftFieldOptions).realmIndexedPropertie
     }
+
+    override fun getLinkedObjects(node: DescriptorProtos.DescriptorProto): List<LinkedObject> {
+        return if (node.hasOptions() && node.options.hasExtension(SwiftDescriptor.swiftMessageOptions)) {
+                   val extension = node.options.getExtension(SwiftDescriptor.swiftMessageOptions)
+                   if (extension.linkedObjectsList.isNotEmpty())
+                       extension.linkedObjectsList.map {
+                           LinkedObject(fieldName = it.fieldName,
+                                        fromType = it.fromType,
+                                        packageName = it.packageName,
+                                        propertyName = it.propertyName)
+                       }
+                   else emptyList()
+               } else emptyList()
+    }
 }

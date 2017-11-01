@@ -37,7 +37,7 @@ class KotlinReactModel private constructor(builder: Builder): ReactModel<FunSpec
                                .append(builder.protoClassFullName)
                                .append(".newBuilder().run {\n")
 
-        builder.fieldsList.map { it as ReactField<*> }
+        builder.fields.map { it as ReactField<*> }
                           .forEach {
                               if (!it.needSkip()) {
                                   toWritableBodyBuilder.append('\t')

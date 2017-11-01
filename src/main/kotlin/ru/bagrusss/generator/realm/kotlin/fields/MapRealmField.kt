@@ -5,7 +5,7 @@ import ru.bagrusss.generator.fields.FieldBuilder
 
 class MapRealmField private constructor(builder: Builder) : KotlinRealmField<MapRealmField>(builder) {
 
-    class Builder : RealmFieldBuilder<MapRealmField>() {
+    class Builder internal constructor(): RealmFieldBuilder<MapRealmField>() {
 
         override fun repeated(isRepeated: Boolean): FieldBuilder<MapRealmField> {
             return super.repeated(true)
