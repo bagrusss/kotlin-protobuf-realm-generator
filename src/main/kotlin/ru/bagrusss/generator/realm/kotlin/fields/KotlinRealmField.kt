@@ -37,8 +37,7 @@ abstract class KotlinRealmField<T>(builder: RealmFieldBuilder<T>): RealmField<T>
                                                          }
                                   val typedList = ParameterizedTypeName.get(realmListType, className)
                                   PropertySpec.builder(fieldName, typedList)
-                              }.addModifiers(KModifier.OPEN)
-                               .mutable(true)
+                              }.mutable(true)
 
         val toProtoBuilder = StringBuilder()
         val realmProtoConstructorBuilder = StringBuilder()

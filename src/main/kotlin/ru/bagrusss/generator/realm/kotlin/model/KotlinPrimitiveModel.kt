@@ -11,7 +11,7 @@ class KotlinPrimitiveModel(realmPackage: String,
 
     init {
         val classBuilder = TypeSpec.classBuilder(className)
-        val fieldBuilder = PropertySpec.builder("value", primitiveClassName, KModifier.OPEN)
+        val fieldBuilder = PropertySpec.builder("value", primitiveClassName)
                                        .mutable(true)
                                        .initializer("%L", defValue)
 
