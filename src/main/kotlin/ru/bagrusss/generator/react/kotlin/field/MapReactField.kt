@@ -71,8 +71,7 @@ class MapReactField private constructor(builder: Builder): MessageReactField(bui
     }
 
     override fun toMapInitializer(): String {
-        val element = "item"
-        val arrayName = fieldName + "Array"
+        val container = fieldName + "ObjectMap"
         val putInitializer = "put" + when(valueType) {
                                          Type.STRING    -> "String(k, v)"
                                          Type.DOUBLE    -> "Double(k, v)"
@@ -85,28 +84,21 @@ class MapReactField private constructor(builder: Builder): MessageReactField(bui
                                      }
 
         return StringBuilder().append("\n\tval ")
-                              .append(arrayName)
+                              .append(container)
                               .append(" = ")
-                              .append(Utils.createArray)
+                              .append(Utils.createMap)
                               .append("\n\t")
                               .append("for ((k ,v) in ")
                               .append(fieldName)
-                              .append("Map) {\n\t\t")
-                              .append("val ")
-                              .append(element)
-                              .append(" = ")
-                              .append(Utils.createMap)
-                              .append("\n\t\t")
-                              .append(element)
+                              .append("Map) { ")
+                              .append(container)
                               .append('.')
                               .append(putInitializer)
-                              .append("\n\t\t")
-                              .append(fieldName)
-                              .append("Array.pushMap(item)\n\t}\n\t")
-                              .append("putArray(\"")
+                              .append(" }\n\t")
+                              .append("putMap(\"")
                               .append(fieldName)
                               .append("\", ")
-                              .append(arrayName)
+                              .append(container)
                               .append(')')
                               .toString()
     }
