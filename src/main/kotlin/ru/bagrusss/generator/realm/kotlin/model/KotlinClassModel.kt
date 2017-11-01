@@ -3,7 +3,7 @@ package ru.bagrusss.generator.realm.kotlin.model
 import ru.bagrusss.generator.realm.kotlin.fields.KotlinRealmField
 import com.squareup.kotlinpoet.*
 import ru.bagrusss.generator.realm.kotlin.RealmModelBuilder
-import ru.bagrusss.generator.realm.kotlin.fields.LinkedObjectsRealmField
+import ru.bagrusss.generator.realm.kotlin.fields.LinkingObjectsRealmField
 
 /**
  * Created by bagrusss on 10.08.17
@@ -41,7 +41,7 @@ class KotlinClassModel private constructor(builder: BuilderRealm): KotlinRealmMo
                }
 
         builder.linkedObjects
-               .map { it as LinkedObjectsRealmField }
+               .map { it as LinkingObjectsRealmField }
                .forEach {
                    classNameBuilder.addProperty(it.getPropSpec())
                }

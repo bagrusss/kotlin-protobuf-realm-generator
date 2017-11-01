@@ -2,14 +2,14 @@ package ru.bagrusss.generator.realm.kotlin
 
 import ru.bagrusss.generator.fields.Field
 import ru.bagrusss.generator.model.ModelBuilder
-import ru.bagrusss.generator.realm.kotlin.fields.LinkedObjectsRealmField
+import ru.bagrusss.generator.realm.kotlin.fields.LinkingObjectsRealmField
 import java.util.*
 
 abstract class RealmModelBuilder: ModelBuilder() {
 
     internal var realmPackageName = ""
     internal var realmClassName = ""
-    internal val linkedObjects: LinkedList<Field<LinkedObjectsRealmField>> = LinkedList()
+    internal val linkedObjects: LinkedList<Field<LinkingObjectsRealmField>> = LinkedList()
 
     fun realmPackageName(realmPackageName: String) = apply {
         this.realmPackageName = realmPackageName
@@ -20,7 +20,7 @@ abstract class RealmModelBuilder: ModelBuilder() {
     }
 
 
-    fun addLinkedObject(linkedObject: Field<LinkedObjectsRealmField>) = apply {
+    fun addLinkedObject(linkedObject: Field<LinkingObjectsRealmField>) = apply {
         linkedObjects.add(linkedObject)
     }
 

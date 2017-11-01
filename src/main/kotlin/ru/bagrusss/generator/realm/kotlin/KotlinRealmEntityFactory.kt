@@ -26,7 +26,7 @@ class KotlinRealmEntityFactory(serializer: Serializer) : RealmEntityFactory(seri
 
     override fun newModelBuilder() = KotlinClassModel.BuilderRealm()
 
-    override fun newLinkedObjectsBuilder() = LinkedObjectsRealmField.Builder()
+    override fun newLinkedObjectsBuilder() = LinkingObjectsRealmField.Builder()
 
 
 }

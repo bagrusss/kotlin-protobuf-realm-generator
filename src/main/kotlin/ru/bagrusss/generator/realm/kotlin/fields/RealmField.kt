@@ -14,6 +14,8 @@ abstract class RealmField<T>(builder: RealmFieldBuilder<T>) : Field<T>(builder) 
     protected val indexAnnotation           = "io.realm.annotations.Index"
     protected val linkedObjectAnnotation    = "io.realm.annotations.LinkingObjects"
 
+    protected val realmResultsClass         = "io.realm.RealmResults"
+
     lateinit var toProtoInitializer: String
     lateinit var fromProtoInitializer: String
 }

@@ -1,7 +1,6 @@
 package ru.bagrusss.generator.model
 
 import ru.bagrusss.generator.fields.Field
-import ru.bagrusss.generator.realm.kotlin.fields.LinkedObjectsRealmField
 import java.util.*
 
 
