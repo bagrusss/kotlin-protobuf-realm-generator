@@ -9,13 +9,9 @@ class MapReactField private constructor(builder: Builder): MessageReactField(bui
 
 
     /* to Map
-    val requisitesArray = com.facebook.react.bridge.Arguments.createArray()
-    for ((k, v) in requisitesMap) {
-        val item = com.facebook.react.bridge.Arguments.createMap()
-        item.putString(k, v)
-        requisitesArray.pushMap(item)
-    }
-    putArray("requisites", requisitesArray)
+    val requisitesObjectMap = com.facebook.react.bridge.Arguments.createMap()
+    for ((k ,v) in requisitesMap) { requisitesObjectMap.putString(k, v) }
+    putMap("requisites", requisitesObjectMap)
     */
 
     /* from Map
