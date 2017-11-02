@@ -55,66 +55,67 @@ class KotlinReactGenerator(input: InputStream,
     }
 
     override fun filter(node: DescriptorProtos.DescriptorProto): Boolean {
-        return !protoFileJavaPackage.contains("google", true)
-                && !protoFilePackage.contains("google", true)
-                && !node.name.contains("Swift", true)
-                && !node.name.contains("Kotlin", true)
-                && !protoFileJavaPackage.contains("JWT", true)
+        return true
     }
 
     private var count = 0
 
     override fun handleProtoMessage(message: DescriptorProtos.DescriptorProto) {
         if (filter(message)) {
-            if (message.options.hasExtension(SwiftDescriptor.swiftMessageOptions))
-                Logger.log("${message.name} generate_react_object = ${message.options.getExtension(SwiftDescriptor.swiftMessageOptions) }")
+            Logger.log("${message.name} generate_react_object = ${message.options.getExtension(SwiftDescriptor.swiftMessageOptions) }")
             parseCurrent(message)
         }
     }
 
     private val mapsValuesTypes = TreeMap<String, Type>()
 
-    private fun parseCurrent(node: DescriptorProtos.DescriptorProto, parentNameOriginal: String = "") {
+    private fun parseCurrent(node: DescriptorProtos.DescriptorProto, parentNameOriginal: String = "", generateReact: Boolean = false) {
         //if (node.name == "Request") return // filter node name
 
         val fullName = "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
         val protoFullName = "$protoFileJavaPackage.$fullName"
+        val needGenerate = node.options.hasExtension(SwiftDescriptor.swiftMessageOptions)
+                && node.options.getExtension(SwiftDescriptor.swiftMessageOptions).generateReact
 
         node.nestedTypeList.forEach {
-            parseCurrent(it, "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else "" }${node.name}")
+            parseCurrent(it, "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else "" }${node.name}", needGenerate || generateReact)
         }
 
-        val isMap = node.options.mapEntry
+        Logger.log("need generate $protoFullName = ${needGenerate || generateReact}")
 
-        val modelBuilder = KotlinReactModel.Builder()
-                                           .isMap(isMap)
-                                           .protoClassFullName(protoFullName)
+        if (needGenerate || generateReact) {
+            val isMap = node.options.mapEntry
 
-        if (isMap) {
-            mapsSet.add(protoFullName)
-            val valueField = node.fieldList.find { it.name == "value" }!!
-            val valueType = getTypeName(valueField)
-            if (valueType == Type.ENUM || valueType == Type.MESSAGE) {
-                val typeName = gerFullName(valueField)
-                valuesTypesMap.put(protoFullName, typeName)
+            val modelBuilder = KotlinReactModel.Builder()
+                    .isMap(isMap)
+                    .protoClassFullName(protoFullName)
+
+            if (isMap) {
+                mapsSet.add(protoFullName)
+                val valueField = node.fieldList.find { it.name == "value" }!!
+                val valueType = getTypeName(valueField)
+                if (valueType == Type.ENUM || valueType == Type.MESSAGE) {
+                    val typeName = gerFullName(valueField)
+                    valuesTypesMap.put(protoFullName, typeName)
+                }
+                mapsValuesTypes.put(protoFullName, valueType)
             }
-            mapsValuesTypes.put(protoFullName, valueType)
+
+            node.fieldList.forEach {
+                val field = generateProperty(it)
+                modelBuilder.addField(field)
+            }
+
+
+            val model = modelBuilder.build() as KotlinReactModel
+            val functions = model.getMapFunctions()
+            functions?.let {
+                utilsBuilder.addFun(it.first)
+                utilsBuilder.addFun(it.second)
+            }
+
+            ++count
         }
-
-        node.fieldList.forEach {
-            val field = generateProperty(it)
-            modelBuilder.addField(field)
-        }
-
-
-        val model = modelBuilder.build() as KotlinReactModel
-        val functions = model.getMapFunctions()
-        functions?.let {
-            utilsBuilder.addFun(it.first)
-            utilsBuilder.addFun(it.second)
-        }
-
-        ++count
     }
 
     override fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*> {
