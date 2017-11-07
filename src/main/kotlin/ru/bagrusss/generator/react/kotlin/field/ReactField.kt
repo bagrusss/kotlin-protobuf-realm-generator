@@ -76,15 +76,17 @@ abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Fiel
             repeated -> {
                 val array = Utils.fieldArray(fieldName)
                 val item = "element"
-                val builder = StringBuilder().append("\n\tval ")
+                val builder = StringBuilder().append("\n\tif (map.hasKey(\"")
+                                             .append(fieldName)
+                                             .append("\")) {\n\t\tval ")
                                              .append(array)
                                              .append(" = map.getArray(\"")
                                              .append(fieldName)
                                              .append("\")\n")
-                                             .append("\tfor (i in 0 until ")
+                                             .append("\t\tfor (i in 0 until ")
                                              .append(array)
                                              .append(".size()) {\n")
-                                             .append("\t\tval ")
+                                             .append("\t\t\tval ")
                                              .append(item)
                                              .append(" = ")
 
@@ -100,11 +102,11 @@ abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Fiel
                 if (!isPrimitive())
                     builder.append(")")
 
-                builder.append("\n\t\t")
+                builder.append("\n\t\t\t")
                        .append(Utils.addToArray(fieldName))
                        .append('(')
                        .append(item)
-                       .append(")\n\t}")
+                       .append(")\n\t\t}\n\t}")
 
                 builder.toString()
             }

@@ -62,7 +62,6 @@ class KotlinReactGenerator(input: InputStream,
 
     override fun handleProtoMessage(message: DescriptorProtos.DescriptorProto) {
         if (filter(message)) {
-            Logger.log("${message.name} generate_react_object = ${message.options.getExtension(SwiftDescriptor.swiftMessageOptions) }")
             parseCurrent(message)
         }
     }
@@ -70,7 +69,6 @@ class KotlinReactGenerator(input: InputStream,
     private val mapsValuesTypes = TreeMap<String, Type>()
 
     private fun parseCurrent(node: DescriptorProtos.DescriptorProto, parentNameOriginal: String = "", generateReact: Boolean = false) {
-        //if (node.name == "Request") return // filter node name
 
         val fullName = "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
         val protoFullName = "$protoFileJavaPackage.$fullName"
@@ -81,14 +79,12 @@ class KotlinReactGenerator(input: InputStream,
             parseCurrent(it, "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else "" }${node.name}", needGenerate || generateReact)
         }
 
-        Logger.log("need generate $protoFullName = ${needGenerate || generateReact}")
-
         if (needGenerate || generateReact) {
             val isMap = node.options.mapEntry
 
             val modelBuilder = KotlinReactModel.Builder()
-                    .isMap(isMap)
-                    .protoClassFullName(protoFullName)
+                                               .isMap(isMap)
+                                               .protoClassFullName(protoFullName)
 
             if (isMap) {
                 mapsSet.add(protoFullName)
