@@ -64,7 +64,8 @@ class KotlinRealmGenerator(input: InputStream,
     }
 
     override fun isPrimaryKey(field: DescriptorProtos.FieldDescriptorProto): Boolean {
-        return field.hasOptions()
+        return field.name == "id"
+                || field.hasOptions()
                 && field.options.hasExtension(SwiftDescriptor.swiftFieldOptions)
                 && field.options.getExtension(SwiftDescriptor.swiftFieldOptions).realmPrimaryKey
                 || field.options.hasExtension(KotlinDescriptor.kotlinFieldOptions)
