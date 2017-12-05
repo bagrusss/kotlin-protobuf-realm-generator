@@ -141,8 +141,8 @@ abstract class DefaultRealmGenerator(input: InputStream,
         val primaryKey = isPrimaryKey(field)
         val index = isIndex(field)
 
-        fieldBuilder.realmPackage(realmPackage)        //Just for maps
-                    .primaryKey(primaryKey || (field.name == "key" && field.type == ProtobufType.TYPE_STRING))
+        fieldBuilder.realmPackage(realmPackage)
+                    .primaryKey(primaryKey)
                     .indexed(index)
                     .optional(field.label == OPTIONAL || field.type == ProtobufType.TYPE_MESSAGE)
                     .repeated(field.label == REPEATED)
