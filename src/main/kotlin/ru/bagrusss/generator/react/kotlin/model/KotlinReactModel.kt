@@ -33,10 +33,6 @@ class KotlinReactModel private constructor(builder: Builder): ReactModel<FunSpec
                              .append(argumentsClass)
                              .append(".createMap().apply {\n")
 
-        fromReadableBodyBuilder.append("return ")
-                               .append(builder.protoClassFullName)
-                               .append(".newBuilder().run {\n")
-
         builder.fields.map { it as ReactField<*> }
                           .forEach {
                               if (!it.needSkip()) {
@@ -53,7 +49,7 @@ class KotlinReactModel private constructor(builder: Builder): ReactModel<FunSpec
                           }
 
         toWritableBodyBuilder.append("}\n")
-        fromReadableBodyBuilder.append("\n\tbuild()\n}\n")
+        fromReadableBodyBuilder.append("\nreturn build()")
 
         toWritableMapFun = toWritableBuilder.body(toWritableBodyBuilder.toString())
                                             .build()
