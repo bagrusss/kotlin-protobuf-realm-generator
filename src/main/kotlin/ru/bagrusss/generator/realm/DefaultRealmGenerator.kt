@@ -146,7 +146,7 @@ abstract class DefaultRealmGenerator(input: InputStream,
                     .indexed(index)
                     .optional(field.label == OPTIONAL || field.type == ProtobufType.TYPE_MESSAGE)
                     .repeated(field.label == REPEATED)
-                    .fieldName(field.name)
+                    .fieldName(field.jsonName)
                     .prefix(prefix)
 
         return fieldBuilder.build()
