@@ -6,3 +6,4 @@ build
 out
 .gradle
 protoGenerator-1.0.jar
+src/main/kotlin/google
