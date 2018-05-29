@@ -146,10 +146,10 @@ class KotlinReactGenerator(input: InputStream,
                 builder.fullProtoTypeName(prototypeName?: "")
 
             }
-            ProtobufType.TYPE_ENUM      -> EnumReactField.Builder()
-                                                         .fullProtoTypeName(gerFullName(field))
+            ProtobufType.TYPE_ENUM     -> EnumReactField.Builder()
+                                                        .fullProtoTypeName(gerFullName(field))
 
-            else                        -> StringReactField.Builder()
+            else                       -> StringReactField.Builder()
         }
 
         fieldBuilder.optional(field.label == OPTIONAL)
@@ -172,8 +172,16 @@ class KotlinReactGenerator(input: InputStream,
 
     private fun getTypeName(field: DescriptorProtos.FieldDescriptorProto): Type {
         return when(field.type) {
-            ProtobufType.TYPE_INT32     -> Type.INT
-            ProtobufType.TYPE_INT64     -> Type.LONG
+            ProtobufType.TYPE_INT32,
+            ProtobufType.TYPE_UINT32,
+            ProtobufType.TYPE_FIXED32,
+            ProtobufType.TYPE_SFIXED32 -> Type.INT
+
+            ProtobufType.TYPE_INT64,
+            ProtobufType.TYPE_UINT64,
+            ProtobufType.TYPE_FIXED64,
+            ProtobufType.TYPE_SFIXED64   -> Type.LONG
+
             ProtobufType.TYPE_BOOL      -> Type.BOOL
             ProtobufType.TYPE_FLOAT     -> Type.FLOAT
             ProtobufType.TYPE_DOUBLE    -> Type.DOUBLE
