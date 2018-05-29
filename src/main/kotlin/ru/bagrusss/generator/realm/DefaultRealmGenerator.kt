@@ -90,7 +90,7 @@ abstract class DefaultRealmGenerator(input: InputStream,
 
             if (additionalClass(node).isNotEmpty()) {
                 classModelBuilder as RealmModelBuilder
-                classModelBuilder.realmClassName("Additional" + realmClassName)
+                classModelBuilder.realmClassName("Additional$realmClassName")
 
                 val additionalModel = classModelBuilder.build() as RealmModel
 
@@ -133,7 +133,8 @@ abstract class DefaultRealmGenerator(input: InputStream,
                                             .replace(".", "")
 
                 builder.fullProtoTypeName(clearedFullName)
-                       .protoPackage("$protoPackage.") as RealmFieldBuilder<*>
+                       .protoPackage("$protoPackage.")
+                builder
             }
 
             else                        -> throw UnsupportedOperationException("name=${field.name}, type=${field.typeName}")
