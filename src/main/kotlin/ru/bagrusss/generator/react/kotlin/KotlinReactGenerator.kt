@@ -116,14 +116,22 @@ class KotlinReactGenerator(input: InputStream,
 
     override fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*> {
         val fieldBuilder = when (field.type) {
-            ProtobufType.TYPE_INT32     -> IntReactField.Builder()
-            ProtobufType.TYPE_INT64     -> LongReactField.Builder()
-            ProtobufType.TYPE_BOOL      -> BoolReactField.Builder()
-            ProtobufType.TYPE_STRING    -> StringReactField.Builder()
-            ProtobufType.TYPE_FLOAT     -> FloatReactField.Builder()
-            ProtobufType.TYPE_DOUBLE    -> DoubleReactField.Builder()
-            ProtobufType.TYPE_BYTES     -> BytesReactField.Builder()
-            ProtobufType.TYPE_MESSAGE   -> {
+            ProtobufType.TYPE_INT32,
+            ProtobufType.TYPE_UINT32,
+            ProtobufType.TYPE_FIXED32,
+            ProtobufType.TYPE_SFIXED32 -> IntReactField.Builder()
+
+            ProtobufType.TYPE_INT64,
+            ProtobufType.TYPE_UINT64,
+            ProtobufType.TYPE_FIXED64,
+            ProtobufType.TYPE_SFIXED64 -> LongReactField.Builder()
+
+            ProtobufType.TYPE_BOOL     -> BoolReactField.Builder()
+            ProtobufType.TYPE_STRING   -> StringReactField.Builder()
+            ProtobufType.TYPE_FLOAT    -> FloatReactField.Builder()
+            ProtobufType.TYPE_DOUBLE   -> DoubleReactField.Builder()
+            ProtobufType.TYPE_BYTES    -> BytesReactField.Builder()
+            ProtobufType.TYPE_MESSAGE  -> {
                 val fullName = gerFullName(field)
                 val isMap = mapsSet.contains(fullName)
                 val prototypeName: String?
