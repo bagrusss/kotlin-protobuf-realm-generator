@@ -101,8 +101,16 @@ abstract class DefaultRealmGenerator(input: InputStream,
 
     override fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*> {
         val fieldBuilder = when (field.type) {
-            ProtobufType.TYPE_INT32     -> entitiesFactory.newBuilder(Type.INT)
-            ProtobufType.TYPE_INT64     -> entitiesFactory.newBuilder(Type.LONG)
+            ProtobufType.TYPE_INT32,
+            ProtobufType.TYPE_UINT32,
+            ProtobufType.TYPE_FIXED32,
+            ProtobufType.TYPE_SFIXED32  -> entitiesFactory.newBuilder(Type.INT)
+
+            ProtobufType.TYPE_INT64,
+            ProtobufType.TYPE_UINT64,
+            ProtobufType.TYPE_FIXED64,
+            ProtobufType.TYPE_SFIXED64  -> entitiesFactory.newBuilder(Type.LONG)
+
             ProtobufType.TYPE_FLOAT     -> entitiesFactory.newBuilder(Type.FLOAT)
             ProtobufType.TYPE_DOUBLE    -> entitiesFactory.newBuilder(Type.DOUBLE)
             ProtobufType.TYPE_STRING    -> entitiesFactory.newBuilder(Type.STRING)
@@ -137,7 +145,7 @@ abstract class DefaultRealmGenerator(input: InputStream,
                 builder
             }
 
-            else                        -> throw UnsupportedOperationException("name=${field.name}, type=${field.typeName}")
+            else                        -> throw UnsupportedOperationException("Field ${field.name} with type ${field.typeName} not supported")
         }
         val primaryKey = isPrimaryKey(field)
         val index = isIndex(field)
