@@ -46,7 +46,7 @@ abstract class Generator(protected val input: InputStream,
             protoFilePackage = protoFile.`package`
             protoFileJavaPackage = protoFile.options.javaPackage
             packagesSet.add(protoFilePackage)
-            protoToJavaPackagesMap.put(protoFilePackage, protoFileJavaPackage)
+            protoToJavaPackagesMap[protoFilePackage] = protoFileJavaPackage
 
 
             Logger.log("proto package java ${protoFile.options.javaPackage}")

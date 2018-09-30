@@ -20,7 +20,9 @@ import java.util.*
 
 class KotlinReactGenerator(input: InputStream,
                            output: PrintStream,
-                           private val reactPath: String): Generator(input, output) {
+                           private val reactPath: String,
+                           private val className: String = "ConvertUtils",
+                           private val packageName: String = "ru.rocketbank.serenity.react.utils"): Generator(input, output) {
 
     private lateinit var utilsBuilder: UtilsModelBuilder<FunSpec>
 
@@ -39,8 +41,8 @@ class KotlinReactGenerator(input: InputStream,
 
 
         utilsBuilder = KotlinUtilsModel.Builder()
-                                       .fileName("ConvertUtils")
-                                       .packageName("ru.rocketbank.serenity.react.utils")
+                                       .fileName(className)
+                                       .packageName(packageName)
 
         super.generate()
 
@@ -49,7 +51,7 @@ class KotlinReactGenerator(input: InputStream,
 
         val body = utilsBuilder.build().getBody()
 
-        writeFile(reactPath, "ConvertUtils.kt", body)
+        writeFile(reactPath, "$className.kt", body)
         Logger.log("maps and fields: $mapsValuesTypes")
         Logger.log("react end")
     }
@@ -92,9 +94,9 @@ class KotlinReactGenerator(input: InputStream,
                 val valueType = getTypeName(valueField)
                 if (valueType == Type.ENUM || valueType == Type.MESSAGE) {
                     val typeName = gerFullName(valueField)
-                    valuesTypesMap.put(protoFullName, typeName)
+                    valuesTypesMap[protoFullName] = typeName
                 }
-                mapsValuesTypes.put(protoFullName, valueType)
+                mapsValuesTypes[protoFullName] = valueType
             }
 
             node.fieldList.forEach {
@@ -105,9 +107,9 @@ class KotlinReactGenerator(input: InputStream,
 
             val model = modelBuilder.build() as KotlinReactModel
             val functions = model.getMapFunctions()
-            functions?.let {
-                utilsBuilder.addFun(it.first)
-                utilsBuilder.addFun(it.second)
+            functions?.let { (toWritableMap, fromReadableMap) ->
+                utilsBuilder.addFun(toWritableMap)
+                            .addFun(fromReadableMap)
             }
 
             ++count
