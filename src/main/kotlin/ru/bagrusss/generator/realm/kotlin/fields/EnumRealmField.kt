@@ -20,7 +20,7 @@ class EnumRealmField private constructor(builder: Builder): PrimitiveRealmField<
 
     override fun getPropSpec(): PropertySpec {
         return if (!repeated) {
-            PropertySpec.builder(fieldName, ClassName.bestGuess(kotlinFieldType))
+            PropertySpec.builder(fieldName, ClassName.bestGuess(getFieldType()))
                         .mutable(true)
                         .initializer("%L", -1)
                         .build().apply {

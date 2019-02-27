@@ -7,28 +7,27 @@ abstract class KotlinRealmField<T>(builder: RealmFieldBuilder<T>): RealmField<T>
     protected val generateToProto      = builder.generateToProto
     protected val generateFromProto    = builder.generateFromProto
 
-    protected val kotlinFieldType by lazy { getFieldType() }
-
     private var classTypeName = ""
 
     open fun repeatedToProtoInitializer() = ""
     open fun repeatedFromProtoInitializer() = ""
 
+    //TODO
     protected abstract fun getFieldType(): String
 
     open fun getPropSpec(): PropertySpec {
 
         val propSpecBuilder = if (!repeated) {
                                   PropertySpec.builder(fieldName, if (isPrimitive())
-                                                                      ClassName.bestGuess(kotlinFieldType).apply {
-                                                                                classTypeName = this.simpleName()
+                                                                      ClassName.bestGuess(getFieldType()).apply {
+                                                                                classTypeName = simpleName()
                                                                       }
                                                                   else ClassName("", "$realmPackage.$protoPackage$typePrefix$protoFullTypeName"))
                               } else {
                                   val realmListType = ClassName.bestGuess(realmListClass)
                                   val className =  if (isPrimitive())
-                                                         ClassName(realmPackage, typePrefix + kotlinFieldType.split(".")
-                                                                                                                         .last()
+                                                         ClassName(realmPackage, typePrefix + getFieldType().split(".")
+                                                                                                                        .last()
                                                          ).apply {
                                                              classTypeName = this.simpleName()
                                                          }

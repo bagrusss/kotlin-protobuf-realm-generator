@@ -20,7 +20,7 @@ class ByteArrayRealmField private constructor(builder: Builder): KotlinRealmFiel
     override fun getFieldType() = "kotlin.ByteArray"
 
     override fun getPropSpec(): PropertySpec {
-        return PropertySpec.builder(fieldName, ClassName.bestGuess(kotlinFieldType))
+        return PropertySpec.builder(fieldName, ClassName.bestGuess(getFieldType()))
                            .initializer("%L", "ByteArray(0)")
                            .mutable(true)
                            .build().apply {
