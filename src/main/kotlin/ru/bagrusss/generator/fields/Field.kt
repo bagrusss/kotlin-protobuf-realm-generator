@@ -14,7 +14,7 @@ abstract class Field<T>(builder: FieldBuilder<T>) {
     val initializerArgs      = builder.initializerArgs
     val protoPackage         = builder.protoPackage
 
-    protected abstract fun isPrimitive(): Boolean
+    protected abstract val isPrimitive: Boolean
 }
 
 enum class Type {

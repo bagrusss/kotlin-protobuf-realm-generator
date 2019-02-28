@@ -9,14 +9,16 @@ abstract class RealmModel : Model {
     protected val className: ClassName
 
     constructor(builder: RealmModelBuilder) {
-        className = ClassName(builder.realmPackageName, builder.realmClassName)
+        className = builder.run { ClassName(realmPackageName, realmClassName) }
     }
 
-    constructor(packageName: String, className: String) {
-        this.className = ClassName(packageName, className)
+    constructor(packageName: String, classNameStr: String) {
+        className = ClassName(packageName, classNameStr)
     }
 
-    abstract fun getFileExtension(): String
-    abstract fun getFileName(): String
-    abstract fun getModelBody(): String
+    abstract val fileName: String
+    abstract val fileExtension: String
+
+    abstract val body: String
+
 }

@@ -5,7 +5,7 @@ package ru.bagrusss.generator.realm.kotlin.fields
  */
 class LongRealmField(builder: Builder): PrimitiveRealmField<LongRealmField>(builder) {
 
-    override fun getFieldType() = "kotlin.Long"
+    override val getFieldType = "kotlin.Long"
 
     class Builder internal constructor(): RealmFieldBuilder<LongRealmField>() {
 

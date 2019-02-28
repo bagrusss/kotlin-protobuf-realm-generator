@@ -5,7 +5,7 @@ package ru.bagrusss.generator.realm.kotlin.fields
  */
 class DoubleRealmField private constructor(builder: Builder): PrimitiveRealmField<DoubleRealmField>(builder) {
 
-    override fun getFieldType() = "kotlin.Double"
+    override val getFieldType = "kotlin.Double"
 
     class Builder internal constructor(): RealmFieldBuilder<DoubleRealmField>() {
 

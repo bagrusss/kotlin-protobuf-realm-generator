@@ -14,20 +14,20 @@ abstract class KotlinRealmField<T>(builder: RealmFieldBuilder<T>): RealmField<T>
     open fun repeatedFromProtoInitializer() = ""
 
     //TODO
-    protected abstract fun getFieldType(): String
+    protected abstract val getFieldType: String
 
     open fun getPropSpec(): PropertySpec {
 
         val propSpecBuilder = if (!repeated) {
-                                  val type = if (isPrimitive())
-                                                ClassName.bestGuess(getFieldType()).apply { classTypeName = simpleName }
+                                  val type = if (isPrimitive)
+                                                ClassName.bestGuess(getFieldType).apply { classTypeName = simpleName }
                                              else ClassName("", "$realmPackage.$protoPackage$typePrefix$protoFullTypeName")
                                   PropertySpec.builder(fieldName, type.copy(nullable = optional))
                               } else {
                                   val realmListType = ClassName.bestGuess(realmListClass)
-                                  val className =  if (isPrimitive())
-                                                         ClassName(realmPackage, typePrefix + getFieldType().split(".")
-                                                                                                                        .last()
+                                  val className =  if (isPrimitive)
+                                                         ClassName(realmPackage, typePrefix + getFieldType.split(".")
+                                                                                                                      .last()
                                                          ).apply {
                                                              classTypeName = this.simpleName
                                                          }

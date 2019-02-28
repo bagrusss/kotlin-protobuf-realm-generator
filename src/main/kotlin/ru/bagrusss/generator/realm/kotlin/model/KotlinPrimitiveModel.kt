@@ -7,7 +7,7 @@ class KotlinPrimitiveModel(realmPackage: String,
                            primitiveClassName: ClassName,
                            defValue: Any): KotlinRealmModel(realmPackage, prefix + primitiveClassName.simpleName) {
 
-    private val body: String
+    override val body: String
 
     init {
         val classBuilder = TypeSpec.classBuilder(className)
@@ -33,7 +33,5 @@ class KotlinPrimitiveModel(realmPackage: String,
                        .getCharContent(true)
                        .toString()
     }
-
-    override fun getModelBody() = body
 
 }

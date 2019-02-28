@@ -22,9 +22,6 @@ abstract class Generator(protected val input: InputStream,
     protected val protoToJavaPackagesMap = HashMap<String, String>()
     protected val mapsSet = TreeSet<String>()
 
-    @JvmField protected val OPTIONAL = DescriptorProtos.FieldDescriptorProto.Label.LABEL_OPTIONAL
-    @JvmField protected val REPEATED = DescriptorProtos.FieldDescriptorProto.Label.LABEL_REPEATED
-
     protected lateinit var response: PluginProtos.CodeGeneratorResponse.Builder
     protected lateinit var request:  PluginProtos.CodeGeneratorRequest
 
@@ -66,5 +63,10 @@ abstract class Generator(protected val input: InputStream,
     abstract fun handleProtoMessage(message:  DescriptorProtos.DescriptorProto)
 
     abstract fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*>
+
+    companion object {
+        @JvmField val OPTIONAL = DescriptorProtos.FieldDescriptorProto.Label.LABEL_OPTIONAL
+        @JvmField val REPEATED = DescriptorProtos.FieldDescriptorProto.Label.LABEL_REPEATED
+    }
 
 }

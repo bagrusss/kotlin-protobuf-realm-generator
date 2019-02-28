@@ -6,7 +6,7 @@ package ru.bagrusss.generator.realm.kotlin.fields
  */
 class StringRealmField private constructor(builder: Builder) : PrimitiveRealmField<StringRealmField>(builder) {
 
-    override fun getFieldType() = "kotlin.String"
+    override val getFieldType = "kotlin.String"
 
     class Builder internal constructor(): RealmFieldBuilder<StringRealmField>() {
 

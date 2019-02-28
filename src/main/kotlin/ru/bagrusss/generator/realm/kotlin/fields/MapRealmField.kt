@@ -5,22 +5,8 @@ import ru.bagrusss.generator.fields.FieldBuilder
 
 class MapRealmField private constructor(builder: Builder) : KotlinRealmField<MapRealmField>(builder) {
 
-    class Builder internal constructor(): RealmFieldBuilder<MapRealmField>() {
-
-        override fun repeated(isRepeated: Boolean): FieldBuilder<MapRealmField> {
-            return super.repeated(true)
-        }
-
-        override fun build(): Field<MapRealmField> {
-            initializer("$realmPackage.$protoPackage$typePrefix$fullProtoTypeName()")
-            return MapRealmField(this)
-        }
-
-    }
-
-    override fun getFieldType() = protoFullTypeName
-
-    override fun isPrimitive() = false
+    override val getFieldType = protoFullTypeName
+    override val isPrimitive = false
 
     override fun repeatedToProtoFill(): String {
         return StringBuilder().append("it.forEach { ")
@@ -50,6 +36,17 @@ class MapRealmField private constructor(builder: Builder) : KotlinRealmField<Map
                               .append(fieldName)
                               .append("!!.add(e)\n}\n}")
                               .toString()
+    }
+
+    class Builder internal constructor(): RealmFieldBuilder<MapRealmField>() {
+
+        override fun repeated(isRepeated: Boolean): FieldBuilder<MapRealmField> = super.repeated(true)
+
+        override fun build(): Field<MapRealmField> {
+            initializer("$realmPackage.$protoPackage$typePrefix$fullProtoTypeName()")
+            return MapRealmField(this)
+        }
+
     }
 
     companion object {

@@ -3,7 +3,7 @@ package ru.bagrusss.generator.react.kotlin.field
 
 class EnumReactField private constructor(builder: Builder): StringReactField(builder) {
 
-    override fun isPrimitive() = false
+    override val isPrimitive = false
 
     override fun fromMapInit() = fieldName + " = " + protoFullTypeName + ".valueOf(" + "map.get" + getReactType() + "(\"" + fieldName + "\"))"
 

@@ -6,7 +6,7 @@ package ru.bagrusss.generator.realm.kotlin.fields
  */
  abstract class PrimitiveRealmField<T>(builder: RealmFieldBuilder<T>): KotlinRealmField<T>(builder) {
 
-    override fun isPrimitive() = true
+    override val isPrimitive = true
 
     override fun repeatedFromProtoInitializer() = "it"
 

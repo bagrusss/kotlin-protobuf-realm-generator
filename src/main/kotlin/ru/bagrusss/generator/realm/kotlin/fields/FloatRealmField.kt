@@ -5,14 +5,13 @@ package ru.bagrusss.generator.realm.kotlin.fields
  */
 class FloatRealmField private constructor(builder: Builder): PrimitiveRealmField<FloatRealmField>(builder) {
 
-    override fun getFieldType() = "kotlin.Float"
+    override val getFieldType = "kotlin.Float"
 
     class Builder internal constructor(): RealmFieldBuilder<FloatRealmField>() {
 
         init {
             initializer("0f")
         }
-
 
         override fun build() = FloatRealmField(this)
 

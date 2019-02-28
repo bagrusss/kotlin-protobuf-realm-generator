@@ -3,11 +3,9 @@ package ru.bagrusss.generator.react.kotlin.field
 
 class IntReactField private constructor(builder: Builder): ReactField<IntReactField>(builder) {
 
-    override fun getReactType() = getReactTypeForMap()
-
+    override val isPrimitive = true
     override fun getReactTypeForMap() = "Int"
-
-    override fun isPrimitive() = true
+    override fun getReactType() = getReactTypeForMap()
 
     class Builder: ReactFieldBuilder<IntReactField>() {
         override fun build() = IntReactField(this)

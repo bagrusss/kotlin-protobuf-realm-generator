@@ -10,9 +10,9 @@ class LinkingObjectsRealmField private constructor(builder: Builder): KotlinReal
 
     private val propertyName = builder.propertyName
 
-    override fun isPrimitive() = false
+    override val isPrimitive = false
 
-    override fun getFieldType() = protoFullTypeName
+    override val getFieldType = protoFullTypeName
 
     override fun getPropSpec(): PropertySpec {
         val realmResultsType = ClassName.bestGuess(realmResultsClass)
@@ -32,9 +32,7 @@ class LinkingObjectsRealmField private constructor(builder: Builder): KotlinReal
 
         internal var propertyName = ""
 
-        fun propertyName(propertyName: String) = apply {
-            this.propertyName = propertyName
-        }
+        fun propertyName(propertyName: String) = apply { this.propertyName = propertyName }
 
         override fun build() = LinkingObjectsRealmField(this)
 

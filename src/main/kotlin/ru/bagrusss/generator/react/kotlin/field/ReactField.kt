@@ -4,6 +4,26 @@ import ru.bagrusss.generator.Utils
 import ru.bagrusss.generator.fields.Field
 
 
+/**
+ * toMap
+ * ```
+ * if (colorsList.isNotEmpty()) {
+ *      val colorsArray = Arguments.createArray()
+ *      colorsList.forEach { colorsArray.pushMap(it.toWritableMap()) }
+ * }
+ * ```
+ *
+ * fromMap
+ * ```
+ * val colorsElements = map.getArray("colors")
+ * for (i in 0 until colorsElements.size()) {
+ *     val element = package.newBuilder().fromReadableMap(someElements.getMap(i))
+ *     addColors(element)
+ * }
+ * ```
+ */
+
+
 abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Field<T>(builder) {
 
     private val checkOptionalToMap = "\n\tif (${Utils.getHas(fieldName)}())\n\t\t"
@@ -14,8 +34,8 @@ abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Fiel
 
     open fun needSkip() = false
 
-    protected fun putToArrayMethodName() = "push" + getReactType()
-    protected fun getFromArrayMethodName() = "get" + getReactType()
+    private fun putToArrayMethodName() = "push" + getReactType()
+    private fun getFromArrayMethodName() = "get" + getReactType()
 
     protected open fun fromMapInit() = fieldName + " = map.get" + getReactType() + "(\"" + fieldName + "\")"
     protected open fun toMapInit() = "put" + getReactType() + "(\"" + fieldName + "\", " + fieldName + ")"
@@ -23,19 +43,6 @@ abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Fiel
     protected open fun toMapConverter() = "it"
 
     protected open fun getFromMapInit() = "$protoFullTypeName.newBuilder().${Utils.fromMapMethod}("
-
-    /*в карту
-    if (colorsList.isNotEmpty()) {
-        val colorsArray = Arguments.createArray()
-        colorsList.forEach { colorsArray.pushMap(it.toWritableMap()) }
-    }*/
-
-    /*из карты
-    val colorsElements = map.getArray("colors")
-    for (i in 0 until colorsElements.size()) {
-        val element = ru.rocketbank.protomodel.ProtoApi.Color.newBuilder().fromReadableMap(colorsElements.getMap(i))
-        addColors(element)
-    }*/
 
     protected open fun toMapRepeated(): String {
         val array = Utils.fieldArray(fieldName)
@@ -63,56 +70,51 @@ abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Fiel
                               .toString()
     }
 
-    open fun toMapInitializer(): String {
-        return when {
-            repeated -> { toMapRepeated() }
-            optional -> checkOptionalToMap + toMapInit()
-            else -> toMapInit()
-        }
+    open fun toMapInitializer() = when {
+        repeated -> { toMapRepeated() }
+        optional -> checkOptionalToMap + toMapInit()
+        else -> toMapInit()
     }
 
-    open fun fromMapInitializer(): String {
-        return when {
-            repeated -> {
-                val array = Utils.fieldArray(fieldName)
-                val item = "element"
-                val builder = StringBuilder().append("\n\tif (map.hasKey(\"")
-                                             .append(fieldName)
-                                             .append("\")) {\n\t\tval ")
-                                             .append(array)
-                                             .append(" = map.getArray(\"")
-                                             .append(fieldName)
-                                             .append("\")\n")
-                                             .append("\t\tfor (i in 0 until ")
-                                             .append(array)
-                                             .append(".size()) {\n")
-                                             .append("\t\t\tval ")
-                                             .append(item)
-                                             .append(" = ")
+    open fun fromMapInitializer() = when {
+        repeated    -> {
+            val array = Utils.fieldArray(fieldName)
+            val item = "element"
+            val builder = StringBuilder().append("\n\tif (map.hasKey(\"")
+                                         .append(fieldName)
+                                         .append("\")) {\n\t\tval ")
+                                         .append(array)
+                                         .append(" = map.getArray(\"")
+                                         .append(fieldName)
+                                         .append("\")\n")
+                                         .append("\t\tfor (i in 0 until ")
+                                         .append(array)
+                                         .append(".size()) {\n")
+                                         .append("\t\t\tval ")
+                                         .append(item)
+                                         .append(" = ")
 
-                if (!isPrimitive()) {
-                    builder.append(getFromMapInit())
-                }
+            if (!isPrimitive)
+                builder.append(getFromMapInit())
 
-                builder.append(array)
-                       .append('.')
-                       .append(getFromArrayMethodName())
-                       .append("(i)")
+            builder.append(array)
+                   .append('.')
+                   .append(getFromArrayMethodName())
+                   .append("(i)")
 
-                if (!isPrimitive())
-                    builder.append(")")
+            if (!isPrimitive)
+                builder.append(")")
 
-                builder.append("\n\t\t\t")
-                       .append(Utils.addToArray(fieldName))
-                       .append('(')
-                       .append(item)
-                       .append(")\n\t\t}\n\t}")
+            builder.append("\n\t\t\t")
+                    .append(Utils.addToArray(fieldName))
+                    .append('(')
+                    .append(item)
+                    .append(")\n\t\t}\n\t}")
 
-                builder.toString()
-            }
-            optional -> checkOptionalFromMap + fromMapInit()
-            else -> fromMapInit()
+            builder.toString()
         }
+        optional    -> checkOptionalFromMap + fromMapInit()
+        else        -> fromMapInit()
     }
 
 }

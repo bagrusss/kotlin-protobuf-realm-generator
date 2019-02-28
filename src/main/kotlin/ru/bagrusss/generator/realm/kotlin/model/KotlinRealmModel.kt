@@ -9,8 +9,7 @@ abstract class KotlinRealmModel : RealmModel {
 
     constructor(packageName: String, className: String) : super(packageName, className)
 
-    override fun getFileExtension() = ".kt"
-
-    override fun getFileName() = className.simpleName + ".kt"
+    override val fileExtension = ".kt"
+    override val fileName = className.simpleName + ".kt"
 
 }

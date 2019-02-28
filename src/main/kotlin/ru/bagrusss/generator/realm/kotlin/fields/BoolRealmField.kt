@@ -5,7 +5,7 @@ package ru.bagrusss.generator.realm.kotlin.fields
  */
 class BoolRealmField private constructor(builder: Builder): PrimitiveRealmField<BoolRealmField>(builder) {
 
-    override fun getFieldType() = "kotlin.Boolean"
+    override val getFieldType = "kotlin.Boolean"
 
     class Builder internal constructor(): RealmFieldBuilder<BoolRealmField>() {
 

@@ -20,13 +20,14 @@ class KotlinClassModel private constructor(builder: BuilderRealm): KotlinRealmMo
     private val realmProtoConstructor = FunSpec.constructorBuilder()
                                                .addParameter("protoModel", ClassName("", builder.protoClassFullName))
 
-    private val body: String
+    override val body: String
 
     private val isMap = builder.isMap
 
     class BuilderRealm internal constructor(): RealmModelBuilder() {
 
         override fun build() = KotlinClassModel(this)
+
     }
 
     init {
@@ -42,9 +43,7 @@ class KotlinClassModel private constructor(builder: BuilderRealm): KotlinRealmMo
 
         builder.linkedObjects
                .map { it as LinkingObjectsRealmField }
-               .forEach {
-                   classNameBuilder.addProperty(it.getPropSpec())
-               }
+               .forEach { classNameBuilder.addProperty(it.getPropSpec()) }
 
         toProtoMethodBuilder.addStatement("return p.build()")
 
@@ -53,8 +52,7 @@ class KotlinClassModel private constructor(builder: BuilderRealm): KotlinRealmMo
             classNameBuilder.addFunction(realmProtoConstructor.build())
         }
 
-        val realmDefaultConstructor = FunSpec.constructorBuilder()
-                                             .build()
+        val realmDefaultConstructor = FunSpec.constructorBuilder().build()
         classNameBuilder.addFunction(realmDefaultConstructor)
 
         body = FileSpec.builder(builder.realmPackageName, builder.realmClassName)
@@ -65,5 +63,4 @@ class KotlinClassModel private constructor(builder: BuilderRealm): KotlinRealmMo
                        .toString()
     }
 
-    override fun getModelBody() = body
 }

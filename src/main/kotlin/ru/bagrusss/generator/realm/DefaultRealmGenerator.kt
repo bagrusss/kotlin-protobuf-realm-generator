@@ -30,7 +30,7 @@ abstract class DefaultRealmGenerator(input: InputStream,
 
         super.generate()
 
-        Logger.log("realm generated $count")
+        Logger.log("realm generated $count models")
     }
 
     override fun handleProtoMessage(message: DescriptorProtos.DescriptorProto) {
@@ -86,7 +86,7 @@ abstract class DefaultRealmGenerator(input: InputStream,
 
             val model = classModelBuilder.build() as RealmModel
 
-            writeFile("$realmPath${File.separator}$protoFilePackage", model.getFileName(), model.getModelBody())
+            writeFile("$realmPath${File.separator}$protoFilePackage", model.fileName, model.body)
 
             if (additionalClass(node).isNotEmpty()) {
                 classModelBuilder as RealmModelBuilder
@@ -94,7 +94,7 @@ abstract class DefaultRealmGenerator(input: InputStream,
 
                 val additionalModel = classModelBuilder.build() as RealmModel
 
-                writeFile("$realmPath${File.separator}$protoFilePackage", additionalModel.getFileName(), additionalModel.getModelBody())
+                writeFile("$realmPath${File.separator}$protoFilePackage", additionalModel.fileName, additionalModel.body)
             }
         }
     }
@@ -136,17 +136,18 @@ abstract class DefaultRealmGenerator(input: InputStream,
                                        protoFilePackage
                                    else packagesSet.first { field.typeName.indexOf(it) == 1 }
 
-                val clearedFullName =  field.typeName
-                                            .substring(protoPackage.length + 1)
-                                            .replace(".", "")
+                val clearFullName = field.typeName
+                                         .substring(protoPackage.length + 1)
+                                         .replace(".", "")
 
-                builder.fullProtoTypeName(clearedFullName)
+                builder.fullProtoTypeName(clearFullName)
                        .protoPackage("$protoPackage.")
                 builder
             }
 
             else                        -> throw UnsupportedOperationException("Field ${field.name} with type ${field.typeName} not supported")
         }
+
         val primaryKey = isPrimaryKey(field)
         val index = isIndex(field)
 
@@ -170,10 +171,10 @@ abstract class DefaultRealmGenerator(input: InputStream,
     protected abstract fun getLinkedObjects(node: DescriptorProtos.DescriptorProto): List<LinkedObject>
 
     data class LinkedObject(
-            val fieldName: String,
-            val fromType: String,
-            val propertyName: String,
-            val packageName: String
+            @JvmField val fieldName: String,
+            @JvmField val fromType: String,
+            @JvmField val propertyName: String,
+            @JvmField val packageName: String
     )
 
 }

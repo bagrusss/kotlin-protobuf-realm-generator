@@ -37,8 +37,8 @@ class KotlinRealmGenerator(input: InputStream,
             val realmTypeFile = PluginProtos.CodeGeneratorResponse
                                             .File
                                             .newBuilder()
-                                            .setName(primitiveModel.getFileName())
-                                            .setContent(primitiveModel.getModelBody())
+                                            .setName(primitiveModel.fileName)
+                                            .setContent(primitiveModel.body)
                                             .build()
             responseBuilder.addFile(realmTypeFile)
         }

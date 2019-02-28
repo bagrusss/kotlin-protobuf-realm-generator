@@ -7,17 +7,18 @@ import ru.bagrusss.generator.fields.Field
  */
 class MessageRealmField private constructor(builder: Builder): KotlinRealmField<MessageRealmField>(builder) {
 
-    override fun isPrimitive() = false
+    override val getFieldType = protoFullTypeName
+
+    override val isPrimitive = false
 
     class Builder internal constructor(): RealmFieldBuilder<MessageRealmField>() {
+
         override fun build(): Field<MessageRealmField> {
             initializer("$realmPackage.$protoPackage$typePrefix$fullProtoTypeName()")
             return MessageRealmField(this)
         }
 
     }
-
-    override fun getFieldType() = protoFullTypeName
 
     override fun toProtoInitializer() = "${if (optional) "it" else fieldName}.toProto()"
     override fun fromProtoInitializer() = "$realmPackage.$protoPackage$typePrefix$protoFullTypeName($protoConstructorParameter.$fieldName)"
