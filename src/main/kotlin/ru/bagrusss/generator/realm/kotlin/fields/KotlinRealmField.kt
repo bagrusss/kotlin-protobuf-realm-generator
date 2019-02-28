@@ -1,6 +1,7 @@
 package ru.bagrusss.generator.realm.kotlin.fields
 
 import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 
 abstract class KotlinRealmField<T>(builder: RealmFieldBuilder<T>): RealmField<T>(builder) {
 
@@ -18,24 +19,23 @@ abstract class KotlinRealmField<T>(builder: RealmFieldBuilder<T>): RealmField<T>
     open fun getPropSpec(): PropertySpec {
 
         val propSpecBuilder = if (!repeated) {
-                                  PropertySpec.builder(fieldName, if (isPrimitive())
-                                                                      ClassName.bestGuess(getFieldType()).apply {
-                                                                                classTypeName = simpleName()
-                                                                      }
-                                                                  else ClassName("", "$realmPackage.$protoPackage$typePrefix$protoFullTypeName"))
+                                  val type = if (isPrimitive())
+                                                ClassName.bestGuess(getFieldType()).apply { classTypeName = simpleName }
+                                             else ClassName("", "$realmPackage.$protoPackage$typePrefix$protoFullTypeName")
+                                  PropertySpec.builder(fieldName, type.copy(nullable = optional))
                               } else {
                                   val realmListType = ClassName.bestGuess(realmListClass)
                                   val className =  if (isPrimitive())
                                                          ClassName(realmPackage, typePrefix + getFieldType().split(".")
                                                                                                                         .last()
                                                          ).apply {
-                                                             classTypeName = this.simpleName()
+                                                             classTypeName = this.simpleName
                                                          }
                                                     else ClassName("", "$realmPackage.$protoPackage$typePrefix$protoFullTypeName").apply {
-                                                           classTypeName = this.simpleName()
+                                                           classTypeName = this.simpleName
                                                          }
-                                  val typedList = ParameterizedTypeName.get(realmListType, className)
-                                  PropertySpec.builder(fieldName, typedList)
+                                  val typedList = realmListType.parameterizedBy(className)
+                                  PropertySpec.builder(fieldName, typedList.copy(nullable = optional))
                               }.mutable(true)
 
         val toProtoBuilder = StringBuilder()
@@ -49,8 +49,7 @@ abstract class KotlinRealmField<T>(builder: RealmFieldBuilder<T>): RealmField<T>
             propSpecBuilder.addAnnotation(ClassName.bestGuess(indexAnnotation))
 
         if (optional) {
-            propSpecBuilder.nullable(true)
-                           .initializer("%L", "null")
+            propSpecBuilder.initializer("null")
 
             toProtoBuilder.append(fieldName)
                           .append("?.let { ")
@@ -82,8 +81,7 @@ abstract class KotlinRealmField<T>(builder: RealmFieldBuilder<T>): RealmField<T>
             }
             toProtoBuilder.append(" }")
         } else {
-            propSpecBuilder.nullable(false)
-                           .initializer("%L", initializerArgs)
+            propSpecBuilder.initializer("%L", initializerArgs)
 
             toProtoBuilder.append("p.")
                           .append(fieldName)

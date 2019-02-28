@@ -1,6 +1,10 @@
 package ru.bagrusss.generator.realm.kotlin.fields
 
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+
 
 class LinkingObjectsRealmField private constructor(builder: Builder): KotlinRealmField<LinkingObjectsRealmField>(builder) {
 
@@ -13,14 +17,13 @@ class LinkingObjectsRealmField private constructor(builder: Builder): KotlinReal
     override fun getPropSpec(): PropertySpec {
         val realmResultsType = ClassName.bestGuess(realmResultsClass)
         val realmClass = ClassName("", protoFullTypeName)
-        val typedResults = ParameterizedTypeName.get(realmResultsType, realmClass)
+        val typedResults = realmResultsType.parameterizedBy(realmClass)
         val linkedObjectAnnotation = AnnotationSpec.builder(ClassName.bestGuess(linkedObjectAnnotation))
                                                    .addMember("value", "%S", propertyName)
                                                    .build()
-        return PropertySpec.builder(fieldName, typedResults)
+        return PropertySpec.builder(fieldName, typedResults.copy(nullable = true))
                            .addAnnotation(linkedObjectAnnotation)
                            .mutable(false)
-                           .nullable(true)
                            .initializer("%L", "null")
                            .build()
     }

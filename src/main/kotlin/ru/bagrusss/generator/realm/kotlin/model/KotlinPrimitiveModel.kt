@@ -5,7 +5,7 @@ import com.squareup.kotlinpoet.*
 class KotlinPrimitiveModel(realmPackage: String,
                            prefix: String,
                            primitiveClassName: ClassName,
-                           defValue: Any): KotlinRealmModel(realmPackage, prefix + primitiveClassName.simpleName()) {
+                           defValue: Any): KotlinRealmModel(realmPackage, prefix + primitiveClassName.simpleName) {
 
     private val body: String
 
@@ -18,19 +18,20 @@ class KotlinPrimitiveModel(realmPackage: String,
         classBuilder.addProperty(fieldBuilder.build())
                     .addModifiers(KModifier.OPEN)
                     .superclass(ClassName.bestGuess("io.realm.RealmObject"))
-                    .addFun(FunSpec.constructorBuilder()
-                                   .build())
-                    .addFun(FunSpec.constructorBuilder()
-                                   .addParameter(ParameterSpec.builder("value", primitiveClassName).build())
-                                   .addStatement("this.value = value")
-                                   .build())
+                    .addFunction(FunSpec.constructorBuilder()
+                                        .build())
+                    .addFunction(FunSpec.constructorBuilder()
+                                        .addParameter(ParameterSpec.builder("value", primitiveClassName)
+                                                                   .build())
+                                        .addStatement("this.value = value")
+                                        .build())
 
-        body = KotlinFile.builder(realmPackage, className.simpleName())
-                         .addType(classBuilder.build())
-                         .build()
-                         .toJavaFileObject()
-                         .getCharContent(true)
-                         .toString()
+        body = FileSpec.builder(realmPackage, className.simpleName)
+                       .addType(classBuilder.build())
+                       .build()
+                       .toJavaFileObject()
+                       .getCharContent(true)
+                       .toString()
     }
 
     override fun getModelBody() = body

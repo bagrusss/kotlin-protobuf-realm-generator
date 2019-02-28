@@ -49,20 +49,20 @@ class KotlinClassModel private constructor(builder: BuilderRealm): KotlinRealmMo
         toProtoMethodBuilder.addStatement("return p.build()")
 
         if (!isMap) {
-            classNameBuilder.addFun(toProtoMethodBuilder.build())
-            classNameBuilder.addFun(realmProtoConstructor.build())
+            classNameBuilder.addFunction(toProtoMethodBuilder.build())
+            classNameBuilder.addFunction(realmProtoConstructor.build())
         }
 
         val realmDefaultConstructor = FunSpec.constructorBuilder()
                                              .build()
-        classNameBuilder.addFun(realmDefaultConstructor)
+        classNameBuilder.addFunction(realmDefaultConstructor)
 
-        body = KotlinFile.builder(builder.realmPackageName, builder.realmClassName)
-                         .addType(classNameBuilder.build())
-                         .build()
-                         .toJavaFileObject()
-                         .getCharContent(true)
-                         .toString()
+        body = FileSpec.builder(builder.realmPackageName, builder.realmClassName)
+                       .addType(classNameBuilder.build())
+                       .build()
+                       .toJavaFileObject()
+                       .getCharContent(true)
+                       .toString()
     }
 
     override fun getModelBody() = body

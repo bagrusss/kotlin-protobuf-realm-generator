@@ -11,6 +11,6 @@ abstract class KotlinRealmModel : RealmModel {
 
     override fun getFileExtension() = ".kt"
 
-    override fun getFileName() = className.simpleName() + ".kt"
+    override fun getFileName() = className.simpleName + ".kt"
 
 }
