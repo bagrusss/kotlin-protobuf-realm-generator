@@ -34,19 +34,19 @@ class KotlinReactModel private constructor(builder: Builder): ReactModel<FunSpec
                              .append(".createMap().apply {\n")
 
         builder.fields.map { it as ReactField<*> }
-                          .forEach {
-                              if (!it.needSkip()) {
-                                  toWritableBodyBuilder.append('\t')
-                                                       .append(it.toMapInitializer())
-                                                       .append('\n')
+                      .forEach {
+                          if (!it.skip) {
+                              toWritableBodyBuilder.append('\t')
+                                                   .append(it.toMapInitializer())
+                                                   .append('\n')
 
-                                  fromReadableBodyBuilder.append('\t')
-                                                         .append(it.fromMapInitializer())
-                                                         .append('\n')
-                              } else {
-                                  Logger.log("skip ${builder.protoClassFullName}")
-                              }
+                              fromReadableBodyBuilder.append('\t')
+                                                     .append(it.fromMapInitializer())
+                                                     .append('\n')
+                          } else {
+                              Logger.log("skip ${builder.protoClassFullName}")
                           }
+                      }
 
         toWritableBodyBuilder.append("}\n")
         fromReadableBodyBuilder.append("\nreturn build()")

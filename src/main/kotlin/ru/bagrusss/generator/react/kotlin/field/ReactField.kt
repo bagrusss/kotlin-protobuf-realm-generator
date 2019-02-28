@@ -32,7 +32,7 @@ abstract class ReactField<T: ReactField<T>>(builder: ReactFieldBuilder<T>): Fiel
     abstract fun getReactType(): String
     abstract fun getReactTypeForMap(): String
 
-    open fun needSkip() = false
+    open val skip = false
 
     private fun putToArrayMethodName() = "push" + getReactType()
     private fun getFromArrayMethodName() = "get" + getReactType()
