@@ -85,7 +85,7 @@ fun com.company.project.models.User.toWritableMap(): com.facebook.react.bridge.W
 
 
 fun com.company.project.models.User.Builder.fromReadableMap(map: com.facebook.react.bridge.ReadableMap): com.company.project.models.User {
-  	id = map.getString("id").toLong()
+    id = map.getString("id").toLong()
     firstName = map.getString("firstName")
     lastName = map.getString("lastName")
     if (map.hasKey("middleName")) 
