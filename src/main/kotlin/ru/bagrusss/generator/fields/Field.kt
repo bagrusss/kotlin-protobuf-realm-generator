@@ -4,15 +4,15 @@ package ru.bagrusss.generator.fields
  * Created by bagrusss on 12.07.17
  */
 abstract class Field<T>(builder: FieldBuilder<T>) {
-    val optional             = builder.optional
-    val repeated             = builder.repeated
-    val typePrefix           = builder.typePrefix
-    val typeSuffix           = builder.typeSuffix
-    val protoFullTypeName    = builder.fullProtoTypeName
-    val fieldName            = builder.fieldName
-    val initializerFormat    = builder.initializerFormat
-    val initializerArgs      = builder.initializerArgs
-    val protoPackage         = builder.protoPackage
+    @JvmField val optional             = builder.optional
+    @JvmField val repeated             = builder.repeated
+    @JvmField val typePrefix           = builder.typePrefix
+    @JvmField val typeSuffix           = builder.typeSuffix
+    @JvmField val protoFullTypeName    = builder.fullProtoTypeName
+    @JvmField val fieldName            = builder.fieldName
+    @JvmField val initializerFormat    = builder.initializerFormat
+    @JvmField val initializerArgs      = builder.initializerArgs
+    @JvmField val protoPackage         = builder.protoPackage
 
     protected abstract val isPrimitive: Boolean
 }
