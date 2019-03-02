@@ -62,6 +62,5 @@ enum class Lang {
 enum class Serializer {
     GOOGLE,
     PROTOSTUFF,
-    WIRE,
-    REACT
+    WIRE
 }

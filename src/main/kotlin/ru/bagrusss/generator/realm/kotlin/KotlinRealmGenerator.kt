@@ -9,15 +9,12 @@ import google.protobuf.SwiftDescriptor
 import google.protobuf.compiler.PluginProtos
 import ru.bagrusss.generator.realm.RealmEntityFactory
 import ru.bagrusss.generator.realm.DefaultRealmGenerator
+import ru.bagrusss.generator.realm.params.RealmParams
 import java.io.InputStream
 import java.io.PrintStream
 
-class KotlinRealmGenerator(input: InputStream,
-                           output: PrintStream,
-                           realmPath: String,
-                           realmPackage: String,
-                           prefix: String,
-                           factory: RealmEntityFactory): DefaultRealmGenerator(input, output, realmPath, realmPackage, prefix, factory) {
+class KotlinRealmGenerator(params: RealmParams,
+                           factory: RealmEntityFactory): DefaultRealmGenerator(params, factory) {
 
     override fun filter(node: DescriptorProtos.DescriptorProto): Boolean {
         return node.hasOptions()
@@ -50,7 +47,7 @@ class KotlinRealmGenerator(input: InputStream,
         KotlinDescriptor.registerAllExtensions(extensionRegistry)
 
         response = PluginProtos.CodeGeneratorResponse.newBuilder()
-        request = PluginProtos.CodeGeneratorRequest.parseFrom(input, extensionRegistry)
+        request = PluginProtos.CodeGeneratorRequest.parseFrom(params.inputStream, extensionRegistry)
 
         super.generate()
     }

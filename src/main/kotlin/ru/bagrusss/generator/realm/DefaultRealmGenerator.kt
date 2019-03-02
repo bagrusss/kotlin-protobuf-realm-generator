@@ -9,17 +9,19 @@ import ru.bagrusss.generator.generator.Generator
 import ru.bagrusss.generator.generator.ProtobufType
 import ru.bagrusss.generator.realm.kotlin.RealmModelBuilder
 import ru.bagrusss.generator.realm.kotlin.fields.RealmFieldBuilder
+import ru.bagrusss.generator.realm.params.RealmParams
 import java.io.File
-import java.io.InputStream
-import java.io.PrintStream
 
+abstract class DefaultRealmGenerator(params: RealmParams,
+                                     private val entitiesFactory: RealmEntityFactory): Generator<RealmParams>(params) {
 
-abstract class DefaultRealmGenerator(input: InputStream,
-                                     output: PrintStream,
-                                     private val realmPath: String,
-                                     protected val realmPackage: String,
-                                     protected val prefix: String,
-                                     private val entitiesFactory: RealmEntityFactory): Generator(input, output) {
+    protected inline val realmPackage
+        get() = params.realmPackage
+    protected inline val prefix
+        get() = params.prefix
+    private inline val realmPath
+        get() = params.realmPath
+
     private var count = 0
 
     abstract fun generatePrimitives(responseBuilder: PluginProtos.CodeGeneratorResponse.Builder)

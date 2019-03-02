@@ -12,8 +12,7 @@ import java.util.TreeSet
 
 internal typealias ProtobufType = DescriptorProtos.FieldDescriptorProto.Type
 
-abstract class Generator(protected val input: InputStream,
-                         protected val output: PrintStream) {
+abstract class Generator<P: Params<P>>(@JvmField protected val params: P) {
 
     protected var protoFilePackage = ""
     protected var protoFileJavaPackage = ""
@@ -55,7 +54,7 @@ abstract class Generator(protected val input: InputStream,
         Logger.log("end")
 
         response.build()
-                .writeTo(output)
+                .writeTo(params.outputStream)
     }
 
     abstract fun filter(node: DescriptorProtos.DescriptorProto): Boolean
