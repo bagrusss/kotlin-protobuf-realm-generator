@@ -6,7 +6,6 @@ class RealmParams private constructor(builder: Builder): Params<RealmParams>(bui
 
     @JvmField val prefix        = builder.prefix
     @JvmField val suffix        = builder.suffix
-    @JvmField val realmPath     = builder.targetPath
 
     class Builder internal constructor(): Params.Builder<RealmParams>() {
 

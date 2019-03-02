@@ -16,18 +16,19 @@ abstract class DefaultRealmGenerator(params: RealmParams,
 
     protected inline val prefix
         get() = params.prefix
-    private inline val realmPath
-        get() = params.realmPath
 
     private var count = 0
 
     abstract fun generatePrimitives(responseBuilder: PluginProtos.CodeGeneratorResponse.Builder)
 
+    protected abstract fun isPrimaryKey(field: DescriptorProtos.FieldDescriptorProto): Boolean
+    protected abstract fun isIndex(field: DescriptorProtos.FieldDescriptorProto): Boolean
+    protected abstract fun additionalClass(node: DescriptorProtos.DescriptorProto): String
+    protected abstract fun getLinkedObjects(node: DescriptorProtos.DescriptorProto): List<LinkedObject>
+
     override fun generate() {
         generatePrimitives(response)
-
         super.generate()
-
         Logger.log("realm generated $count models")
     }
 
@@ -65,8 +66,7 @@ abstract class DefaultRealmGenerator(params: RealmParams,
             Logger.log("generate $protoFullName, nodeName = ${node.name}")
 
             node.fieldList.forEach { field ->
-                val property = generateProperty(field)
-                classModelBuilder.addField(property)
+                classModelBuilder.addField(generateProperty(field))
             }
 
             getLinkedObjects(node).forEach {
@@ -86,12 +86,12 @@ abstract class DefaultRealmGenerator(params: RealmParams,
 
             val model = classModelBuilder.build()
 
-            writeFile("$realmPath${File.separator}$protoFilePackage", model.fileName, model.body)
+            writeFile("$targetPath${File.separator}$protoFilePackage", model.fileName, model.body)
 
             if (additionalClass(node).isNotEmpty()) {
                 classModelBuilder.realmClassName("Additional$realmClassName")
                 val additionalModel = classModelBuilder.build()
-                writeFile("$realmPath${File.separator}$protoFilePackage", additionalModel.fileName, additionalModel.body)
+                writeFile("$targetPath${File.separator}$protoFilePackage", additionalModel.fileName, additionalModel.body)
             }
         }
     }
@@ -159,14 +159,6 @@ abstract class DefaultRealmGenerator(params: RealmParams,
 
         return fieldBuilder.build()
     }
-
-    protected abstract fun isPrimaryKey(field: DescriptorProtos.FieldDescriptorProto): Boolean
-
-    protected abstract fun isIndex(field: DescriptorProtos.FieldDescriptorProto): Boolean
-
-    protected abstract fun additionalClass(node: DescriptorProtos.DescriptorProto): String
-
-    protected abstract fun getLinkedObjects(node: DescriptorProtos.DescriptorProto): List<LinkedObject>
 
     class LinkedObject(
             @JvmField val fieldName: String,

@@ -1,6 +1,5 @@
 package ru.bagrusss.generator.realm.kotlin
 
-import com.google.protobuf.ExtensionRegistryLite
 import ru.bagrusss.generator.realm.kotlin.model.KotlinPrimitiveModel
 import com.squareup.kotlinpoet.*
 import google.protobuf.DescriptorProtos
@@ -22,12 +21,13 @@ class KotlinRealmGenerator(params: RealmParams,
     }
 
     override fun generatePrimitives(responseBuilder: PluginProtos.CodeGeneratorResponse.Builder) {
-        listOf(Pair(INT, 0),
-               Pair(LONG, 0L),
-               Pair(FLOAT, "0f"),
-               Pair(DOUBLE, 0.0),
-               Pair(BOOLEAN, false),
-               Pair(ClassName("kotlin", "String"), "\"\"")).forEach { (className, defaultValue) ->
+        val primitives = listOf(Pair(INT, 0),
+                                Pair(LONG, 0L),
+                                Pair(FLOAT, "0f"),
+                                Pair(DOUBLE, 0.0),
+                                Pair(BOOLEAN, false),
+                                Pair(ClassName("kotlin", "String"), "\"\""))
+        primitives.forEach { (className, defaultValue) ->
             val primitiveModel = KotlinPrimitiveModel(targetPackage, prefix, className, defaultValue)
             val realmTypeFile = PluginProtos.CodeGeneratorResponse
                                             .File
@@ -37,17 +37,6 @@ class KotlinRealmGenerator(params: RealmParams,
                                             .build()
             responseBuilder.addFile(realmTypeFile)
         }
-    }
-
-    override fun generate() {
-        val extensionRegistry = ExtensionRegistryLite.newInstance()
-        SwiftDescriptor.registerAllExtensions(extensionRegistry)
-        KotlinDescriptor.registerAllExtensions(extensionRegistry)
-
-        response = PluginProtos.CodeGeneratorResponse.newBuilder()
-        request = PluginProtos.CodeGeneratorRequest.parseFrom(params.inputStream, extensionRegistry)
-
-        super.generate()
     }
 
     override fun additionalClass(node: DescriptorProtos.DescriptorProto): String {

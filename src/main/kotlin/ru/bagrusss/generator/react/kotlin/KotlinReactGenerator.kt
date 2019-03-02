@@ -26,13 +26,6 @@ class KotlinReactGenerator(params: ReactParams): Generator<ReactParams>(params) 
     override fun generate() {
         Logger.log("react start")
 
-        val extensionRegistry = ExtensionRegistryLite.newInstance()
-        SwiftDescriptor.registerAllExtensions(extensionRegistry)
-        KotlinDescriptor.registerAllExtensions(extensionRegistry)
-
-        response = PluginProtos.CodeGeneratorResponse.newBuilder()
-        request = PluginProtos.CodeGeneratorRequest.parseFrom(params.inputStream, extensionRegistry)
-
         utilsBuilder = KotlinUtilsModel.Builder()
                                        .fileName(params.className)
                                        .packageName(targetPackage)

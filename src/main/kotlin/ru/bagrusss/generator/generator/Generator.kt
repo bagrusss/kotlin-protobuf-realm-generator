@@ -1,12 +1,13 @@
 package ru.bagrusss.generator.generator
 
+import com.google.protobuf.ExtensionRegistryLite
 import google.protobuf.DescriptorProtos
+import google.protobuf.KotlinDescriptor
+import google.protobuf.SwiftDescriptor
 import google.protobuf.compiler.PluginProtos
 import ru.bagrusss.generator.Logger
 import ru.bagrusss.generator.fields.Field
 import java.io.File
-import java.io.InputStream
-import java.io.PrintStream
 import java.io.PrintWriter
 import java.util.TreeSet
 
@@ -21,27 +22,34 @@ abstract class Generator<P: Params<P>>(@JvmField protected val params: P) {
     protected val protoToJavaPackagesMap = HashMap<String, String>()
     protected val mapsSet = TreeSet<String>()
 
-    protected lateinit var response: PluginProtos.CodeGeneratorResponse.Builder
-    protected lateinit var request:  PluginProtos.CodeGeneratorRequest
+    @JvmField
+    protected val extensionRegistry: ExtensionRegistryLite = ExtensionRegistryLite.newInstance()
+    protected val response: PluginProtos.CodeGeneratorResponse.Builder = PluginProtos.CodeGeneratorResponse
+                                                                                     .newBuilder()
+    private val request: PluginProtos.CodeGeneratorRequest = PluginProtos.CodeGeneratorRequest
+                                                                         .parseFrom(params.inputStream, extensionRegistry)
 
     protected inline val targetPath
         get() = params.targetPath
     protected inline val targetPackage
         get() = params.targetPackage
 
+
     protected fun writeFile(path: String, fileName: String, classBody: String) {
         val protoPackageDir = File(path)
         if (!protoPackageDir.exists())
             protoPackageDir.mkdir()
 
-        val file = File(path, fileName)
-        file.createNewFile()
-        PrintWriter(file).use {
-            it.write(classBody)
+        File(path, fileName).run {
+            createNewFile()
+            PrintWriter(this).use { it.write(classBody) }
         }
     }
 
     open fun generate() {
+        SwiftDescriptor.registerAllExtensions(extensionRegistry)
+        KotlinDescriptor.registerAllExtensions(extensionRegistry)
+
         Logger.log("generate start size = ${request.protoFileList.size}")
         request.protoFileList.forEach { protoFile ->
             protoFilePackage = protoFile.`package`
@@ -60,9 +68,7 @@ abstract class Generator<P: Params<P>>(@JvmField protected val params: P) {
     }
 
     abstract fun filter(node: DescriptorProtos.DescriptorProto): Boolean
-
     abstract fun handleProtoMessage(message:  DescriptorProtos.DescriptorProto)
-
     abstract fun generateProperty(field: DescriptorProtos.FieldDescriptorProto): Field<*>
 
     companion object {
