@@ -6,15 +6,13 @@ class RealmParams private constructor(builder: Builder): Params<RealmParams>(bui
 
     @JvmField val prefix        = builder.prefix
     @JvmField val suffix        = builder.suffix
-    @JvmField val realmPackage  = builder.realmPackage
-    @JvmField val realmPath     = builder.realmPath
+    @JvmField val realmPath     = builder.targetPath
 
     class Builder internal constructor(): Params.Builder<RealmParams>() {
 
-        internal var prefix:  String = "Realm"
-        internal var suffix:  String = "Realm"
-        internal var realmPackage: String = "realm"
-        internal var realmPath:    String = "realm"
+        @JvmField internal var prefix: String = "Realm"
+        @JvmField internal var suffix: String = ""
+        @JvmField internal var realmPackage: String = "realm"
 
         fun modelPrefix(modelPrefix: String) = apply {
             this.prefix = modelPrefix
@@ -24,12 +22,8 @@ class RealmParams private constructor(builder: Builder): Params<RealmParams>(bui
             this.suffix = modelSuffix
         }
 
-        fun realmPackage(realmPackage: String) = apply {
-            this.realmPackage = realmPackage
-        }
-
         fun realmPath(realmPath: String) = apply {
-            this.realmPath = realmPath
+            this.targetPath = realmPath
         }
 
         override fun build() = RealmParams(this)

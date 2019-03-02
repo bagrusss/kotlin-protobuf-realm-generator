@@ -6,7 +6,7 @@ import ru.bagrusss.generator.realm.RealmEntityFactory
 import ru.bagrusss.generator.realm.kotlin.fields.*
 import ru.bagrusss.generator.realm.kotlin.model.KotlinClassModel
 
-class KotlinRealmEntityFactory(serializer: Serializer) : RealmEntityFactory(serializer) {
+class KotlinRealmEntityFactory : RealmEntityFactory() {
 
     override fun newBuilder(type: Type) = when (type) {
         Type.BOOL       -> BoolRealmField.newBuilder()

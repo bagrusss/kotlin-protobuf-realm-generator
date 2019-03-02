@@ -7,16 +7,13 @@ import ru.bagrusss.generator.fields.Field
 import ru.bagrusss.generator.fields.Type
 import ru.bagrusss.generator.generator.Generator
 import ru.bagrusss.generator.generator.ProtobufType
-import ru.bagrusss.generator.realm.kotlin.RealmModelBuilder
-import ru.bagrusss.generator.realm.kotlin.fields.RealmFieldBuilder
 import ru.bagrusss.generator.realm.params.RealmParams
 import java.io.File
+
 
 abstract class DefaultRealmGenerator(params: RealmParams,
                                      private val entitiesFactory: RealmEntityFactory): Generator<RealmParams>(params) {
 
-    protected inline val realmPackage
-        get() = params.realmPackage
     protected inline val prefix
         get() = params.prefix
     private inline val realmPath
@@ -27,7 +24,6 @@ abstract class DefaultRealmGenerator(params: RealmParams,
     abstract fun generatePrimitives(responseBuilder: PluginProtos.CodeGeneratorResponse.Builder)
 
     override fun generate() {
-
         generatePrimitives(response)
 
         super.generate()
@@ -43,22 +39,26 @@ abstract class DefaultRealmGenerator(params: RealmParams,
     }
 
     private fun parseCurrent(node: DescriptorProtos.DescriptorProto, parentNameOriginal: String = "", parentNameRealm: String = "") {
-        val currentRealmPackage = "$realmPackage.$protoFilePackage"
+        val currentRealmPackage = "$targetPackage.$protoFilePackage"
         val realmClassName = "${if (parentNameRealm.isNotEmpty()) parentNameRealm.replace(".", "") else prefix}${node.name}"
         val fullName = "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else ""}${node.name}"
         val protoFullName = "$protoFileJavaPackage.$fullName"
 
         node.nestedTypeList.forEach {
-            parseCurrent(it, "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else "" }${node.name}", realmClassName)
+            val parentName = "${if (parentNameOriginal.isNotEmpty()) "$parentNameOriginal." else "" }${node.name}"
+            parseCurrent(it, parentName, realmClassName)
         }
 
         if (node.fieldList.isNotEmpty()) {
             val isMap = node.options.mapEntry
             val classModelBuilder = entitiesFactory.newModelBuilder()
-                                                   .realmPackageName(currentRealmPackage)
-                                                   .realmClassName(realmClassName)
-                                                   .protoClassFullName(protoFullName)
-                                                   .isMap(isMap)
+                                                   .apply {
+                                                       realmPackageName(currentRealmPackage)
+                                                       realmClassName(realmClassName)
+                                                       protoClassFullName(protoFullName)
+                                                       isMap(isMap)
+                                                   }
+
             if (isMap)
                 mapsSet.add("$protoFilePackage.$fullName")
 
@@ -69,8 +69,7 @@ abstract class DefaultRealmGenerator(params: RealmParams,
                 classModelBuilder.addField(property)
             }
 
-            val linkedObjects = getLinkedObjects(node)
-            linkedObjects.forEach {
+            getLinkedObjects(node).forEach {
                 val clearName = it.fromType.replace(it.packageName, "")
                                            .replace(".", "")
 
@@ -78,24 +77,20 @@ abstract class DefaultRealmGenerator(params: RealmParams,
                                                   .propertyName(it.propertyName)
                                                   .fieldName(it.fieldName)
                                                   .repeated(true)
-                                                  .fullProtoTypeName("$realmPackage.${it.packageName}.$prefix$clearName")
+                                                  .fullProtoTypeName("$targetPackage.${it.packageName}.$prefix$clearName")
                                                   .build()
 
-                classModelBuilder as RealmModelBuilder
                 classModelBuilder.addLinkedObject(linkedObject)
                 Logger.log("linkedObjects_gen: $currentRealmPackage.${it.packageName}.$prefix$clearName, $it")
             }
 
-            val model = classModelBuilder.build() as RealmModel
+            val model = classModelBuilder.build()
 
             writeFile("$realmPath${File.separator}$protoFilePackage", model.fileName, model.body)
 
             if (additionalClass(node).isNotEmpty()) {
-                classModelBuilder as RealmModelBuilder
                 classModelBuilder.realmClassName("Additional$realmClassName")
-
-                val additionalModel = classModelBuilder.build() as RealmModel
-
+                val additionalModel = classModelBuilder.build()
                 writeFile("$realmPath${File.separator}$protoFilePackage", additionalModel.fileName, additionalModel.body)
             }
         }
@@ -126,7 +121,7 @@ abstract class DefaultRealmGenerator(params: RealmParams,
 
                 val javaPackage = protoToJavaPackagesMap[protoPackage]
                 entitiesFactory.newBuilder(Type.ENUM)
-                               .fullProtoTypeName("$javaPackage$clearTypeName") as RealmFieldBuilder<*>
+                               .apply { fullProtoTypeName("$javaPackage$clearTypeName") }
             }
             ProtobufType.TYPE_MESSAGE   -> {
                 val protoTypeName = field.typeName.substring(1)
@@ -142,9 +137,10 @@ abstract class DefaultRealmGenerator(params: RealmParams,
                                          .substring(protoPackage.length + 1)
                                          .replace(".", "")
 
-                builder.fullProtoTypeName(clearFullName)
-                       .protoPackage("$protoPackage.")
-                builder
+                builder.apply {
+                    fullProtoTypeName(clearFullName)
+                    protoPackage("$protoPackage.")
+                }
             }
 
             else                        -> throw UnsupportedOperationException("Field ${field.name} with type ${field.typeName} not supported")
@@ -153,7 +149,7 @@ abstract class DefaultRealmGenerator(params: RealmParams,
         val primaryKey = isPrimaryKey(field)
         val index = isIndex(field)
 
-        fieldBuilder.realmPackage(realmPackage)
+        fieldBuilder.realmPackage(targetPackage)
                     .primaryKey(primaryKey)
                     .indexed(index)
                     .optional(field.label == OPTIONAL || field.type == ProtobufType.TYPE_MESSAGE)
@@ -172,7 +168,7 @@ abstract class DefaultRealmGenerator(params: RealmParams,
 
     protected abstract fun getLinkedObjects(node: DescriptorProtos.DescriptorProto): List<LinkedObject>
 
-    data class LinkedObject(
+    class LinkedObject(
             @JvmField val fieldName: String,
             @JvmField val fromType: String,
             @JvmField val propertyName: String,

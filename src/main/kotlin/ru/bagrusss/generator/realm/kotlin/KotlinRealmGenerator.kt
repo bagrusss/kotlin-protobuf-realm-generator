@@ -25,12 +25,12 @@ class KotlinRealmGenerator(params: RealmParams,
 
     override fun generatePrimitives(responseBuilder: PluginProtos.CodeGeneratorResponse.Builder) {
         listOf(Pair(INT, 0),
-                Pair(LONG, 0L),
-                Pair(FLOAT, "0f"),
-                Pair(DOUBLE, 0.0),
-                Pair(BOOLEAN, false),
-                Pair(ClassName("kotlin", "String"), "\"\"")).forEach {
-            val primitiveModel = KotlinPrimitiveModel(realmPackage, prefix, it.first, it.second)
+               Pair(LONG, 0L),
+               Pair(FLOAT, "0f"),
+               Pair(DOUBLE, 0.0),
+               Pair(BOOLEAN, false),
+               Pair(ClassName("kotlin", "String"), "\"\"")).forEach { (className, defaultValue) ->
+            val primitiveModel = KotlinPrimitiveModel(targetPackage, prefix, className, defaultValue)
             val realmTypeFile = PluginProtos.CodeGeneratorResponse
                                             .File
                                             .newBuilder()

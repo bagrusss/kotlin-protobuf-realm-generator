@@ -14,15 +14,10 @@ import ru.bagrusss.generator.generator.ProtobufType
 import ru.bagrusss.generator.react.UtilsModelBuilder
 import ru.bagrusss.generator.react.kotlin.field.*
 import ru.bagrusss.generator.react.kotlin.model.KotlinReactModel
-import java.io.InputStream
-import java.io.PrintStream
+import ru.bagrusss.generator.react.params.ReactParams
 import java.util.*
 
-class KotlinReactGenerator(input: InputStream,
-                           output: PrintStream,
-                           private val reactPath: String,
-                           private val className: String = "ConvertUtils",
-                           private val packageName: String = "ru.rocketbank.serenity.react.utils"): Generator(input, output) {
+class KotlinReactGenerator(params: ReactParams): Generator<ReactParams>(params) {
 
     private lateinit var utilsBuilder: UtilsModelBuilder<FunSpec>
 
@@ -37,12 +32,12 @@ class KotlinReactGenerator(input: InputStream,
         KotlinDescriptor.registerAllExtensions(extensionRegistry)
 
         response = PluginProtos.CodeGeneratorResponse.newBuilder()
-        request = PluginProtos.CodeGeneratorRequest.parseFrom(input, extensionRegistry)
+        request = PluginProtos.CodeGeneratorRequest.parseFrom(params.inputStream, extensionRegistry)
 
 
         utilsBuilder = KotlinUtilsModel.Builder()
-                                       .fileName(className)
-                                       .packageName(packageName)
+                                       .fileName(params.className)
+                                       .packageName(targetPackage)
 
         super.generate()
 
@@ -51,7 +46,7 @@ class KotlinReactGenerator(input: InputStream,
 
         val body = utilsBuilder.build().getBody()
 
-        writeFile(reactPath, "$className.kt", body)
+        writeFile(targetPath, "${params.className}.kt", body)
         Logger.log("maps and fields: $mapsValuesTypes")
         Logger.log("react end")
     }
@@ -177,19 +172,19 @@ class KotlinReactGenerator(input: InputStream,
             ProtobufType.TYPE_INT32,
             ProtobufType.TYPE_UINT32,
             ProtobufType.TYPE_FIXED32,
-            ProtobufType.TYPE_SFIXED32 -> Type.INT
+            ProtobufType.TYPE_SFIXED32   -> Type.INT
 
             ProtobufType.TYPE_INT64,
             ProtobufType.TYPE_UINT64,
             ProtobufType.TYPE_FIXED64,
             ProtobufType.TYPE_SFIXED64   -> Type.LONG
 
-            ProtobufType.TYPE_BOOL      -> Type.BOOL
-            ProtobufType.TYPE_FLOAT     -> Type.FLOAT
-            ProtobufType.TYPE_DOUBLE    -> Type.DOUBLE
-            ProtobufType.TYPE_MESSAGE   -> Type.MESSAGE
-            ProtobufType.TYPE_ENUM      -> Type.ENUM
-            else                        -> Type.STRING
+            ProtobufType.TYPE_BOOL       -> Type.BOOL
+            ProtobufType.TYPE_FLOAT      -> Type.FLOAT
+            ProtobufType.TYPE_DOUBLE     -> Type.DOUBLE
+            ProtobufType.TYPE_MESSAGE    -> Type.MESSAGE
+            ProtobufType.TYPE_ENUM       -> Type.ENUM
+            else                         -> Type.STRING
         }
     }
 

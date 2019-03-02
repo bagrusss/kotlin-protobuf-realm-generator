@@ -13,7 +13,7 @@ class RealmConfig private constructor(builder: ConfigBuilder) {
             throw IllegalStateException("realmPackage must be set!")
 
         if (realmPath.isEmpty())
-            throw IllegalStateException("realmPath must be set!")
+            throw IllegalStateException("targetPath must be set!")
     }
 
     class ConfigBuilder internal constructor() {

@@ -16,9 +16,6 @@ abstract class RealmModel : Model {
         className = ClassName(packageName, classNameStr)
     }
 
-    abstract val fileName: String
     abstract val fileExtension: String
-
-    abstract val body: String
 
 }

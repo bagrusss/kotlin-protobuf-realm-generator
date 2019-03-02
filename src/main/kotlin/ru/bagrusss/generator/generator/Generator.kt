@@ -24,6 +24,11 @@ abstract class Generator<P: Params<P>>(@JvmField protected val params: P) {
     protected lateinit var response: PluginProtos.CodeGeneratorResponse.Builder
     protected lateinit var request:  PluginProtos.CodeGeneratorRequest
 
+    protected inline val targetPath
+        get() = params.targetPath
+    protected inline val targetPackage
+        get() = params.targetPackage
+
     protected fun writeFile(path: String, fileName: String, classBody: String) {
         val protoPackageDir = File(path)
         if (!protoPackageDir.exists())
@@ -44,11 +49,8 @@ abstract class Generator<P: Params<P>>(@JvmField protected val params: P) {
             packagesSet.add(protoFilePackage)
             protoToJavaPackagesMap[protoFilePackage] = protoFileJavaPackage
 
-
             Logger.log("proto package java ${protoFile.options.javaPackage}")
-            protoFile.messageTypeList.forEach {
-                handleProtoMessage(it)
-            }
+            protoFile.messageTypeList.forEach(::handleProtoMessage)
         }
 
         Logger.log("end")
