@@ -35,11 +35,11 @@ jar {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java
-    compile group: 'com.google.protobuf', name: 'protobuf-java', version: '3.5.1'
-    //compile 'com.squareup:javapoet:1.8.0'
-    compile 'com.squareup:kotlinpoet:1.0.1'
-    compile fileTree(dir: 'libs', include: '*.jar')
+    implementation group: 'com.google.protobuf', name: 'protobuf-java', version: '3.5.1'
+    //implementation 'com.squareup:javapoet:1.8.0'
+    implementation 'com.squareup:kotlinpoet:1.0.1'
+    implementation fileTree(dir: 'libs', include: '*.jar')
 }
