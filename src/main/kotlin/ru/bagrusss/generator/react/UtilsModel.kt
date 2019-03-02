@@ -1,8 +1,9 @@
 package ru.bagrusss.generator.react
 
-abstract class UtilsModel<T>(builder: UtilsModelBuilder<T>) {
-    protected var packageName = ""
-    protected var fileName = ""
+import ru.bagrusss.generator.model.Model
 
-    abstract fun getBody(): String
+abstract class UtilsModel<T>(builder: UtilsModelBuilder<T>): Model() {
+
+    protected var packageName = ""
+
 }

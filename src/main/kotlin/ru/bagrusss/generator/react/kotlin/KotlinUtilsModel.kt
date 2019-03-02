@@ -7,20 +7,22 @@ import ru.bagrusss.generator.react.UtilsModel
 
 class KotlinUtilsModel private constructor(builder: Builder): UtilsModel<FunSpec>(builder) {
 
-    private val body: String
+    private val contentBody: String
+
+    override val fileName = ""
+
+    override val body
+        get() = contentBody
 
     init {
         val fileBuilder = FileSpec.builder(builder.packageName, builder.fileName)
 
         builder.functions.forEach { fileBuilder.addFunction(it.getSpec()) }
         val file = fileBuilder.build()
-        body = file.toJavaFileObject()
-                   .getCharContent(true)
-                   .toString()
+        contentBody = file.toJavaFileObject()
+                          .getCharContent(true)
+                          .toString()
     }
-
-    override fun getBody() = body
-
 
     class Builder: UtilsModelBuilder<FunSpec>() {
 

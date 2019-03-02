@@ -10,8 +10,6 @@ import google.protobuf.compiler.PluginProtos
 import ru.bagrusss.generator.realm.RealmEntityFactory
 import ru.bagrusss.generator.realm.DefaultRealmGenerator
 import ru.bagrusss.generator.realm.params.RealmParams
-import java.io.InputStream
-import java.io.PrintStream
 
 class KotlinRealmGenerator(params: RealmParams,
                            factory: RealmEntityFactory): DefaultRealmGenerator(params, factory) {

@@ -26,14 +26,12 @@ class KotlinReactGenerator(params: ReactParams): Generator<ReactParams>(params) 
     override fun generate() {
         Logger.log("react start")
 
-        //вот оно, блять, решение проблем!
         val extensionRegistry = ExtensionRegistryLite.newInstance()
         SwiftDescriptor.registerAllExtensions(extensionRegistry)
         KotlinDescriptor.registerAllExtensions(extensionRegistry)
 
         response = PluginProtos.CodeGeneratorResponse.newBuilder()
         request = PluginProtos.CodeGeneratorRequest.parseFrom(params.inputStream, extensionRegistry)
-
 
         utilsBuilder = KotlinUtilsModel.Builder()
                                        .fileName(params.className)
@@ -43,10 +41,7 @@ class KotlinReactGenerator(params: ReactParams): Generator<ReactParams>(params) 
 
         Logger.log("react generated $count")
 
-
-        val body = utilsBuilder.build().getBody()
-
-        writeFile(targetPath, "${params.className}.kt", body)
+        writeFile(targetPath, "${params.className}.kt", utilsBuilder.build().body)
         Logger.log("maps and fields: $mapsValuesTypes")
         Logger.log("react end")
     }
