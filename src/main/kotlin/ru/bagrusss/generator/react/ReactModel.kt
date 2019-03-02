@@ -9,6 +9,9 @@ abstract class ReactModel<T>(builder: ReactModelBuilder) : Model() {
     protected lateinit var toWritableMapFun: FunModel<T>
     protected lateinit var fromReadableMapFun: FunModel<T>
 
+    override val fileName = ""
+    override val body = ""
+
     /**
      * @return first - toWritableMapFun, second - fromReadableMapFun
      */
