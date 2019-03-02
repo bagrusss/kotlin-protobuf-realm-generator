@@ -21,10 +21,6 @@ class RealmParams private constructor(builder: Builder): Params<RealmParams>(bui
             this.suffix = modelSuffix
         }
 
-        fun realmPath(realmPath: String) = apply {
-            this.targetPath = realmPath
-        }
-
         override fun build() = RealmParams(this)
 
     }
