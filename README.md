@@ -89,7 +89,7 @@ fun com.company.project.models.User.Builder.fromReadableMap(map: com.facebook.re
     firstName = map.getString("firstName")
     lastName = map.getString("lastName")
     if (map.hasKey("middleName")) 
-          comment = map.getString("middleName")
+          middleName = map.getString("middleName")
     if (map.hasKey("contacts")) {
     	val contactsArray = map.getArray("contacts")
     	for (i in 0 until contactsArray.size()) {
