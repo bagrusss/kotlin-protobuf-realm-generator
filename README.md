@@ -75,7 +75,7 @@ fun com.company.project.models.User.toWritableMap(): com.facebook.react.bridge.W
       	putString("firstName", firstName)
       	putString("lastName", lastName)
       	if (hasMiddleName())
-      	    putBoolean("middleName", middleName)
+      	    putString("middleName", middleName)
       	if (contactsList.isNotEmpty()) {
         	val contactsArray = com.facebook.react.bridge.Arguments.createArray()
         	contactsList.forEach { contactsArray.pushString(it) }
